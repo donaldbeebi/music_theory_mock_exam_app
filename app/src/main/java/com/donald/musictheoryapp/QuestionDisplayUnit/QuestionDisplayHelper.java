@@ -34,7 +34,7 @@ import com.donald.musictheoryapp.Question.TruthQuestion;
 import com.donald.musictheoryapp.R;
 import com.donald.musictheoryapp.Screen.Screen;
 
-public class QuestionDisplayUnitLoader implements Question.QuestionVisitor
+public class QuestionDisplayHelper implements Question.QuestionVisitor
 {
     private static class EditTextInputSaver implements Runnable
     {
@@ -61,10 +61,10 @@ public class QuestionDisplayUnitLoader implements Question.QuestionVisitor
     private final LinearLayout m_List;
     private final Context m_Context;
     private final LayoutInflater m_Inflater;
-    private boolean m_ShowingResults;
+    private boolean m_ReadingMode;
 
 
-    public QuestionDisplayUnitLoader(Screen screen)
+    public QuestionDisplayHelper(Screen screen)
     {
         final View view = screen.getView();
         m_Context = screen.getContext();
@@ -84,12 +84,12 @@ public class QuestionDisplayUnitLoader implements Question.QuestionVisitor
         m_ImageView = view.findViewById(R.id.question_image);
         m_DescriptionView = view.findViewById(R.id.question_description);
         m_List = view.findViewById(R.id.question_answer_item_list);
-        m_ShowingResults = false;
+        m_ReadingMode = false;
     }
 
-    public void setShowingResults(boolean showingResults)
+    public void setReadingMode(boolean readingMode)
     {
-        m_ShowingResults = showingResults;
+        m_ReadingMode = readingMode;
     }
 
     public void displayQuestion(Question question)
@@ -219,12 +219,12 @@ public class QuestionDisplayUnitLoader implements Question.QuestionVisitor
             radioButtons[i] = button;
 
             // 5. disabling the buttons if showing results
-            if(m_ShowingResults) button.setEnabled(false);
+            if(m_ReadingMode) button.setEnabled(false);
 
             m_List.addView(item);
         }
 
-        if(m_ShowingResults)
+        if(m_ReadingMode)
         {
             // 1. highlighting the user selected button
             if(question.getAnswer() != null)
@@ -321,7 +321,7 @@ public class QuestionDisplayUnitLoader implements Question.QuestionVisitor
                 editText.setText(question.getAnswer(i));
             }
 
-            if (m_ShowingResults)
+            if (m_ReadingMode)
             {
                 editText.setEnabled(false);
                 if (question.isCorrect(i))
@@ -367,7 +367,7 @@ public class QuestionDisplayUnitLoader implements Question.QuestionVisitor
         if(question.getAnswer() != null)
             truthOption.setChecked(question.getAnswer().equals(TruthQuestion.TRUE_ANSWER));
 
-        truthOption.setEnabled(!m_ShowingResults);
+        truthOption.setEnabled(!m_ReadingMode);
 
         // 3. on check listener
         truthOption.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener()
@@ -400,7 +400,7 @@ public class QuestionDisplayUnitLoader implements Question.QuestionVisitor
             if (question.getAnswer() != null)
                 checkBox.setChecked(question.getAnswer(i).equals(CheckBoxQuestion.CHECK_ANSWER));
 
-            checkBox.setEnabled(!m_ShowingResults);
+            checkBox.setEnabled(!m_ReadingMode);
 
             // 3. on check listener
             checkBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener()

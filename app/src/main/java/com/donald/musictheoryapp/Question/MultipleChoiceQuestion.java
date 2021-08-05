@@ -13,11 +13,10 @@ public class MultipleChoiceQuestion extends Question
     protected String[] m_Options;
     protected OptionType m_OptionType;
 
-    public MultipleChoiceQuestion(int subNumber, QuestionGroup group,
-                                  String topic, Description[] descriptions,
+    public MultipleChoiceQuestion(int subNumber, QuestionGroup group, Description[] descriptions,
                                   String[] correctAnswer, String[] options, OptionType optionType)
     {
-        super(subNumber, group, topic, descriptions, correctAnswer);
+        super(subNumber, group, descriptions, correctAnswer);
         if (BuildConfig.DEBUG && correctAnswer.length != 1) // never need MC questions with multiple answers
             throw new AssertionError("Assertion failed");
         m_Options = options;

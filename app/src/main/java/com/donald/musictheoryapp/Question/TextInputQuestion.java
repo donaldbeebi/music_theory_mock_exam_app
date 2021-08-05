@@ -10,11 +10,10 @@ public class TextInputQuestion extends Question
 
     private final InputType m_InputType;
 
-    public TextInputQuestion(int subNumber, QuestionGroup group,
-                             String topic, Description[] descriptions,
+    public TextInputQuestion(int subNumber, QuestionGroup group, Description[] descriptions,
                              String[] correctAnswer, InputType inputType)
     {
-        super(subNumber, group, topic, descriptions, correctAnswer);
+        super(subNumber, group, descriptions, correctAnswer);
         m_InputType = inputType;
     }
 

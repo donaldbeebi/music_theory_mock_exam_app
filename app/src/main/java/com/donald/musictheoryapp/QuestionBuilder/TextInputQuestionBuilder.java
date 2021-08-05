@@ -1,9 +1,10 @@
 package com.donald.musictheoryapp.QuestionBuilder;
 
+import com.donald.musictheoryapp.Question.Question;
 import com.donald.musictheoryapp.Question.TextInputQuestion;
 
 public class TextInputQuestionBuilder
-    extends QuestionBuilder<TextInputQuestionBuilder, TextInputQuestion>
+    extends QuestionBuilder
 {
     private TextInputQuestion.InputType m_InputType;
 
@@ -11,29 +12,24 @@ public class TextInputQuestionBuilder
     protected TextInputQuestion newQuestion()
     {
         return new TextInputQuestion(
-            m_Number, m_Group, m_Topic,
-            m_Descriptions, m_CorrectAnswer, m_InputType
+            m_Number, m_Group, m_Descriptions,
+            m_CorrectAnswers, m_InputType
         );
     }
 
-    @Override
-    protected TextInputQuestionBuilder getThis() { return this; }
-
-    public static TextInputQuestionBuilder question()
-    {
-        return new TextInputQuestionBuilder();
-    }
-
-    public TextInputQuestionBuilder inputType(TextInputQuestion.InputType inputType)
-    {
-        m_InputType = inputType;
-        return this;
-    }
+    public void setInputType(TextInputQuestion.InputType inputType) { m_InputType = inputType; }
 
     @Override
-    public TextInputQuestion build()
+    public Question build()
     {
         if(m_InputType == null) throwError("InputType");
         return super.build();
+    }
+
+    @Override
+    public void reset()
+    {
+        m_InputType = null;
+        super.reset();
     }
 }

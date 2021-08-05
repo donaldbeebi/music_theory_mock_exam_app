@@ -10,7 +10,7 @@ import android.widget.TextView;
 import com.donald.musictheoryapp.BuildConfig;
 import com.donald.musictheoryapp.Exercise.ExerciseGenerator;
 import com.donald.musictheoryapp.QuestionArray.QuestionArray;
-import com.donald.musictheoryapp.QuestionDisplayUnit.QuestionDisplayUnitLoader;
+import com.donald.musictheoryapp.QuestionDisplayUnit.QuestionDisplayHelper;
 import com.donald.musictheoryapp.R;
 import com.donald.musictheoryapp.Utils.TimeFormatter;
 
@@ -45,10 +45,10 @@ public class QuestionScreen extends Screen
      * ******
      */
 
-    private boolean m_ShowingResults;
+    private boolean m_ReadingMode;
 
     private int m_CurrentQuestion;
-    private final QuestionDisplayUnitLoader m_UnitLoader;
+    private final QuestionDisplayHelper m_DisplayHelper;
     private QuestionArray m_Questions;
     private final ExerciseGenerator m_ExerciseGenerator;
     private final OnFinishExerciseListener m_OnFinishExerciseListener;
@@ -73,7 +73,7 @@ public class QuestionScreen extends Screen
     {
         super(context, view);
 
-        m_UnitLoader = new QuestionDisplayUnitLoader(this);
+        m_DisplayHelper = new QuestionDisplayHelper(this);
         m_OnFinishExerciseListener = onFinishExerciseListener;
         m_OnReturnToOverviewListener = onReturnToOverviewListener;
         m_ExerciseTimer = new ExerciseTimer(60 * 60 * 2, view.findViewById(R.id.question_timer_display));
@@ -113,7 +113,7 @@ public class QuestionScreen extends Screen
             @Override
             public void onClick(View view)
             {
-                if(!m_ShowingResults) m_OnFinishExerciseListener.onFinishExercise();
+                if(!m_ReadingMode) m_OnFinishExerciseListener.onFinishExercise();
                 else m_OnReturnToOverviewListener.onReturnToOverview();
             }
         });
@@ -126,8 +126,8 @@ public class QuestionScreen extends Screen
         if(BuildConfig.DEBUG && m_Questions == null)
             throw new AssertionError("No questions set. Make sure to call setQuestions(QuestionArray) first.");
 
-        m_ShowingResults = false;
-        m_UnitLoader.setShowingResults(m_ShowingResults);
+        m_ReadingMode = false;
+        m_DisplayHelper.setReadingMode(m_ReadingMode);
 
         /*
          * Setting up the progress view
@@ -140,14 +140,14 @@ public class QuestionScreen extends Screen
 
     public QuestionArray getQuestions() { return m_Questions; }
 
-    public void displayResults(int questionIndex)
+    public void displayQuestion(int questionIndex)
     {
         if(BuildConfig.DEBUG && m_Questions == null)
             throw new AssertionError("No questions set. Make sure to call setQuestions(QuestionArray) first.");
 
-        m_ShowingResults = true;
+        m_ReadingMode = true;
         m_CurrentQuestion = questionIndex;
-        m_UnitLoader.setShowingResults(true);
+        m_DisplayHelper.setReadingMode(true);
         m_FinishButton.setText(R.string.return_to_overview_text);
 
         displayCurrentQuestion();
@@ -169,7 +169,7 @@ public class QuestionScreen extends Screen
 
     private void displayCurrentQuestion()
     {
-        m_UnitLoader.displayQuestion(m_Questions.getQuestion(m_CurrentQuestion));
+        m_DisplayHelper.displayQuestion(m_Questions.getQuestion(m_CurrentQuestion));
         m_ProgressDisplay.setText((m_CurrentQuestion + 1) + "/" + m_Questions.getNumberOfQuestions());
         updatePreviousNextButton();
     }

@@ -1,4 +1,4 @@
-package com.donald.musictheoryapp;
+package com.donald.musictheoryapp.Screen;
 
 import android.app.AlertDialog;
 import android.app.Dialog;
@@ -10,12 +10,11 @@ import androidx.appcompat.app.AppCompatDialogFragment;
 
 public class FinishExerciseConfirmationDialog extends AppCompatDialogFragment
 {
-    public interface OnConfirmDialogListener
-    { void onConfirmDialog(); }
+    public interface OnConfirmDialogListener { void onConfirmDialog(); }
 
     private final OnConfirmDialogListener m_OnConfirmDialogListener;
 
-    FinishExerciseConfirmationDialog(OnConfirmDialogListener listener)
+    public FinishExerciseConfirmationDialog(OnConfirmDialogListener listener)
     {
         m_OnConfirmDialogListener = listener;
     }

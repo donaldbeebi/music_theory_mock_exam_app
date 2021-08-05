@@ -8,11 +8,12 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.donald.musictheoryapp.QuestionArray.QuestionArray;
 import com.donald.musictheoryapp.R;
-import com.donald.musictheoryapp.ResultOverviewAdapter;
+import com.donald.musictheoryapp.Utils.ResultOverviewAdapter;
 
 public class ResultOverviewScreen extends Screen
 {
-    public interface OnProceedToDetailListener { void onProceedToDetail(int targetQuestion); }
+    public interface OnProceedToDetailListener
+    { void onProceedToDetail(QuestionArray questions, int targetGroup); }
 
     private RecyclerView m_RecyclerView;
     private ResultOverviewAdapter m_Adapter;

@@ -1,4 +1,4 @@
-package com.donald.musictheoryapp;
+package com.donald.musictheoryapp.Utils;
 
 import android.provider.BaseColumns;
 

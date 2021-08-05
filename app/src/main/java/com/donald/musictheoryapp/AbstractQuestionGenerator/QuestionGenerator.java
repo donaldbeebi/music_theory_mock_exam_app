@@ -1,7 +1,6 @@
 package com.donald.musictheoryapp.AbstractQuestionGenerator;
 
 import android.content.Context;
-import android.content.res.Resources;
 import android.database.sqlite.SQLiteDatabase;
 
 import androidx.annotation.CallSuper;
@@ -11,6 +10,7 @@ import java.util.ArrayList;
 import com.donald.musictheoryapp.Question.Description;
 import com.donald.musictheoryapp.Question.Question;
 import com.donald.musictheoryapp.Question.QuestionGroup;
+import com.donald.musictheoryapp.QuestionBuilder.QuestionBuilder;
 import com.donald.musictheoryapp.Utils.SnakeCaseConverter;
 
 // TODO: SHOULD SETTING STATIC TITLES BE MOVED TO CONSTRUCTORS?
@@ -32,8 +32,8 @@ public abstract class QuestionGenerator
     private ArrayList<Description> m_QuestionDescriptions;
     private String[] m_CorrectAnswer;
 
-    protected QuestionGenerator(String topic, int numberOfQuestionsPerGeneration,
-                                int numberOfCorrectAnswers, SQLiteDatabase db, Context context)
+    protected QuestionGenerator(String topic, int numberOfCorrectAnswers, int numberOfQuestionsPerGeneration,
+                                SQLiteDatabase db, Context context)
     {
         m_Number = 0;
         m_Topic = topic;
@@ -51,7 +51,7 @@ public abstract class QuestionGenerator
         Question[] questions = new Question[NUMBER_OF_QUESTIONS_PER_GENERATION];
         Description[] descriptions = new Description[m_GroupDescriptions.size()];
         descriptions = m_GroupDescriptions.toArray(descriptions);
-        m_Group = new QuestionGroup(questionNumber, descriptions);
+        m_Group = new QuestionGroup(questionNumber, m_Topic, descriptions);
 
         // 1. parent question generation
         onInitialize();
@@ -86,11 +86,8 @@ public abstract class QuestionGenerator
     // getters
     protected final Context getContext() { return m_Context; }
     protected final SQLiteDatabase getDatabase() { return m_DB; }
-    @Deprecated
-    protected final Resources getResources() { return m_Context.getResources(); }   // TODO: MAKE ALL GENERATORS USE THIS FUNCTION INSTEAD
     protected final QuestionGroup getGroup() { return m_Group; }
     protected final int getNumber() { return m_Number; }
-    protected final String getTopic() { return m_Topic; }
     protected final String getTopicSnakeCase() { return m_TopicSnakeCase; }
     protected final Description[] getQuestionDescriptions()
     {
@@ -113,5 +110,22 @@ public abstract class QuestionGenerator
     }
     protected abstract void onGenerate();
     protected abstract void setUpData();
-    protected abstract Question onBuildQuestion();
+    protected abstract QuestionBuilder getBuilder();
+    @CallSuper
+    protected Question onBuildQuestion()
+    {
+        QuestionBuilder builder = getBuilder();
+        Question question;
+
+        Description[] descriptions = new Description[m_QuestionDescriptions.size()];
+        descriptions = m_QuestionDescriptions.toArray(descriptions);
+
+        builder.setNumber(m_Number);
+        builder.setGroup(m_Group);
+        builder.setDescriptions(descriptions);
+        builder.setCorrectAnswers(m_CorrectAnswer);
+        question = builder.build();
+        builder.reset();
+        return question;
+    }
 }

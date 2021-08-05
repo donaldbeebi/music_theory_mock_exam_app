@@ -1,8 +1,9 @@
 package com.donald.musictheoryapp.QuestionBuilder;
 
+import com.donald.musictheoryapp.Question.Question;
 import com.donald.musictheoryapp.Question.TruthQuestion;
 
-public class TruthQuestionBuilder extends QuestionBuilder<TruthQuestionBuilder, TruthQuestion>
+public class TruthQuestionBuilder extends QuestionBuilder
 {
     private String m_Statement;
 
@@ -10,29 +11,24 @@ public class TruthQuestionBuilder extends QuestionBuilder<TruthQuestionBuilder, 
     protected TruthQuestion newQuestion()
     {
         return new TruthQuestion(
-            m_Number, m_Group, m_Topic, m_Descriptions,
-            m_CorrectAnswer, m_Statement
+            m_Number, m_Group, m_Descriptions,
+            m_CorrectAnswers, m_Statement
         );
     }
 
-    @Override
-    protected TruthQuestionBuilder getThis() { return this; }
-
-    public static TruthQuestionBuilder question()
-    {
-        return new TruthQuestionBuilder();
-    }
-
-    public TruthQuestionBuilder statement(String statement)
-    {
-        m_Statement = statement;
-        return this;
-    }
+    public void setStatement(String statement) { m_Statement = statement; }
 
     @Override
-    public TruthQuestion build()
+    public Question build()
     {
         if(m_Statement == null) throwError("Statement");
         return super.build();
+    }
+
+    @Override
+    public void reset()
+    {
+        m_Statement = null;
+        super.reset();
     }
 }

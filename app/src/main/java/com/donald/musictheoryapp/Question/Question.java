@@ -12,17 +12,15 @@ public abstract class Question
 
     private final int m_Number;
     private final QuestionGroup m_Group;
-    private final String m_Topic;
     private final Description[] m_Descriptions;
     private final String[] m_Answer;
     private final String[] m_CorrectAnswer;
 
-    Question(int subNumber, QuestionGroup group, String topic,
+    Question(int subNumber, QuestionGroup group,
              Description[] descriptions, String[] correctAnswer)
     {
         m_Number = subNumber;
         m_Group = group;
-        m_Topic = topic;
         m_Descriptions = descriptions;
         m_Answer = new String[correctAnswer.length];
         m_CorrectAnswer = correctAnswer;
@@ -32,8 +30,6 @@ public abstract class Question
     public int getNumber() { return m_Number; }
 
     public QuestionGroup getGroup() { return m_Group; }
-
-    public String getTopic() { return m_Topic; }
 
     public Description[] getDescriptions() { return m_Descriptions; }
 

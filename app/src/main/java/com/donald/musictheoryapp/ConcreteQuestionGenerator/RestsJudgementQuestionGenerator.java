@@ -7,6 +7,7 @@ import android.database.sqlite.SQLiteDatabase;
 import java.util.Locale;
 
 import com.donald.musictheoryapp.AbstractQuestionGenerator.CheckBoxQuestionGenerator;
+import com.donald.musictheoryapp.Question.CheckBoxQuestion;
 import com.donald.musictheoryapp.Question.Description;
 import com.donald.musictheoryapp.R;
 import com.donald.musictheoryapp.Utils.RandomIntegerGenerator.RandomIntegerGenerator;
@@ -42,13 +43,26 @@ public class RestsJudgementQuestionGenerator extends CheckBoxQuestionGenerator
             "Answers",
             new String[] { "Answer" },
             "Topic = ? AND Question = ?",
-            new String[] { getTopicSnakeCase(), (m_CurrentQuestionVariation + 1) + "." + getNumber() },
+            new String[] { getTopicSnakeCase(), String.valueOf(m_CurrentQuestionVariation) },
             null,
             null,
             "Answer DESC"
         );
         cursor.moveToFirst();
-        addCorrectAnswer(cursor.getString(cursor.getColumnIndex("Answer")));
+        char[] answers = cursor.getString(cursor.getColumnIndex("Answer")).toCharArray();
         cursor.close();
+        for(int i = 0; i < NUMBER_OF_ANSWERS; i++)
+        {
+            switch(answers[i])
+            {
+                case 'O':
+                    addCorrectAnswer(CheckBoxQuestion.CHECK_ANSWER);
+                    break;
+                case 'X':
+                    addCorrectAnswer(CheckBoxQuestion.CROSS_ANSWER);
+                    break;
+            }
+        }
+
     }
 }

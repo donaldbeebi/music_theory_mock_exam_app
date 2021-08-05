@@ -1,9 +1,9 @@
 package com.donald.musictheoryapp.QuestionBuilder;
 
 import com.donald.musictheoryapp.Question.MultipleChoiceQuestion;
+import com.donald.musictheoryapp.Question.Question;
 
-public class MultipleChoiceQuestionBuilder
-    extends QuestionBuilder<MultipleChoiceQuestionBuilder, MultipleChoiceQuestion>
+public class MultipleChoiceQuestionBuilder extends QuestionBuilder
 {
     private String[] m_Options;
     private MultipleChoiceQuestion.OptionType m_OptionType;
@@ -12,36 +12,31 @@ public class MultipleChoiceQuestionBuilder
     protected MultipleChoiceQuestion newQuestion()
     {
         return new MultipleChoiceQuestion(
-            m_Number, m_Group, m_Topic, m_Descriptions,
-            m_CorrectAnswer, m_Options, m_OptionType
+            m_Number, m_Group, m_Descriptions,
+            m_CorrectAnswers, m_Options, m_OptionType
         );
     }
 
-    @Override
-    protected MultipleChoiceQuestionBuilder getThis() { return this; }
+    public void setOptions(String[] options) { m_Options = options; }
 
-    public static MultipleChoiceQuestionBuilder question()
-    {
-        return new MultipleChoiceQuestionBuilder();
-    }
-
-    public MultipleChoiceQuestionBuilder options(String[] options)
-    {
-        m_Options = options;
-        return this;
-    }
-
-    public MultipleChoiceQuestionBuilder optionType(MultipleChoiceQuestion.OptionType optionType)
+    public void setOptionType(MultipleChoiceQuestion.OptionType optionType)
     {
         m_OptionType = optionType;
-        return this;
     }
 
     @Override
-    public MultipleChoiceQuestion build()
+    public Question build()
     {
         if(m_Options == null) throwError("Options");
         if(m_OptionType == null) throwError("OptionType");
         return super.build();
+    }
+
+    @Override
+    public void reset()
+    {
+        m_Options = null;
+        m_OptionType = null;
+        super.reset();
     }
 }

@@ -12,7 +12,7 @@ import com.donald.musictheoryapp.ConcreteQuestionGenerator.RhythmQuestionGenerat
 import com.donald.musictheoryapp.ConcreteQuestionGenerator.SimpleCompoundQuestionGenerator;
 import com.donald.musictheoryapp.ConcreteQuestionGenerator.TimeSignatureQuestionGenerator;
 import com.donald.musictheoryapp.ConcreteQuestionGenerator.TranspositionQuestionGenerator;
-import com.donald.musictheoryapp.FeedReaderDbHelper;
+import com.donald.musictheoryapp.Utils.FeedReaderDbHelper;
 import com.donald.musictheoryapp.QuestionArray.QuestionArray;
 import com.donald.musictheoryapp.QuestionArray.QuestionArrayBuilder;
 

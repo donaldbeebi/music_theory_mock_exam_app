@@ -6,6 +6,7 @@ import android.database.sqlite.SQLiteDatabase;
 import com.donald.musictheoryapp.Question.MultipleChoiceQuestion;
 import com.donald.musictheoryapp.Question.Question;
 import com.donald.musictheoryapp.QuestionBuilder.MultipleChoiceQuestionBuilder;
+import com.donald.musictheoryapp.QuestionBuilder.QuestionBuilder;
 import com.donald.musictheoryapp.Utils.ArrayShuffler;
 
 public abstract class MultipleChoiceQuestionGenerator extends QuestionGenerator
@@ -17,14 +18,17 @@ public abstract class MultipleChoiceQuestionGenerator extends QuestionGenerator
     private String[] m_Options;
     private final MultipleChoiceQuestion.OptionType m_OptionType;
 
+    private final MultipleChoiceQuestionBuilder m_Builder;
+
     protected MultipleChoiceQuestionGenerator(String topic, int numberOfPossibleAnswers,
                                               MultipleChoiceQuestion.OptionType optionType,
                                               int numberOfSubQuestionsPerGeneration,
                                               SQLiteDatabase db, Context context)
     {
-        super(topic, numberOfSubQuestionsPerGeneration, 1, db, context);
+        super(topic, 1, numberOfSubQuestionsPerGeneration, db, context);
         NUMBER_OF_OPTIONS = numberOfPossibleAnswers;
         m_OptionType = optionType;
+        m_Builder = new MultipleChoiceQuestionBuilder();
     }
 
     @Override
@@ -52,18 +56,14 @@ public abstract class MultipleChoiceQuestionGenerator extends QuestionGenerator
     }
 
     @Override
+    protected final QuestionBuilder getBuilder() { return m_Builder; }
+
+    @Override
     protected final Question onBuildQuestion()
     {
-        return MultipleChoiceQuestionBuilder
-            .question()
-            .number(getNumber())
-            .group(getGroup())
-            .topic(getTopic())
-            .descriptions(getQuestionDescriptions())
-            .correctAnswer(getCorrectAnswer())
-            .options(m_Options)
-            .optionType(m_OptionType)
-            .build();
+        m_Builder.setOptions(m_Options);
+        m_Builder.setOptionType(m_OptionType);
+        return super.onBuildQuestion();
     }
 
     // setters

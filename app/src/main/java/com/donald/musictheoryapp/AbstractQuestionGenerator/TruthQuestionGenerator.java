@@ -4,19 +4,21 @@ import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 
 import com.donald.musictheoryapp.Question.Question;
+import com.donald.musictheoryapp.QuestionBuilder.QuestionBuilder;
 import com.donald.musictheoryapp.QuestionBuilder.TruthQuestionBuilder;
 
 public abstract class TruthQuestionGenerator extends QuestionGenerator
 {
-    private static final boolean IS_COLLAPSIBLE = false;
+    private String m_Statement;
 
-    protected String m_Statement;
+    private final TruthQuestionBuilder m_Builder;
 
     protected TruthQuestionGenerator(String topic,
                                      int numberOfSubQuestionsPerGeneration,
                                      SQLiteDatabase db, Context context)
     {
-        super(topic, numberOfSubQuestionsPerGeneration, 1, db, context);
+        super(topic, 1, numberOfSubQuestionsPerGeneration, db, context);
+        m_Builder = new TruthQuestionBuilder();
     }
 
     @Override
@@ -33,17 +35,13 @@ public abstract class TruthQuestionGenerator extends QuestionGenerator
     }
 
     @Override
+    protected final QuestionBuilder getBuilder() { return m_Builder; }
+
+    @Override
     protected final Question onBuildQuestion()
     {
-        return TruthQuestionBuilder
-            .question()
-            .number(getNumber())
-            .group(getGroup())
-            .topic(getTopic())
-            .descriptions(getQuestionDescriptions())
-            .correctAnswer(getCorrectAnswer())
-            .statement(m_Statement)
-            .build();
+        m_Builder.setStatement(m_Statement);
+        return super.onBuildQuestion();
     }
 
     // setters

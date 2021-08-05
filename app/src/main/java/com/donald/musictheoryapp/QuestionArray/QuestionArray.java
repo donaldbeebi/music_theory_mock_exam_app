@@ -29,10 +29,22 @@ public class QuestionArray
         return m_Groups[groupIndex].getQuestions()[localQuestionIndex];
     }
 
+    public QuestionGroup getGroup(int groupIndex) { return m_Groups[groupIndex]; }
+
     public int getNumberOfQuestions()
     {
         return m_Questions.length;
     }
 
     public int getNumberOfGroups() { return m_Groups.length; }
+
+    public int getQuestionIndex(Question question)
+    {
+        int index = -1;
+        for(int i = 0; i < m_Questions.length; i++)
+        {
+            if(m_Questions[i] == question) index = i;
+        }
+        return index;
+    }
 }

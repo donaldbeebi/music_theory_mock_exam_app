@@ -15,7 +15,6 @@ public class TranspositionQuestionGenerator extends CheckBoxQuestionGenerator
 {
 
     private final RandomIntegerGenerator m_RandomForVariation;
-    private char[] m_CurrentCorrectAnswers;
 
     public TranspositionQuestionGenerator(SQLiteDatabase db, Context context)
     {
@@ -45,7 +44,7 @@ public class TranspositionQuestionGenerator extends CheckBoxQuestionGenerator
         );
         cursor.move(questionVariation);
         String transposition = cursor.getString(cursor.getColumnIndex("transposition"));
-        m_CurrentCorrectAnswers = cursor.getString(cursor.getColumnIndex("answer")).toCharArray();
+        char[] answers = cursor.getString(cursor.getColumnIndex("answer")).toCharArray();
         cursor.close();
 
         // 3. setting information
@@ -62,10 +61,18 @@ public class TranspositionQuestionGenerator extends CheckBoxQuestionGenerator
         addQuestionDescription(new Description(Description.IMAGE_TYPE,
             "q_" + getTopicSnakeCase() + "_transposed_" + questionVariation));
 
-        if(m_CurrentCorrectAnswers[getNumber() - 1] == 'O')
-            addCorrectAnswer(CheckBoxQuestion.CHECK_ANSWER);
-        else
-            addCorrectAnswer(CheckBoxQuestion.CROSS_ANSWER);
+        for(int i = 0; i < NUMBER_OF_ANSWERS; i++)
+        {
+            switch(answers[i]){
+                case 'O':
+                    addCorrectAnswer(CheckBoxQuestion.CHECK_ANSWER);
+                    break;
+                case 'X':
+                    addCorrectAnswer(CheckBoxQuestion.CROSS_ANSWER);
+                    break;
+            }
+        }
+
     }
 
 }
