@@ -1,0 +1,30 @@
+<resources>
+    <string name="app_name">MusicTheoryApp</string>
+    <string name="exercise_nav_title">Exercise</string>
+    <string name="reference_nav_title">Reference</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="enter_button_text">ENTER</string>
+    <string name="exercise_previous_text">PREVIOUS</string>
+    <string name="exercise_next_text">NEXT</string>
+    <string name="exercise_finish_text">FINISH</string>
+    <string name="result_detail_return_text">RETURN TO OVERVIEW</string>
+    <string name="correct_answer_header_text">CORRECT ANSWER</string>
+    <string name="empty_answer">NO ANSWER PROVIDED</string>
+    <string name="time_remaining">Time:</string>
+    <string name="times_up_text">Time\'s up!</string>
+    <string name="exercise_menu_start_button_text">START</string>
+    <string name="return_to_overview_text">RETURN TO OVERVIEW</string>
+    <string name="name_simple_time">simple time</string>
+    <string name="name_compound_time">compound time</string>
+    <string name="simple_compound_question_title">Here is a bar in %1$s:</string>
+    <string name="question_description_simple_compound">Which of the following shows the bar above correctly rewritten in %1$s?</string>
+    <string name="rests_judgement_question_title">Tick or cross each box to show whether the rests are correct or incorrect.</string>
+    <string name="time_signature_question_title">Select the correct time signature for each of these bars.</string>
+    <string name="note_grouping_question_title">Select the correct option to show which bar is grouped correctly.</string>
+    <string name="rhythm_question_title">Complete the following {number} sentence(s) by adding a number to each.</string>
+    <string name="note_naming_question_title">Correctly choose the name of this note.</string>
+    <string name="enharmonic_equivalent_question_title">Correctly choose the enharmonic equivalent of this note.</string>
+    <string name="transposition_question_text1">Here is a bar at its original pitch.</string>
+    <string name="transposition_question_text2">This bar has been transposed %1$s to be at written pitch. There are some mistakes. Put a tick or a cross underneath the key signature and each note to show whether each is correct or incorrect.</string>
+</resources>

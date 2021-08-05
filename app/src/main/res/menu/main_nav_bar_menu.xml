@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item
+        android:id="@+id/exercise_nav_button"
+        android:enabled="true"
+        android:icon="@drawable/image_exercise_nav_icon"
+        android:title="@string/exercise_nav_title"/>
+
+    <item
+        android:id="@+id/reference_nav_button"
+        android:enabled="true"
+        android:icon="@drawable/image_reference_nav_icon"
+        android:title="@string/reference_nav_title"/>
+
+</menu>
