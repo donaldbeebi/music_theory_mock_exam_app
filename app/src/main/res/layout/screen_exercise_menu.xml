@@ -4,11 +4,26 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
+    <com.donald.musictheoryapp.Music.ScoreView.ScoreView
+        android:id="@+id/debug_score_view"
+        android:layout_width="match_parent"
+        android:layout_height="200dp"
+        android:layout_alignParentBottom="true"/>
+
     <Button
         android:id="@+id/exercise_menu_start_button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_centerInParent="true"
-        android:text="@string/exercise_menu_start_button_text"/>
+        android:text="@string/exercise_menu_start_button_default_text"/>
+
+    <TextView
+        android:id="@+id/exercise_menu_status_text_view"
+        android:text="Click Start To Download Exercise"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_below="@id/exercise_menu_start_button"
+        android:layout_marginTop="8dp" />
 
 </RelativeLayout>

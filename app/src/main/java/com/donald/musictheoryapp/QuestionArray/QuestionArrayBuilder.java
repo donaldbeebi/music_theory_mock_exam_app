@@ -23,6 +23,14 @@ public class QuestionArrayBuilder
         Collections.addAll(m_Questions, group.getQuestions());
     }
 
+    public void addGroups(QuestionGroup[] groups)
+    {
+        for(QuestionGroup group : groups)
+        {
+            addGroup(group);
+        }
+    }
+
     public QuestionArray build()
     {
         Question[] questions = new Question[m_Questions.size()];

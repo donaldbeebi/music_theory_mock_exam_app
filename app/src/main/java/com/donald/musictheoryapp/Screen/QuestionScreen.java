@@ -7,10 +7,11 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 
+import androidx.cardview.widget.CardView;
+
 import com.donald.musictheoryapp.BuildConfig;
-import com.donald.musictheoryapp.Exercise.ExerciseGenerator;
 import com.donald.musictheoryapp.QuestionArray.QuestionArray;
-import com.donald.musictheoryapp.QuestionDisplayUnit.QuestionDisplayHelper;
+import com.donald.musictheoryapp.Question.QuestionDisplayHelper;
 import com.donald.musictheoryapp.R;
 import com.donald.musictheoryapp.Utils.TimeFormatter;
 
@@ -27,16 +28,16 @@ public class QuestionScreen extends Screen
 
     private static class ExerciseTimer extends CountDownTimer
     {
-        private final TextView m_QuestionTimerTextView;
+        private final TextView questionTimerTextView;
 
         ExerciseTimer(int timeInSeconds, TextView questionTimerTextView)
-        { super(timeInSeconds * 1000, 1000); m_QuestionTimerTextView = questionTimerTextView; }
+        { super(timeInSeconds * 1000, 1000); this.questionTimerTextView = questionTimerTextView; }
 
         @Override
-        public void onTick(long timeRemainingInMillis) { m_QuestionTimerTextView.setText(TimeFormatter.convert(timeRemainingInMillis)); }
+        public void onTick(long timeRemainingInMillis) { questionTimerTextView.setText(TimeFormatter.convert(timeRemainingInMillis)); }
 
         @Override
-        public void onFinish() { m_QuestionTimerTextView.setText(R.string.times_up_text); }
+        public void onFinish() { questionTimerTextView.setText(R.string.times_up_text); }
     }
 
     /*
@@ -45,21 +46,22 @@ public class QuestionScreen extends Screen
      * ******
      */
 
-    private boolean m_ReadingMode;
+    private boolean readingMode = false;
+    private boolean hiddenAnswerPanel = false;
 
-    private int m_CurrentQuestion;
-    private final QuestionDisplayHelper m_DisplayHelper;
-    private QuestionArray m_Questions;
-    private final ExerciseGenerator m_ExerciseGenerator;
-    private final OnFinishExerciseListener m_OnFinishExerciseListener;
-    private final OnReturnToOverviewListener m_OnReturnToOverviewListener;
-    private final ExerciseTimer m_ExerciseTimer;
+    private int currentQuestion;
+    private final QuestionDisplayHelper displayHelper;
+    private QuestionArray questions;
+    private final OnFinishExerciseListener onFinishExerciseListener;
+    private final OnReturnToOverviewListener onReturnToOverviewListener;
+    private final ExerciseTimer exerciseTimer;
 
     // Views
-    private final TextView m_ProgressDisplay;
-    private final Button m_PreviousButton;
-    private final Button m_NextButton;
-    private final Button m_FinishButton;
+    private final TextView progressDisplay;
+    private final CardView questionAnswerPanel;
+    private final Button previousButton;
+    private final Button nextButton;
+    private final Button finishButton;
 
     /*
      * *******
@@ -73,22 +75,23 @@ public class QuestionScreen extends Screen
     {
         super(context, view);
 
-        m_DisplayHelper = new QuestionDisplayHelper(this);
-        m_OnFinishExerciseListener = onFinishExerciseListener;
-        m_OnReturnToOverviewListener = onReturnToOverviewListener;
-        m_ExerciseTimer = new ExerciseTimer(60 * 60 * 2, view.findViewById(R.id.question_timer_display));
-        m_CurrentQuestion = 0;
-        m_ExerciseGenerator = new ExerciseGenerator(getContext());
+        displayHelper = new QuestionDisplayHelper(this);
+        this.onFinishExerciseListener = onFinishExerciseListener;
+        this.onReturnToOverviewListener = onReturnToOverviewListener;
+        exerciseTimer = new ExerciseTimer(60 * 60 * 2, view.findViewById(R.id.question_timer_display));
+        currentQuestion = 0;
 
-        m_ProgressDisplay = view.findViewById(R.id.question_progress);
-        m_PreviousButton = view.findViewById(R.id.question_previous_button);
-        m_NextButton = view.findViewById(R.id.question_next_button);
-        m_FinishButton = view.findViewById(R.id.question_finish_button);
+        progressDisplay = view.findViewById(R.id.question_progress);
+        questionAnswerPanel = view.findViewById(R.id.question_answer_panel);
+        previousButton = view.findViewById(R.id.question_previous_button);
+        nextButton = view.findViewById(R.id.question_next_button);
+        finishButton = view.findViewById(R.id.question_finish_button);
+        Button debugButton = view.findViewById(R.id.question_debug_button);
 
         /*
          *  SETTING UP LISTENERS
          */
-        m_PreviousButton.setOnClickListener(new View.OnClickListener()
+        previousButton.setOnClickListener(new View.OnClickListener()
         {
             @Override
             public void onClick(View view)
@@ -98,7 +101,7 @@ public class QuestionScreen extends Screen
             }
         });
 
-        m_NextButton.setOnClickListener(new View.OnClickListener()
+        nextButton.setOnClickListener(new View.OnClickListener()
         {
             @Override
             public void onClick(View view)
@@ -108,52 +111,72 @@ public class QuestionScreen extends Screen
             }
         });
 
-        m_FinishButton.setOnClickListener(new View.OnClickListener()
+        finishButton.setOnClickListener(new View.OnClickListener()
         {
             @Override
             public void onClick(View view)
             {
-                if(!m_ReadingMode) m_OnFinishExerciseListener.onFinishExercise();
-                else m_OnReturnToOverviewListener.onReturnToOverview();
+                if(!readingMode) QuestionScreen.this.onFinishExerciseListener.onFinishExercise();
+                else QuestionScreen.this.onReturnToOverviewListener.onReturnToOverview();
+            }
+        });
+
+        debugButton.setOnClickListener(new View.OnClickListener()
+        {
+            @Override
+            public void onClick(View view)
+            {
+                if(hiddenAnswerPanel) questionAnswerPanel.setVisibility(View.VISIBLE);
+                else questionAnswerPanel.setVisibility(View.GONE);
+                hiddenAnswerPanel = !hiddenAnswerPanel;
             }
         });
     }
 
-    public void setQuestions(QuestionArray questions) { m_Questions = questions; m_CurrentQuestion = 0; }
+    public void setQuestions(QuestionArray questions)
+    {
+        this.questions = questions; currentQuestion = 0;
+    }
 
     public void startExercise()
     {
-        if(BuildConfig.DEBUG && m_Questions == null)
+        if(BuildConfig.DEBUG && questions == null)
             throw new AssertionError("No questions set. Make sure to call setQuestions(QuestionArray) first.");
 
-        m_ReadingMode = false;
-        m_DisplayHelper.setReadingMode(m_ReadingMode);
+        readingMode = false;
+        displayHelper.setReadingMode(readingMode);
 
         /*
          * Setting up the progress view
          */
         TextView progressTextView = getView().findViewById(R.id.question_progress);
-        progressTextView.setText("1/" + m_Questions.getNumberOfQuestions());
+        progressTextView.setText("1/" + questions.numberOfQuestions());
 
         displayCurrentQuestion();
     }
 
-    public QuestionArray getQuestions() { return m_Questions; }
+    public QuestionArray getQuestions()
+    {
+        return questions;
+    }
 
     public void displayQuestion(int questionIndex)
     {
-        if(BuildConfig.DEBUG && m_Questions == null)
+        if(BuildConfig.DEBUG && questions == null)
             throw new AssertionError("No questions set. Make sure to call setQuestions(QuestionArray) first.");
 
-        m_ReadingMode = true;
-        m_CurrentQuestion = questionIndex;
-        m_DisplayHelper.setReadingMode(true);
-        m_FinishButton.setText(R.string.return_to_overview_text);
+        readingMode = true;
+        currentQuestion = questionIndex;
+        displayHelper.setReadingMode(true);
+        finishButton.setText(R.string.return_to_overview_text);
 
         displayCurrentQuestion();
     }
 
-    public void startTimer() { m_ExerciseTimer.start(); }
+    public void startTimer()
+    {
+        exerciseTimer.start();
+    }
 
     public void onBackPressed()
     {
@@ -169,24 +192,26 @@ public class QuestionScreen extends Screen
 
     private void displayCurrentQuestion()
     {
-        m_DisplayHelper.displayQuestion(m_Questions.getQuestion(m_CurrentQuestion));
-        m_ProgressDisplay.setText((m_CurrentQuestion + 1) + "/" + m_Questions.getNumberOfQuestions());
+        displayHelper.displayQuestion(questions.question(currentQuestion));
+        progressDisplay.setText((currentQuestion + 1) + "/" + questions.numberOfQuestions());
         updatePreviousNextButton();
     }
 
     private void changeQuestion(boolean nextQuestion)
     {
-        if(nextQuestion && m_CurrentQuestion < m_Questions.getNumberOfQuestions() - 1) m_CurrentQuestion++;
-        else if (!nextQuestion && m_CurrentQuestion > 0) m_CurrentQuestion--;
+        if(nextQuestion && currentQuestion < questions.numberOfQuestions() - 1) currentQuestion++;
+        else if (!nextQuestion && currentQuestion > 0) currentQuestion--;
         displayCurrentQuestion();
+        hiddenAnswerPanel = false;
+        questionAnswerPanel.setVisibility(View.VISIBLE);
     }
 
     private void updatePreviousNextButton()
     {
-        if(m_Questions != null)
+        if(questions != null)
         {
-            m_PreviousButton.setEnabled(m_CurrentQuestion != 0);
-            m_NextButton.setEnabled(m_CurrentQuestion != m_Questions.getNumberOfQuestions() - 1);
+            previousButton.setEnabled(currentQuestion != 0);
+            nextButton.setEnabled(currentQuestion != questions.numberOfQuestions() - 1);
         }
         else Log.e("QuestionScreen", "updatePreviousNextButton() called before questions are set!");
     }

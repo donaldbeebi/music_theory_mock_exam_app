@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <declare-styleable name="question_button_state">
+        <attr name="state_correct" format="boolean" />
+        <attr name="state_checked" format="boolean" />
+    </declare-styleable>
+</resources>

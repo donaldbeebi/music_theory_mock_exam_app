@@ -5,10 +5,13 @@ import java.util.Random;
 import java.util.TreeSet;
 
 // TODO: FIGURE OUT A WAY TO DETERMINE IF NO NUMBERS CAN BE GENERATED DUE TO THE EVALUATORS
+// TODO: IMPLEMENT NON DISTINCTION BETWEEN LOWER AND UPPER BOUNDS
 
 public class RandomIntegerGenerator
 {
     public interface ExclusionFunctor { int value(int n); }
+    public interface IntegerExcluder
+    { boolean excludes(int value); }
 
     private final int m_InclusiveLowerBound;
     private final int m_ExclusiveUpperBound;
@@ -28,19 +31,23 @@ public class RandomIntegerGenerator
 
     protected RandomIntegerGenerator(int inclusiveLowerBound, int exclusiveUpperBound,
                                      TreeSet<Integer> hardExcludedIntegers,
-                                     ArrayList<ExclusionFunctor> functors)
+                                     ArrayList<ExclusionFunctor> functors,
+                                     ArrayList<IntegerExcluder> excluders)
     {
+        if(exclusiveUpperBound <= inclusiveLowerBound)
+            throw new IllegalStateException("Inclusive lower bound is not lower than exclusive upper bound.");
         m_InclusiveLowerBound = inclusiveLowerBound;
         m_ExclusiveUpperBound = exclusiveUpperBound;
         m_Random = new Random();
         m_HardExcludedIntegers = hardExcludedIntegers;
-        for(ExclusionFunctor functor : functors) exclude(functor);
+        for(ExclusionFunctor functor : functors) exclude(functor, m_HardExcludedIntegers);
+        for(IntegerExcluder excluder : excluders) excludeIf(excluder, m_HardExcludedIntegers);
         m_SoftExcludedIntegers = new TreeSet<>(m_HardExcludedIntegers);
     }
 
     public int nextInt()
     {
-        if(m_ExclusiveUpperBound - m_SoftExcludedIntegers.size() <= 0)
+        if((m_ExclusiveUpperBound - m_InclusiveLowerBound) - m_SoftExcludedIntegers.size() <= 0)
             throw new IllegalStateException("All of the possible integers have been excluded.");
 
         // 1. generate an integer within the bound of the number of possible values
@@ -94,15 +101,30 @@ public class RandomIntegerGenerator
         }
     }
 
+    private void excludeIf(IntegerExcluder excluder, TreeSet<Integer> treeSet)
+    {
+        // iterating through all possible values
+        for(int n = m_InclusiveLowerBound; n < m_ExclusiveUpperBound; n++)
+        {
+            if(excluder.excludes(n)) treeSet.add(n);
+        }
+    }
+
     public void exclude(int integer) { exclude(integer, m_SoftExcludedIntegers); }
 
     public void exclude(int[] integers) { exclude(integers, m_SoftExcludedIntegers); }
 
     public void exclude(ExclusionFunctor functor) { exclude(functor, m_SoftExcludedIntegers); }
 
+    public void excludeIf(IntegerExcluder excluder) { excludeIf(excluder, m_SoftExcludedIntegers); };
+
     public void clearAllExcludedIntegers()
     {
         m_SoftExcludedIntegers.clear();
         m_SoftExcludedIntegers.addAll(m_HardExcludedIntegers);
     }
+
+    public int getLowerBound() { return m_InclusiveLowerBound; }
+
+    public int getUpperBound() { return m_ExclusiveUpperBound; }
 }

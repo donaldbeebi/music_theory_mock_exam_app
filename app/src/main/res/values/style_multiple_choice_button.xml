@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <style
+        name="mc_button_style">
+        <item name="android:buttonCornerRadius">26dp</item>
+    </style>
+</resources>

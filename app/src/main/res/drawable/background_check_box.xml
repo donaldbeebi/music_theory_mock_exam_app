@@ -1,0 +1,157 @@
+<?xml version="1.0" encoding="utf-8"?>
+<selector
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <item
+        android:state_enabled="false"
+        android:state_selected="true"
+        app:state_checked="true"
+        app:state_correct="true" >
+        <layer-list>
+            <item>
+                <inset android:drawable="@drawable/ic_check" />
+            </item>
+            <item>
+                <shape>
+                    <stroke
+                        android:width="@dimen/check_box_stroke_width"
+                        android:color="@color/check_box_stroke_correct" />
+                    <corners
+                        android:radius="@dimen/check_box_corner_radius" />
+                </shape>
+            </item>
+        </layer-list>
+    </item>
+
+    <item
+        android:state_enabled="false"
+        android:state_selected="true"
+        app:state_checked="true"
+        app:state_correct="false" >
+        <layer-list>
+            <item>
+                <inset android:drawable="@drawable/ic_check" />
+            </item>
+            <item>
+                <shape>
+                    <stroke
+                        android:width="@dimen/check_box_stroke_width"
+                        android:color="@color/check_box_stroke_wrong" />
+                    <corners
+                        android:radius="@dimen/check_box_corner_radius" />
+                </shape>
+            </item>
+        </layer-list>
+    </item>
+
+    <item
+        android:state_enabled="false"
+        android:state_selected="true"
+        app:state_checked="false"
+        app:state_correct="true" >
+        <layer-list>
+            <item>
+                <inset android:drawable="@drawable/ic_cross" />
+            </item>
+            <item>
+                <shape>
+                    <stroke
+                        android:width="@dimen/check_box_stroke_width"
+                        android:color="@color/check_box_stroke_correct" />
+                    <corners
+                        android:radius="@dimen/check_box_corner_radius" />
+                </shape>
+            </item>
+        </layer-list>
+    </item>
+
+    <item
+        android:state_enabled="false"
+        android:state_selected="true"
+        app:state_checked="false"
+        app:state_correct="false" >
+        <layer-list>
+            <item>
+                <inset android:drawable="@drawable/ic_cross" />
+            </item>
+            <item>
+                <shape>
+                    <stroke
+                        android:width="@dimen/check_box_stroke_width"
+                        android:color="@color/check_box_stroke_wrong" />
+                    <corners
+                        android:radius="@dimen/check_box_corner_radius" />
+                </shape>
+            </item>
+        </layer-list>
+    </item>
+
+    <item
+        android:state_enabled="false"
+        android:state_selected="false" >
+        <shape>
+            <stroke
+                android:width="@dimen/check_box_stroke_width"
+                android:color="@color/check_box_stroke_wrong" />
+            <corners
+                android:radius="@dimen/check_box_corner_radius" />
+        </shape>
+    </item>
+
+    <item
+        android:state_enabled="true"
+        android:state_selected="true"
+        app:state_checked="true" >
+        <layer-list>
+            <item>
+                <inset android:drawable="@drawable/ic_check" />
+            </item>
+            <item>
+                <shape>
+                    <stroke
+                        android:width="@dimen/check_box_stroke_width"
+                        android:color="@color/check_box_stroke_default" />
+                    <corners
+                        android:radius="@dimen/check_box_corner_radius" />
+                </shape>
+            </item>
+        </layer-list>
+
+
+    </item>
+
+    <item
+        android:state_enabled="true"
+        android:state_selected="true"
+        app:state_checked="false" >
+        <layer-list>
+            <item>
+                <inset
+                    android:drawable="@drawable/ic_cross" />
+            </item>
+            <item>
+                <shape>
+                    <stroke
+                        android:width="@dimen/check_box_stroke_width"
+                        android:color="@color/check_box_stroke_default" />
+                    <corners
+                        android:radius="@dimen/check_box_corner_radius" />
+                </shape>
+            </item>
+        </layer-list>
+    </item>
+
+    <item
+        android:state_enabled="true"
+        android:state_selected="false">
+        <shape>
+            <stroke
+                android:width="@dimen/check_box_stroke_width"
+                android:color="@color/check_box_stroke_default" />
+            <corners
+                android:radius="@dimen/check_box_corner_radius" />
+        </shape>
+    </item>
+
+</selector>

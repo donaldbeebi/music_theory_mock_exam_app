@@ -45,10 +45,10 @@ public class ResultOverviewAdapter extends RecyclerView.Adapter<ResultOverviewAd
 
         public void bindData(int groupIndexToDisplay)
         {
-            QuestionGroup group = m_Questions.getGroup(groupIndexToDisplay);
-            m_QuestionNumber.setText(group.getNumber());
+            QuestionGroup group = m_Questions.group(groupIndexToDisplay);
+            m_QuestionNumber.setText(String.valueOf(group.getNumber()));
             m_QuestionTitle.setText(group.getTopic());
-            m_QuestionScore.setText(group.getTotalScore());
+            m_QuestionScore.setText(String.valueOf(group.totalPoints()));
             m_GroupIndexToDisplay = groupIndexToDisplay;
         }
     }
@@ -80,6 +80,6 @@ public class ResultOverviewAdapter extends RecyclerView.Adapter<ResultOverviewAd
     @Override
     public int getItemCount()
     {
-        return m_Questions.getNumberOfGroups();
+        return m_Questions.numberOfGroups();
     }
 }

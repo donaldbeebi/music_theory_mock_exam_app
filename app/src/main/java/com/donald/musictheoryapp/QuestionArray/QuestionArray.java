@@ -2,49 +2,78 @@ package com.donald.musictheoryapp.QuestionArray;
 
 import com.donald.musictheoryapp.Question.Question;
 import com.donald.musictheoryapp.Question.QuestionGroup;
+import com.donald.musictheoryapp.Utils.JSONArrayUtil;
+
+import org.json.JSONException;
+import org.json.JSONObject;
+import org.xmlpull.v1.XmlPullParserException;
+
+import java.io.IOException;
 
 public class QuestionArray
 {
-    private final Question[] m_Questions;
-    private final QuestionGroup[] m_Groups;
+    private final Question[] questions;
+    private final QuestionGroup[] groups;
 
     public QuestionArray(Question[] questions, QuestionGroup[] groups)
     {
-        m_Questions = questions;
-        m_Groups = groups;
+        this.questions = questions;
+        this.groups = groups;
     }
 
-    public Question[] getQuestions()
+    public Question question(int questionIndex)
     {
-        return m_Questions;
+        return questions[questionIndex];
     }
 
-    public Question getQuestion(int questionIndex)
+    public Question question(int groupIndex, int localQuestionIndex)
     {
-        return m_Questions[questionIndex];
+        return groups[groupIndex].questions[localQuestionIndex];
     }
 
-    public Question getQuestion(int groupIndex, int localQuestionIndex)
+    public int numberOfQuestions()
     {
-        return m_Groups[groupIndex].getQuestions()[localQuestionIndex];
+        return questions.length;
     }
 
-    public QuestionGroup getGroup(int groupIndex) { return m_Groups[groupIndex]; }
-
-    public int getNumberOfQuestions()
+    public QuestionGroup group(int groupIndex)
     {
-        return m_Questions.length;
+        return groups[groupIndex];
     }
 
-    public int getNumberOfGroups() { return m_Groups.length; }
+    public int numberOfGroups() {
+        return groups.length;
+    }
 
-    public int getQuestionIndex(Question question)
+    public int questionIndex(Question question)
     {
         int index = -1;
-        for(int i = 0; i < m_Questions.length; i++)
+        for(int i = 0; i < questions.length; i++)
         {
-            if(m_Questions[i] == question) index = i;
+            if(questions[i] == question) index = i;
         }
         return index;
+    }
+
+    @Override
+    public String toString()
+    {
+        StringBuilder builder = new StringBuilder();
+        for(QuestionGroup group : groups)
+        {
+            builder.append(group.toString()).append("\n");
+            for(Question question : group.getQuestions())
+            {
+                builder.append("    ").append(question.toString()).append("\n");
+            }
+        }
+        return builder.toString();
+    }
+
+    public static QuestionArray fromJSON(JSONObject object) throws JSONException, IOException, XmlPullParserException
+    {
+        QuestionArrayBuilder builder = new QuestionArrayBuilder();
+        builder.addGroups(JSONArrayUtil.groups(object));
+        return builder.build();
     }
 }

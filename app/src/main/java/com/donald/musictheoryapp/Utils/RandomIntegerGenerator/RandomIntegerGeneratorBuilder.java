@@ -5,10 +5,11 @@ import java.util.TreeSet;
 
 public class RandomIntegerGeneratorBuilder
 {
-    private Integer m_LowerBound = null; // inclusive
-    private Integer m_UpperBound = null; // exclusive
+    private Integer m_InclusiveLowerBound = null; // inclusive
+    private Integer m_ExclusiveUpperBound = null; // exclusive
     private final TreeSet<Integer> m_HardExcludedIntegers = new TreeSet<>();
     private final ArrayList<RandomIntegerGenerator.ExclusionFunctor> m_ExclusionFunctors = new ArrayList<>();
+    private final ArrayList<RandomIntegerGenerator.IntegerExcluder> m_IntegerExcluders = new ArrayList<>();
 
     protected void throwError(String field) { throw new AssertionError("Field '" + field + "' not initialized."); }
 
@@ -17,15 +18,37 @@ public class RandomIntegerGeneratorBuilder
         return new RandomIntegerGeneratorBuilder();
     }
 
-    public RandomIntegerGeneratorBuilder withLowerBound(int inclusiveLowerBound)
+    public RandomIntegerGeneratorBuilder withBounds(int firstInclusiveBound, int secondInclusiveBound)
     {
-        m_LowerBound = inclusiveLowerBound;
+        if(firstInclusiveBound > secondInclusiveBound)
+        {
+            m_ExclusiveUpperBound = firstInclusiveBound + 1;
+            m_InclusiveLowerBound = secondInclusiveBound;
+        }
+        else
+        {
+            m_ExclusiveUpperBound = secondInclusiveBound + 1;
+            m_InclusiveLowerBound = firstInclusiveBound;
+        }
         return this;
     }
 
+    public RandomIntegerGeneratorBuilder withLowerBound(int inclusiveLowerBound)
+    {
+        m_InclusiveLowerBound = inclusiveLowerBound;
+        return this;
+    }
+
+    @Deprecated
     public RandomIntegerGeneratorBuilder withUpperBound(int exclusiveUpperBound)
     {
-        m_UpperBound = exclusiveUpperBound;
+        m_ExclusiveUpperBound = exclusiveUpperBound;
+        return this;
+    }
+
+    public RandomIntegerGeneratorBuilder withIncUpperBound(int inclusiveUpperBound)
+    {
+        m_ExclusiveUpperBound = inclusiveUpperBound + 1;
         return this;
     }
 
@@ -47,11 +70,17 @@ public class RandomIntegerGeneratorBuilder
         return this;
     }
 
+    public RandomIntegerGeneratorBuilder excludingIf(RandomIntegerGenerator.IntegerExcluder excluder)
+    {
+        m_IntegerExcluders.add(excluder);
+        return this;
+    }
+
     public RandomIntegerGenerator build()
     {
-        if(m_LowerBound == null) throwError("LowerBound");
-        if(m_UpperBound == null) throwError("UpperBound");
+        if(m_InclusiveLowerBound == null) throwError("LowerBound");
+        if(m_ExclusiveUpperBound == null) throwError("UpperBound");
         return new RandomIntegerGenerator
-            (m_LowerBound, m_UpperBound, m_HardExcludedIntegers, m_ExclusionFunctors);
+            (m_InclusiveLowerBound, m_ExclusiveUpperBound, m_HardExcludedIntegers, m_ExclusionFunctors, m_IntegerExcluders);
     }
 }

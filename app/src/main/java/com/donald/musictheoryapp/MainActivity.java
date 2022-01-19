@@ -4,21 +4,40 @@ import androidx.activity.OnBackPressedCallback;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.ViewGroup;
+import android.widget.ImageView;
+import android.widget.TextView;
 
-import com.donald.musictheoryapp.Exercise.ExerciseGenerator;
+import com.android.volley.Request;
+import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.ImageRequest;
+import com.android.volley.toolbox.StringRequest;
+import com.android.volley.toolbox.Volley;
 import com.donald.musictheoryapp.QuestionArray.QuestionArray;
 import com.donald.musictheoryapp.Screen.FinishExerciseConfirmationDialog;
+import com.donald.musictheoryapp.Utils.NumberTracker;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 import com.donald.musictheoryapp.Screen.ResultOverviewScreen;
 import com.donald.musictheoryapp.Screen.ExerciseMenuScreen;
 import com.donald.musictheoryapp.Screen.QuestionScreen;
 import com.donald.musictheoryapp.Screen.Screen;
-import com.donald.musictheoryapp.Utils.Note;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+import org.xmlpull.v1.XmlPullParserException;
+
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
 
 public class MainActivity extends AppCompatActivity
     implements BottomNavigationView.OnNavigationItemSelectedListener,
@@ -28,14 +47,17 @@ public class MainActivity extends AppCompatActivity
     FinishExerciseConfirmationDialog.OnConfirmDialogListener,
     ResultOverviewScreen.OnProceedToDetailListener
 {
-    private ExerciseMenuScreen m_ExerciseMenuScreen;
-    private QuestionScreen m_QuestionScreen;
-    private ResultOverviewScreen m_ResultOverviewScreen;
-    private Screen m_CurrentScreenForExerciseTab;
+    public static final String URL = "http://161.81.107.94/";
 
-    private ViewGroup m_MainFrame;
+    private ExerciseMenuScreen exerciseMenuScreen;
+    private QuestionScreen questionScreen;
+    private ResultOverviewScreen resultOverviewScreen;
+    private Screen currentScreenForExerciseTab;
+    private TextView exerciseMenuStatusTextView;
 
-    private ExerciseGenerator m_ExerciseGenerator;
+    private ViewGroup mainFrame;
+
+    //private ExerciseGenerator m_ExerciseGenerator;
 
     @Override
     protected void onCreate(Bundle savedInstanceState)
@@ -45,30 +67,24 @@ public class MainActivity extends AppCompatActivity
 
         ((BottomNavigationView) findViewById(R.id.bottom_navigation_view)).setOnNavigationItemSelectedListener(this);
 
-        m_MainFrame = findViewById(R.id.main_frame_layout);
+        mainFrame = findViewById(R.id.main_frame_layout);
 
-        m_ExerciseMenuScreen = new ExerciseMenuScreen(this, getLayoutInflater().inflate(R.layout.screen_exercise_menu, null), this);
-        m_QuestionScreen = new QuestionScreen(this, getLayoutInflater().inflate(R.layout.screen_question, null), this, this);
-        m_ResultOverviewScreen = new ResultOverviewScreen(this, getLayoutInflater().inflate(R.layout.screen_result_overview, null), this);
+        exerciseMenuScreen = new ExerciseMenuScreen(this, getLayoutInflater().inflate(R.layout.screen_exercise_menu, null), this);
+        exerciseMenuStatusTextView = exerciseMenuScreen.getView().findViewById(R.id.exercise_menu_status_text_view);
+        questionScreen = new QuestionScreen(this, getLayoutInflater().inflate(R.layout.screen_question, null), this, this);
+        resultOverviewScreen = new ResultOverviewScreen(this, getLayoutInflater().inflate(R.layout.screen_result_overview, null), this);
 
-        m_CurrentScreenForExerciseTab = m_ExerciseMenuScreen;
-        m_MainFrame.addView(m_CurrentScreenForExerciseTab.getView());
-
-        m_ExerciseGenerator = new ExerciseGenerator(this);
+        currentScreenForExerciseTab = exerciseMenuScreen;
+        mainFrame.addView(currentScreenForExerciseTab.getView());
 
         getOnBackPressedDispatcher().addCallback(new OnBackPressedCallback(true) {
             @Override
             public void handleOnBackPressed()
             {
-                if(m_CurrentScreenForExerciseTab == m_QuestionScreen)
-                    m_QuestionScreen.onBackPressed();
+                if(currentScreenForExerciseTab == questionScreen)
+                    questionScreen.onBackPressed();
             }
         });
-
-        for(int i = 2; i < 450; i++)
-        {
-            Log.d("note id", i + " " + new Note(i).getStringWithRange());
-        }
     }
 
     /*
@@ -82,14 +98,14 @@ public class MainActivity extends AppCompatActivity
     {
         if(item.getItemId() == R.id.exercise_nav_button)
         {
-            m_MainFrame.removeAllViews();
-            m_MainFrame.addView(m_CurrentScreenForExerciseTab.getView());
+            mainFrame.removeAllViews();
+            mainFrame.addView(currentScreenForExerciseTab.getView());
         }
 
         else
         {
-            m_MainFrame.removeAllViews();
-            m_MainFrame.addView(m_ResultOverviewScreen.getView());
+            mainFrame.removeAllViews();
+            mainFrame.addView(resultOverviewScreen.getView());
         }
 
         return true;
@@ -98,12 +114,125 @@ public class MainActivity extends AppCompatActivity
     @Override
     public void onStartExercise()
     {
-        m_MainFrame.removeAllViews();
-        m_QuestionScreen.setQuestions(m_ExerciseGenerator.generateExercise());
-        m_QuestionScreen.startExercise();
-        m_QuestionScreen.startTimer();
-        m_CurrentScreenForExerciseTab = m_QuestionScreen;
-        m_MainFrame.addView(m_CurrentScreenForExerciseTab.getView());
+        exerciseMenuStatusTextView.setText(R.string.contacting_server_status);
+        RequestQueue queue = Volley.newRequestQueue(this);
+        StringRequest request = new StringRequest(
+            Request.Method.GET,
+            URL + "exercise",
+            new Response.Listener<String>()
+            {
+                @Override
+                public void onResponse(String response)
+                {
+                    try
+                    {
+                        JSONObject object = new JSONObject(response);
+                        JSONArray images = object.getJSONArray("images");
+                        NumberTracker numberTracker = new NumberTracker(
+                            images.length(),
+                            (tracker) ->
+                            {
+                                exerciseMenuStatusTextView.setText(
+                                    getString(
+                                        R.string.image_download_status,
+                                        tracker.count(),
+                                        tracker.target()
+                                    )
+                                );
+                            },
+                            (tracker) ->
+                            {
+                                try
+                                {
+                                    onRetrieveQuestions(object);
+                                }
+                                catch(JSONException e)
+                                {
+                                    e.printStackTrace();
+                                    exerciseMenuStatusTextView.setText(R.string.json_error_status);
+                                }
+                                catch(IOException | XmlPullParserException e)
+                                {
+                                    e.printStackTrace();
+                                    exerciseMenuStatusTextView.setText(R.string.xml_error_status);
+                                }
+                            }
+                        );
+                        for(int i = 0; i < images.length(); i++)
+                        {
+                            downloadImage(images.getString(i), numberTracker);
+                        }
+                    }
+                    catch(JSONException e)
+                    {
+                        exerciseMenuStatusTextView.setText(R.string.volley_error_status);
+                        e.printStackTrace();
+                    }
+                }
+            },
+            new Response.ErrorListener()
+            {
+                @Override
+                public void onErrorResponse(VolleyError error)
+                {
+                    Log.d("from string request", "error: " + error.getMessage());
+                    exerciseMenuStatusTextView.setText(R.string.server_error_status);
+                }
+            });
+
+        queue.add(request);
+    }
+
+    public void downloadImage(String title, NumberTracker tracker)
+    {
+        File dir = new File(getFilesDir(), "images");
+        if(!dir.exists()) dir.mkdir();
+
+        File destination = new File(dir, title + ".png");
+        ImageRequest request = new ImageRequest(
+            MainActivity.URL + "images/" + title,
+            response -> {
+                try
+                {
+                    destination.createNewFile();
+                    ByteArrayOutputStream bos = new ByteArrayOutputStream();
+                    response.compress(Bitmap.CompressFormat.PNG, 100, bos);
+                    FileOutputStream fos = new FileOutputStream(destination);
+                    fos.write(bos.toByteArray());
+                    fos.flush();
+                    fos.close();
+                    tracker.increment();
+                }
+                catch(IOException e)
+                {
+                    e.printStackTrace();
+                }
+            },
+            2000,
+            2000,
+            ImageView.ScaleType.CENTER,
+            Bitmap.Config.RGB_565,
+            error -> Log.d("Volley error while fetch image " + title, error.toString())
+        );
+        Volley.newRequestQueue(this).add(request);
+    }
+
+    public void onImagesReady()
+    {
+
+    }
+
+    public void onRetrieveQuestions(JSONObject object) throws JSONException, IOException, XmlPullParserException
+    {
+        mainFrame.removeAllViews();
+        QuestionArray questions = QuestionArray.fromJSON(object);
+        questionScreen.setQuestions(questions);
+        //m_QuestionScreen.setQuestions(m_ExerciseGenerator.generateExercise());
+        questionScreen.startExercise();
+        questionScreen.startTimer();
+        currentScreenForExerciseTab = questionScreen;
+        mainFrame.addView(currentScreenForExerciseTab.getView());
+        exerciseMenuStatusTextView.setText(R.string.exercise_menu_start_button_default_text);
     }
 
     @Override
@@ -116,27 +245,27 @@ public class MainActivity extends AppCompatActivity
     @Override
     public void onConfirmDialog()
     {
-        m_MainFrame.removeAllViews();
-        m_ResultOverviewScreen.setQuestions(m_QuestionScreen.getQuestions());
-        m_CurrentScreenForExerciseTab = m_ResultOverviewScreen;
-        m_MainFrame.addView(m_CurrentScreenForExerciseTab.getView());
+        mainFrame.removeAllViews();
+        resultOverviewScreen.setQuestions(questionScreen.getQuestions());
+        currentScreenForExerciseTab = resultOverviewScreen;
+        mainFrame.addView(currentScreenForExerciseTab.getView());
     }
 
     @Override
     public void onProceedToDetail(QuestionArray questions, int targetGroup)
     {
-        m_MainFrame.removeAllViews();
-        m_QuestionScreen.setQuestions(questions);
-        m_QuestionScreen.displayQuestion(questions.getQuestionIndex(questions.getGroup(targetGroup).getQuestion(0)));
-        m_CurrentScreenForExerciseTab = m_QuestionScreen;
-        m_MainFrame.addView(m_CurrentScreenForExerciseTab.getView());
+        mainFrame.removeAllViews();
+        questionScreen.setQuestions(questions);
+        questionScreen.displayQuestion(questions.questionIndex(questions.group(targetGroup).getQuestion(0)));
+        currentScreenForExerciseTab = questionScreen;
+        mainFrame.addView(currentScreenForExerciseTab.getView());
     }
 
     @Override
     public void onReturnToOverview()
     {
-        m_MainFrame.removeAllViews();
-        m_CurrentScreenForExerciseTab = m_ResultOverviewScreen;
-        m_MainFrame.addView(m_CurrentScreenForExerciseTab.getView());
+        mainFrame.removeAllViews();
+        currentScreenForExerciseTab = resultOverviewScreen;
+        mainFrame.addView(currentScreenForExerciseTab.getView());
     }
 }
