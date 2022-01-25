@@ -193,7 +193,7 @@ public class ScoreView extends View
 		debugPaint.setStrokeWidth(5f);
 	}
 
-	private void calculateReqDimen(int givenWidth, int givenHeight)
+	private void calculateReqDimen(int givenWidth, int givenHeight, int widthMode)
 	{
 		int numberOfNotes = 0;
 		int highestNotePos = 9;
@@ -260,7 +260,7 @@ public class ScoreView extends View
 		float minRelHeight = topRelPadding + STAFF_REL_HEIGHT + bottomRelPadding ;
 		float minReqRatio = minRelWidth / minRelHeight;
 		float givenRatio = (float) givenWidth / (float) givenHeight;
-		if(givenRatio > minReqRatio)
+		if(givenRatio > minReqRatio && widthMode == MeasureSpec.EXACTLY)
 		{
 			reqWidth = givenWidth;
 			reqHeight = givenHeight;
@@ -311,6 +311,7 @@ public class ScoreView extends View
 	{
 		float width = MeasureSpec.getSize(widthMeasureSpec);
 		float height = MeasureSpec.getSize(heightMeasureSpec);
+		int widthMode = MeasureSpec.getMode(widthMeasureSpec);
 		if(hasFixedRatio)
 		{
 			float givenRatio = width / height;
@@ -322,25 +323,32 @@ public class ScoreView extends View
 			{
 				width = height * fixedRatio;
 			}
-			calculateReqDimen((int) width, (int) height);
+			calculateReqDimen((int) width, (int) height, widthMode);
 			calculateSizes();
 			super.onMeasure(
 				MeasureSpec.makeMeasureSpec((int) width, MeasureSpec.EXACTLY),
 				MeasureSpec.makeMeasureSpec((int) height, MeasureSpec.EXACTLY)
 			);
 		}
-		else
+		else if(widthMode == MeasureSpec.AT_MOST)
 		{
-			// calculate the needed ratio
-			calculateReqDimen((int) width, (int) height);
+			calculateReqDimen((int) width, (int) height, widthMode);
 			calculateSizes();
 			super.onMeasure(
 				MeasureSpec.makeMeasureSpec((int) reqWidth, MeasureSpec.EXACTLY),
 				MeasureSpec.makeMeasureSpec((int) reqHeight, MeasureSpec.EXACTLY)
 			);
 		}
-
-		//setOutlineProvider(new ScoreViewOutline(reqWidth, reqHeight));
+		else
+		{
+			// calculate the needed ratio
+			calculateReqDimen((int) width, (int) height, widthMode);
+			calculateSizes();
+			super.onMeasure(
+				MeasureSpec.makeMeasureSpec((int) reqWidth, MeasureSpec.EXACTLY),
+				MeasureSpec.makeMeasureSpec((int) reqHeight, MeasureSpec.EXACTLY)
+			);
+		}
 	}
 
 	@Override

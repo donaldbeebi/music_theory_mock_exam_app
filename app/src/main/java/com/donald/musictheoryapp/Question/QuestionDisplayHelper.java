@@ -10,6 +10,7 @@ import android.text.Editable;
 import android.text.InputType;
 import android.text.TextWatcher;
 import android.util.Log;
+import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.EditText;
@@ -252,7 +253,7 @@ public class QuestionDisplayHelper implements Question.QuestionVisitor
         }
         else if(question.optionType == MultipleChoiceQuestion.OptionType.TEXT)
         {
-            multipleChoiceSetUpButtons(question, buttons);
+            multipleChoiceSetUpColorButtons(question, buttons);
         }
         else
         {
@@ -774,7 +775,9 @@ public class QuestionDisplayHelper implements Question.QuestionVisitor
 
 
 
-    private void multipleChoiceSetUpButtons(MultipleChoiceQuestion question, QuestionButton[] buttons)
+    private void multipleChoiceSetUpColorButtons(
+        MultipleChoiceQuestion question,
+        QuestionButton[] buttons)
     {
         final int column = 2;
         final int row = (question.options.length + 1) / column;
@@ -825,7 +828,7 @@ public class QuestionDisplayHelper implements Question.QuestionVisitor
             if(question.optionType == MultipleChoiceQuestion.OptionType.TEXT)
             {
                 TextView textView = (TextView) inflater.inflate(
-                    R.layout.text_mc_question_button, button, false
+                    R.layout.text_color_button, button, false
                 );
                 textView.setText(question.options[i]);
                 button.addView(textView);
@@ -861,7 +864,8 @@ public class QuestionDisplayHelper implements Question.QuestionVisitor
     {
         int column;
         int row;
-        if(question.options.length % 2 == 0)
+        //if(question.options.length % 2 == 0)
+        if(true)
         {
             column = 2;
             row = (question.options.length + 1) / column;

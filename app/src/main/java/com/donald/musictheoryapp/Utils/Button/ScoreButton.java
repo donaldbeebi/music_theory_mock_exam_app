@@ -2,6 +2,8 @@ package com.donald.musictheoryapp.Utils.Button;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
+import android.view.ViewGroup;
+import android.widget.RelativeLayout;
 
 import androidx.core.content.ContextCompat;
 
@@ -20,6 +22,11 @@ public class ScoreButton extends QuestionButton
 		);
 		ScoreView scoreView = new ScoreView(context);
 		scoreView.setScore(score);
+		RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(
+			LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT
+		);
+		params.addRule(CENTER_IN_PARENT);
+		scoreView.setLayoutParams(params);
 		addView(scoreView);
 		setElevation(
 			context.getResources().getDimension(R.dimen.image_button_elevation)
