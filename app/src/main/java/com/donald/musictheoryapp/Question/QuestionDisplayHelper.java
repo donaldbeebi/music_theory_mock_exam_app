@@ -10,7 +10,6 @@ import android.text.Editable;
 import android.text.InputType;
 import android.text.TextWatcher;
 import android.util.Log;
-import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.EditText;
@@ -77,7 +76,8 @@ public class QuestionDisplayHelper implements Question.QuestionVisitor
     private static final int BTN_MARGIN = 16;
     private static final int CB_MARGIN = 16;
 
-    private final TextView sectionView;
+    private final TextView sectionNumberView;
+    private final TextView sectionNameView;
     private final TextView numberView;
     private final LinearLayout content;
     private final TextView panelHintView;
@@ -105,7 +105,8 @@ public class QuestionDisplayHelper implements Question.QuestionVisitor
             );
         }
 
-        sectionView = view.findViewById(R.id.question_section);
+        sectionNumberView = view.findViewById(R.id.question_section_number);
+        sectionNameView = view.findViewById(R.id.question_section_name);
         numberView = view.findViewById(R.id.question_number);
         content = view.findViewById(R.id.question_content);
         panelHintView = view.findViewById(R.id.question_input_hint_text_view);
@@ -129,7 +130,11 @@ public class QuestionDisplayHelper implements Question.QuestionVisitor
     {
         // Setting up the question section and number
         StringBuilder numberStringBuilder = new StringBuilder();
-        sectionView.setText(1 + "  " + "IMPLEMENT SECTION NAME");
+        if(currentQuestion == null || currentQuestion.group.section != question.group.section)
+        {
+            sectionNumberView.setText(String.valueOf(question.group.section.number));
+            sectionNameView.setText(question.group.section.name);
+        }
         numberStringBuilder.append(context.getResources().getString(R.string.question_string))
             .append(" ")
             .append(question.group.number);
@@ -331,10 +336,20 @@ public class QuestionDisplayHelper implements Question.QuestionVisitor
                 TextView correctAnswerTextView = (TextView) inflater.inflate(
                     R.layout.text_correct_answer, correctAnswerGridLayout, false
                 );
-                correctAnswerTextView.setText(
-                    question.options[question.answer.correctAnswer]
-                );
                 correctAnswerGridLayout.addView(correctAnswerTextView);
+                if(question.optionType == MultipleChoiceQuestion.OptionType.TEXT)
+                {
+                    correctAnswerTextView.setText(
+                        question.options[question.answer.correctAnswer]
+                    );
+                }
+                else
+                {
+                    correctAnswerTextView.setText(
+                        String.valueOf(question.answer.correctAnswer + 1)
+                    );
+                }
+
             }
         }
     }
@@ -429,12 +444,12 @@ public class QuestionDisplayHelper implements Question.QuestionVisitor
         trueButton.setColor(
             ContextCompat.getColor(context, R.color.green_button_default)
         );
-        trueButton.setRatio(2f);
+        trueButton.setFixedRatio(2f);
         ColorButton falseButton = new ColorButton(context);
         falseButton.setColor(
             ContextCompat.getColor(context, R.color.red_button_default)
         );
-        falseButton.setRatio(2f);
+        falseButton.setFixedRatio(2f);
 
         // params
         {
@@ -737,17 +752,18 @@ public class QuestionDisplayHelper implements Question.QuestionVisitor
                     bitmaps[i]
                 )
             );
+            if(readingMode) button.setNumber(i + 1);
             int columnSize;
             if(column == 2 && i == question.options.length - 1 &&
                 question.options.length % 2 == 1)
             {
                 columnSize = 2;
-                button.setRatio(buttonRatio * 2f);
+                button.setFixedRatio(buttonRatio * 2f);
             }
             else
             {
                 columnSize = 1;
-                button.setRatio(buttonRatio);
+                button.setFixedRatio(buttonRatio);
             }
             GridLayout.LayoutParams buttonParams = new GridLayout.LayoutParams();
             buttonParams.width = 0;
@@ -809,12 +825,12 @@ public class QuestionDisplayHelper implements Question.QuestionVisitor
             if(i == question.options.length - 1 && question.options.length % 2 == 1)
             {
                 columnSize = 2;
-                button.setRatio(ratio * 2f);
+                button.setFixedRatio(ratio * 2f);
             }
             else
             {
                 columnSize = 1;
-                button.setRatio(ratio);
+                button.setFixedRatio(ratio);
             }
             GridLayout.LayoutParams buttonParams = new GridLayout.LayoutParams();
             buttonParams.width = 0;
@@ -896,16 +912,17 @@ public class QuestionDisplayHelper implements Question.QuestionVisitor
         {
             // 1. inflate view preset
             ScoreButton button = new ScoreButton(context, Score.fromXML(question.options[i]));
+            if(readingMode) button.setNumber(i + 1);
             int columnSize;
             if(i == question.options.length - 1 && question.options.length % 2 == 1)
             {
                 columnSize = 1;
-                button.setRatio(ratio);
+                button.setFixedRatio(ratio);
             }
             else
             {
                 columnSize = 1;
-                button.setRatio(ratio);
+                button.setFixedRatio(ratio);
             }
             GridLayout.LayoutParams buttonParams = new GridLayout.LayoutParams();
             buttonParams.width = 0;

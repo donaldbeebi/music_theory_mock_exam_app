@@ -10,8 +10,6 @@ import android.widget.Button;
 import android.widget.SeekBar;
 import android.widget.TextView;
 
-import androidx.cardview.widget.CardView;
-
 import com.donald.musictheoryapp.BuildConfig;
 import com.donald.musictheoryapp.QuestionArray.QuestionArray;
 import com.donald.musictheoryapp.Question.QuestionDisplayHelper;
@@ -105,7 +103,7 @@ public class QuestionScreen extends Screen
             @Override
             public void onClick(View view)
             {
-                if(currentQuestion == questions.numberOfQuestions() - 1)
+                if(currentQuestion == questions.questionCount() - 1)
                 {
                     if(!readingMode) QuestionScreen.this.onFinishExerciseListener.onFinishExercise();
                     else QuestionScreen.this.onReturnToOverviewListener.onReturnToOverview();
@@ -126,7 +124,7 @@ public class QuestionScreen extends Screen
         this.questions = questions;
         currentQuestion = 0;
         progressBar.setMin(0);
-        progressBar.setMax(questions.numberOfQuestions() - 1);
+        progressBar.setMax(questions.questionCount() - 1);
         progressBar.setOnTouchListener(
             new ProgressBarOnTouchListener(progressBar)
         );
@@ -189,20 +187,20 @@ public class QuestionScreen extends Screen
 
     private void displayCurrentQuestion()
     {
-        displayHelper.displayQuestion(questions.question(currentQuestion));
+        displayHelper.displayQuestion(questions.questionAt(currentQuestion));
         updatePreviousNextButton();
     }
 
     private void changeQuestion(boolean nextQuestion)
     {
-        if(nextQuestion && currentQuestion < questions.numberOfQuestions() - 1) currentQuestion++;
+        if(nextQuestion && currentQuestion < questions.questionCount() - 1) currentQuestion++;
         else if (!nextQuestion && currentQuestion > 0) currentQuestion--;
         displayCurrentQuestion();
     }
 
     private void setCurrentQuestion(int questionIndex)
     {
-        if(questionIndex < 0 || questionIndex > questions.numberOfQuestions() - 1)
+        if(questionIndex < 0 || questionIndex > questions.questionCount() - 1)
         {
             throw new IllegalStateException();
         }
@@ -215,7 +213,7 @@ public class QuestionScreen extends Screen
         if(questions != null)
         {
             previousButton.setEnabled(currentQuestion != 0);
-            if(currentQuestion == questions.numberOfQuestions() - 1)
+            if(currentQuestion == questions.questionCount() - 1)
             {
                 nextButton.setBackgroundTintList(ColorStateList.valueOf(Color.RED));
             }

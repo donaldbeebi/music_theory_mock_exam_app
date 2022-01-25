@@ -36,9 +36,9 @@ public class ImageCache implements Question.QuestionVisitor
 
 	public void cacheImages(QuestionArray array)
 	{
-		for(int i = 0; i < array.numberOfGroups(); i++)
+		for(int i = 0; i < array.groupCount(); i++)
 		{
-			for(Description description : array.group(i).descriptions)
+			for(Description description : array.groupAt(i).descriptions)
 			{
 				if(description.type == Description.IMAGE_TYPE)
 				{
@@ -46,9 +46,9 @@ public class ImageCache implements Question.QuestionVisitor
 				}
 			}
 		}
-		for(int i = 0; i < array.numberOfQuestions(); i++)
+		for(int i = 0; i < array.questionCount(); i++)
 		{
-			array.question(i).acceptVisitor(this);
+			array.questionAt(i).acceptVisitor(this);
 		}
 	}
 

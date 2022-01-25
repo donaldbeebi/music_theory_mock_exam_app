@@ -5,40 +5,42 @@ import java.util.Collections;
 
 import com.donald.musictheoryapp.Question.Question;
 import com.donald.musictheoryapp.Question.QuestionGroup;
+import com.donald.musictheoryapp.Question.QuestionSection;
 
 public class QuestionArrayBuilder
 {
-    private final ArrayList<Question> m_Questions;
-    private final ArrayList<QuestionGroup> m_Groups;
+    private final ArrayList<QuestionSection> sections;
+    private final ArrayList<QuestionGroup> groups;
+    private final ArrayList<Question> questions;
 
     public QuestionArrayBuilder()
     {
-        m_Questions = new ArrayList<>();
-        m_Groups = new ArrayList<>();
+        sections = new ArrayList<>();
+        groups = new ArrayList<>();
+        questions = new ArrayList<>();
     }
 
-    public void addGroup(QuestionGroup group)
+    public void addSection(QuestionSection section)
     {
-        m_Groups.add(group);
-        Collections.addAll(m_Questions, group.getQuestions());
-    }
-
-    public void addGroups(QuestionGroup[] groups)
-    {
-        for(QuestionGroup group : groups)
+        sections.add(section);
+        Collections.addAll(groups, section.groups);
+        for(QuestionGroup group : section.groups)
         {
-            addGroup(group);
+            Collections.addAll(questions, group.questions);
         }
     }
 
     public QuestionArray build()
     {
-        Question[] questions = new Question[m_Questions.size()];
-        questions = m_Questions.toArray(questions);
+        QuestionSection[] sections = new QuestionSection[this.sections.size()];
+        sections = this.sections.toArray(sections);
 
-        QuestionGroup[] groups = new QuestionGroup[m_Groups.size()];
-        groups = m_Groups.toArray(groups);
+        QuestionGroup[] groups = new QuestionGroup[this.groups.size()];
+        groups = this.groups.toArray(groups);
 
-        return new QuestionArray(questions, groups);
+        Question[] questions = new Question[this.questions.size()];
+        questions = this.questions.toArray(questions);
+
+        return new QuestionArray(sections, groups, questions);
     }
 }

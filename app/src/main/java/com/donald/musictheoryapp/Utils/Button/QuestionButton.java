@@ -1,8 +1,6 @@
 package com.donald.musictheoryapp.Utils.Button;
 
 import android.content.Context;
-import android.graphics.BlendMode;
-import android.graphics.BlendModeColorFilter;
 import android.graphics.drawable.Drawable;
 import android.graphics.drawable.GradientDrawable;
 import android.graphics.drawable.LayerDrawable;
@@ -17,7 +15,7 @@ public abstract class QuestionButton extends RelativeLayout
 	private static final int PADDING = 16;
 	private final GradientDrawable selectionBorder;
 	private final Drawable background;
-	private float ratio = 2f / 1f;
+	private float fixedRatio = 2f / 1f;
 
 	protected QuestionButton(Context context, Drawable background)
 	{
@@ -55,9 +53,9 @@ public abstract class QuestionButton extends RelativeLayout
 		);
 	}
 
-	public void setRatio(float ratio)
+	public void setFixedRatio(float ratio)
 	{
-		this.ratio = ratio;
+		this.fixedRatio = ratio;
 		invalidate();
 	}
 
@@ -67,13 +65,13 @@ public abstract class QuestionButton extends RelativeLayout
 		float width = MeasureSpec.getSize(widthMeasureSpec);
 		float height = MeasureSpec.getSize(heightMeasureSpec);
 		float givenRatio = width / height;
-		if(givenRatio < ratio)
+		if(givenRatio < fixedRatio)
 		{
-			height = width / ratio;
+			height = width / fixedRatio;
 		}
 		else
 		{
-			width = height * ratio;
+			width = height * fixedRatio;
 		}
 		super.onMeasure(
 			MeasureSpec.makeMeasureSpec((int) width, MeasureSpec.EXACTLY),

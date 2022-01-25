@@ -3,6 +3,7 @@ package com.donald.musictheoryapp.Utils;
 import com.donald.musictheoryapp.Question.Description;
 import com.donald.musictheoryapp.Question.Question;
 import com.donald.musictheoryapp.Question.QuestionGroup;
+import com.donald.musictheoryapp.Question.QuestionSection;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -48,13 +49,25 @@ public class JSONArrayUtil
         return questions;
     }
 
-    public static QuestionGroup[] groups(JSONObject object) throws JSONException, IOException, XmlPullParserException
+    public static QuestionGroup[] groups(JSONObject object, QuestionSection section) throws JSONException, IOException, XmlPullParserException
     {
         JSONArray array = object.getJSONArray("groups");
         int length = array.length();
         QuestionGroup[] groups = new QuestionGroup[length];
         for(int i = 0; i < length; i++)
-            groups[i] = QuestionGroup.fromJSON(array.getJSONObject(i));
+            groups[i] = QuestionGroup.fromJSON(array.getJSONObject(i), section);
         return groups;
+    }
+
+    public static QuestionSection[] sections(JSONObject object) throws JSONException, IOException, XmlPullParserException
+    {
+        JSONArray array =  object.getJSONArray("sections");
+        int length = array.length();
+        QuestionSection[] sections = new QuestionSection[length];
+        for(int i = 0; i < length; i++)
+        {
+            sections[i] = QuestionSection.fromJSON(array.getJSONObject(i));
+        }
+        return sections;
     }
 }

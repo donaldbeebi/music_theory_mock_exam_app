@@ -256,7 +256,7 @@ public class MainActivity extends AppCompatActivity
     {
         mainFrame.removeAllViews();
         questionScreen.setQuestions(questions);
-        questionScreen.displayQuestion(questions.questionIndex(questions.group(targetGroup).getQuestion(0)));
+        questionScreen.displayQuestion(questions.questionIndexOf(questions.groupAt(targetGroup).getQuestion(0)));
         currentScreenForExerciseTab = questionScreen;
         mainFrame.addView(currentScreenForExerciseTab.getView());
     }

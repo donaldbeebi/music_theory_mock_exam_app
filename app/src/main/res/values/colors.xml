@@ -24,5 +24,7 @@
     <color name="check_box_stroke_correct">#00FF00</color>
     <color name="check_box_stroke_wrong">#FF0000</color>
     <color name="question_answer_panel">#FFFFFF</color>
-    <color name="question_correct_answer_text_color">#5AFA5D</color>
+    <color name="question_correct_answer_text">#5AFA5D</color>
+    <color name="question_button_number_text">#FFFFFF</color>
+    <color name="question_button_number_background">#30000000</color>
 </resources>

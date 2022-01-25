@@ -224,7 +224,6 @@ public class ScoreView extends View
 							}
 							if(note.notations != null && note.notations.noteArrow != null)
 							{
-								Log.d("inside score view", "note arrow detected!");
 								hasNoteArrowNotation = true;
 							}
 						}

@@ -2,6 +2,7 @@ package com.donald.musictheoryapp.QuestionArray;
 
 import com.donald.musictheoryapp.Question.Question;
 import com.donald.musictheoryapp.Question.QuestionGroup;
+import com.donald.musictheoryapp.Question.QuestionSection;
 import com.donald.musictheoryapp.Utils.JSONArrayUtil;
 
 import org.json.JSONException;
@@ -12,47 +13,62 @@ import java.io.IOException;
 
 public class QuestionArray
 {
-    private final Question[] questions;
+    private final QuestionSection[] sections;
     private final QuestionGroup[] groups;
+    private final Question[] questions;
 
-    public QuestionArray(Question[] questions, QuestionGroup[] groups)
+    public QuestionArray(QuestionSection[] sections, QuestionGroup[] groups, Question[] questions)
     {
-        this.questions = questions;
+        this.sections = sections;
         this.groups = groups;
+        this.questions = questions;
     }
 
-    public Question question(int questionIndex)
+    public QuestionSection sectionAt(int sectionIndex)
     {
-        return questions[questionIndex];
+        return sections[sectionIndex];
     }
 
-    public Question question(int groupIndex, int localQuestionIndex)
-    {
-        return groups[groupIndex].questions[localQuestionIndex];
-    }
-
-    public int numberOfQuestions()
-    {
-        return questions.length;
-    }
-
-    public QuestionGroup group(int groupIndex)
+    public QuestionGroup groupAt(int groupIndex)
     {
         return groups[groupIndex];
     }
 
-    public int numberOfGroups() {
+    public Question questionAt(int questionIndex)
+    {
+        return questions[questionIndex];
+    }
+
+    public int groupCount() {
         return groups.length;
     }
 
-    public int questionIndex(Question question)
+    public Question questionAt(int groupIndex, int localQuestionIndex)
     {
-        int index = -1;
+        return groups[groupIndex].questions[localQuestionIndex];
+    }
+
+    public int questionCount()
+    {
+        return questions.length;
+    }
+
+    public int questionIndexOf(Question question)
+    {
         for(int i = 0; i < questions.length; i++)
         {
-            if(questions[i] == question) index = i;
+            if(questions[i] == question) return i;
         }
-        return index;
+        return -1;
+    }
+
+    public int sectionIndexOf(QuestionSection section)
+    {
+        for(int i = 0; i < sections.length; i++)
+        {
+            if(sections[i] == section) return i;
+        }
+        return -1;
     }
 
     @Override
@@ -72,8 +88,35 @@ public class QuestionArray
 
     public static QuestionArray fromJSON(JSONObject object) throws JSONException, IOException, XmlPullParserException
     {
-        QuestionArrayBuilder builder = new QuestionArrayBuilder();
-        builder.addGroups(JSONArrayUtil.groups(object));
-        return builder.build();
+        QuestionSection[] sections = JSONArrayUtil.sections(object);
+        int numberOfGroups = 0;
+        int numberOfQuestions = 0;
+        for(QuestionSection section : sections)
+        {
+            numberOfGroups += section.groups.length;
+            for(QuestionGroup group : section.groups)
+            {
+                numberOfQuestions += group.questions.length;
+            }
+        }
+
+        QuestionGroup[] groups = new QuestionGroup[numberOfGroups];
+        Question[] questions = new Question[numberOfQuestions];
+        int currentGroup = 0;
+        int currentQuestion = 0;
+        for(QuestionSection section : sections)
+        {
+            System.arraycopy(section.groups, 0, groups, currentGroup, section.groups.length);
+            currentGroup += section.groups.length;
+            for(QuestionGroup group : section.groups)
+            {
+                System.arraycopy(
+                    group.questions, 0, questions, currentQuestion, group.questions.length
+                );
+                currentQuestion += group.questions.length;
+            }
+        }
+
+        return new QuestionArray(sections, groups, questions);
     }
 }

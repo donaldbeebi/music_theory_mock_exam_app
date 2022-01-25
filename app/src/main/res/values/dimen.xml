@@ -7,4 +7,5 @@
     <dimen name="check_box_stroke_width">2dp</dimen>
     <dimen name="check_box_corner_radius">5dp</dimen>
     <dimen name="image_button_elevation">2dp</dimen>
+    <dimen name="question_button_number_radius">16sp</dimen>
 </resources>

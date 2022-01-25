@@ -11,31 +11,14 @@ import java.util.Arrays;
 
 public class QuestionGroup
 {
+    public QuestionSection section;
     public int number;
     public Description[] descriptions;
     public Question[] questions;
     public String topic;
 
-    public QuestionGroup() {}
-
-    @Deprecated
-    public QuestionGroup(int number, String topic, Description[] descriptions)
-    {
-        this.number = number;
-        this.topic = topic;
-        this.descriptions = descriptions;
-    }
-
-    @Deprecated
-    public void setQuestions(Question[] questions)
-    {
-        this.questions = questions;
-    }
-
     @Deprecated
     public int getNumber() { return number; }
-    @Deprecated
-    public Description[] getDescriptions() { return descriptions; }
     @Deprecated
     public Question getQuestion(int index) { return questions[index]; }
     @Deprecated
@@ -62,9 +45,10 @@ public class QuestionGroup
             "Number of questions: " + questions.length + " ";
     }
 
-    public static QuestionGroup fromJSON(JSONObject object) throws JSONException, IOException, XmlPullParserException
+    public static QuestionGroup fromJSON(JSONObject object, QuestionSection section) throws JSONException, IOException, XmlPullParserException
     {
         QuestionGroup group = new QuestionGroup();
+        group.section = section;
         group.number = object.getInt("number");
         group.topic = object.getString("topic");
         group.descriptions = JSONArrayUtil.descriptions(object);

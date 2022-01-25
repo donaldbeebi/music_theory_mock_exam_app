@@ -45,7 +45,7 @@ public class ResultOverviewAdapter extends RecyclerView.Adapter<ResultOverviewAd
 
         public void bindData(int groupIndexToDisplay)
         {
-            QuestionGroup group = m_Questions.group(groupIndexToDisplay);
+            QuestionGroup group = m_Questions.groupAt(groupIndexToDisplay);
             m_QuestionNumber.setText(String.valueOf(group.getNumber()));
             m_QuestionTitle.setText(group.getTopic());
             m_QuestionScore.setText(String.valueOf(group.totalPoints()));
@@ -80,6 +80,6 @@ public class ResultOverviewAdapter extends RecyclerView.Adapter<ResultOverviewAd
     @Override
     public int getItemCount()
     {
-        return m_Questions.numberOfGroups();
+        return m_Questions.groupCount();
     }
 }
