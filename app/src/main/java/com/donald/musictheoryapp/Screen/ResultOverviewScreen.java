@@ -29,6 +29,6 @@ public class ResultOverviewScreen extends Screen
         m_RecyclerView = getView().findViewById(R.id.result_recycler_view);
         m_Adapter = new ResultOverviewAdapter(questions, m_OnProceedToDetailListener);
         m_RecyclerView.setAdapter(m_Adapter);
-        m_RecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
+        m_RecyclerView.setLayoutManager(new LinearLayoutManager(context()));
     }
 }

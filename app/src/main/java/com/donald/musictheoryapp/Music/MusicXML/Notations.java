@@ -57,4 +57,9 @@ public class Notations
 			NoteArrow.fromJSON(object)
 		);
 	}
+
+	public Notations clone()
+	{
+		return new Notations(noteArrow);
+	}
 }

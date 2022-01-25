@@ -38,10 +38,12 @@ public class SNoteArrow extends ScoreStamp
 
 		if(label != null)
 		{
-			canvas.drawText(label,
+			canvas.drawText(
+				label,
 				posX - noteWidth() * 1.5f,
 				posY - staffStepHeight() * 2,
-				textPaint());
+				textPaint()
+			);
 		}
 	}
 }

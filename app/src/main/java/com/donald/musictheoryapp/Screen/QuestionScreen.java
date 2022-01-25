@@ -1,10 +1,13 @@
 package com.donald.musictheoryapp.Screen;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
+import android.content.res.ColorStateList;
+import android.graphics.Color;
 import android.os.CountDownTimer;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.SeekBar;
 import android.widget.TextView;
 
 import androidx.cardview.widget.CardView;
@@ -13,6 +16,7 @@ import com.donald.musictheoryapp.BuildConfig;
 import com.donald.musictheoryapp.QuestionArray.QuestionArray;
 import com.donald.musictheoryapp.Question.QuestionDisplayHelper;
 import com.donald.musictheoryapp.R;
+import com.donald.musictheoryapp.Utils.ProgressBarOnTouchListener;
 import com.donald.musictheoryapp.Utils.TimeFormatter;
 
 public class QuestionScreen extends Screen
@@ -47,7 +51,6 @@ public class QuestionScreen extends Screen
      */
 
     private boolean readingMode = false;
-    private boolean hiddenAnswerPanel = false;
 
     private int currentQuestion;
     private final QuestionDisplayHelper displayHelper;
@@ -57,11 +60,9 @@ public class QuestionScreen extends Screen
     private final ExerciseTimer exerciseTimer;
 
     // Views
-    private final TextView progressDisplay;
-    private final CardView questionAnswerPanel;
     private final Button previousButton;
     private final Button nextButton;
-    private final Button finishButton;
+    private final SeekBar progressBar;
 
     /*
      * *******
@@ -81,12 +82,9 @@ public class QuestionScreen extends Screen
         exerciseTimer = new ExerciseTimer(60 * 60 * 2, view.findViewById(R.id.question_timer_display));
         currentQuestion = 0;
 
-        progressDisplay = view.findViewById(R.id.question_progress);
-        questionAnswerPanel = view.findViewById(R.id.question_answer_panel);
         previousButton = view.findViewById(R.id.question_previous_button);
         nextButton = view.findViewById(R.id.question_next_button);
-        finishButton = view.findViewById(R.id.question_finish_button);
-        Button debugButton = view.findViewById(R.id.question_debug_button);
+        progressBar = view.findViewById(R.id.question_progress_bar);
 
         /*
          *  SETTING UP LISTENERS
@@ -98,6 +96,7 @@ public class QuestionScreen extends Screen
             {
                 changeQuestion(false);
                 updatePreviousNextButton();
+                progressBar.setProgress(currentQuestion);
             }
         });
 
@@ -106,36 +105,42 @@ public class QuestionScreen extends Screen
             @Override
             public void onClick(View view)
             {
-                changeQuestion(true);
+                if(currentQuestion == questions.numberOfQuestions() - 1)
+                {
+                    if(!readingMode) QuestionScreen.this.onFinishExerciseListener.onFinishExercise();
+                    else QuestionScreen.this.onReturnToOverviewListener.onReturnToOverview();
+                }
+                else
+                {
+                    changeQuestion(true);
+                }
                 updatePreviousNextButton();
-            }
-        });
-
-        finishButton.setOnClickListener(new View.OnClickListener()
-        {
-            @Override
-            public void onClick(View view)
-            {
-                if(!readingMode) QuestionScreen.this.onFinishExerciseListener.onFinishExercise();
-                else QuestionScreen.this.onReturnToOverviewListener.onReturnToOverview();
-            }
-        });
-
-        debugButton.setOnClickListener(new View.OnClickListener()
-        {
-            @Override
-            public void onClick(View view)
-            {
-                if(hiddenAnswerPanel) questionAnswerPanel.setVisibility(View.VISIBLE);
-                else questionAnswerPanel.setVisibility(View.GONE);
-                hiddenAnswerPanel = !hiddenAnswerPanel;
+                progressBar.setProgress(currentQuestion);
             }
         });
     }
 
+    @SuppressLint("ClickableViewAccessibility")
     public void setQuestions(QuestionArray questions)
     {
-        this.questions = questions; currentQuestion = 0;
+        this.questions = questions;
+        currentQuestion = 0;
+        progressBar.setMin(0);
+        progressBar.setMax(questions.numberOfQuestions() - 1);
+        progressBar.setOnTouchListener(
+            new ProgressBarOnTouchListener(progressBar)
+        );
+        progressBar.setOnSeekBarChangeListener(
+            new SeekBar.OnSeekBarChangeListener() {
+                @Override
+                public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser)
+                {
+                    setCurrentQuestion(progress);
+                }
+                @Override public void onStartTrackingTouch(SeekBar seekBar) { /* do nothing */ }
+                @Override public void onStopTrackingTouch(SeekBar seekBar) { /* do nothing */ }
+            }
+        );
     }
 
     public void startExercise()
@@ -145,13 +150,6 @@ public class QuestionScreen extends Screen
 
         readingMode = false;
         displayHelper.setReadingMode(readingMode);
-
-        /*
-         * Setting up the progress view
-         */
-        TextView progressTextView = getView().findViewById(R.id.question_progress);
-        progressTextView.setText("1/" + questions.numberOfQuestions());
-
         displayCurrentQuestion();
     }
 
@@ -168,7 +166,6 @@ public class QuestionScreen extends Screen
         readingMode = true;
         currentQuestion = questionIndex;
         displayHelper.setReadingMode(true);
-        finishButton.setText(R.string.return_to_overview_text);
 
         displayCurrentQuestion();
     }
@@ -193,7 +190,6 @@ public class QuestionScreen extends Screen
     private void displayCurrentQuestion()
     {
         displayHelper.displayQuestion(questions.question(currentQuestion));
-        progressDisplay.setText((currentQuestion + 1) + "/" + questions.numberOfQuestions());
         updatePreviousNextButton();
     }
 
@@ -202,8 +198,16 @@ public class QuestionScreen extends Screen
         if(nextQuestion && currentQuestion < questions.numberOfQuestions() - 1) currentQuestion++;
         else if (!nextQuestion && currentQuestion > 0) currentQuestion--;
         displayCurrentQuestion();
-        hiddenAnswerPanel = false;
-        questionAnswerPanel.setVisibility(View.VISIBLE);
+    }
+
+    private void setCurrentQuestion(int questionIndex)
+    {
+        if(questionIndex < 0 || questionIndex > questions.numberOfQuestions() - 1)
+        {
+            throw new IllegalStateException();
+        }
+        currentQuestion = questionIndex;
+        displayCurrentQuestion();
     }
 
     private void updatePreviousNextButton()
@@ -211,8 +215,21 @@ public class QuestionScreen extends Screen
         if(questions != null)
         {
             previousButton.setEnabled(currentQuestion != 0);
-            nextButton.setEnabled(currentQuestion != questions.numberOfQuestions() - 1);
+            if(currentQuestion == questions.numberOfQuestions() - 1)
+            {
+                nextButton.setBackgroundTintList(ColorStateList.valueOf(Color.RED));
+            }
+            else
+            {
+                nextButton.setBackgroundTintList(ColorStateList.valueOf(
+                    context().getResources().getColor(
+                        R.color.design_default_color_primary, context().getTheme())
+                ));
+            }
+            //nextButton.setEnabled(currentQuestion != questions.numberOfQuestions() - 1);
         }
-        else Log.e("QuestionScreen", "updatePreviousNextButton() called before questions are set!");
+        else throw new IllegalStateException(
+            "updatePreviousNextButton() called before questions are set!"
+        );
     }
 }

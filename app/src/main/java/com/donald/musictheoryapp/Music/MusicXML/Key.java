@@ -42,4 +42,9 @@ public class Key
 			Mode.fromString(key.getString("mode"))
 		);
 	}
+
+	public Key clone()
+	{
+		return new Key(fifths, mode);
+	}
 }

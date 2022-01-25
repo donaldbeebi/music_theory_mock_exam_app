@@ -15,4 +15,14 @@ public class Part
 	{
 		return measures;
 	}
+
+	public Part clone()
+	{
+		Measure[] otherMeasures = new Measure[measures.length];
+		for(int i = 0; i < otherMeasures.length; i++)
+		{
+			otherMeasures[i] = measures[i].clone();
+		}
+		return new Part(id, otherMeasures);
+	}
 }

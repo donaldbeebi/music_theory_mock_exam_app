@@ -5,6 +5,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.FrameLayout;
 
+import androidx.core.content.ContextCompat;
+
 public abstract class Screen
 {
     private final Context m_Context;
@@ -17,7 +19,7 @@ public abstract class Screen
         m_LayoutInflater = LayoutInflater.from(context);
     }
 
-    public Context getContext() { return m_Context; }
+    public Context context() { return m_Context; }
 
     public View getView() { return m_View; }
 

@@ -1,4 +1,4 @@
-package com.donald.musictheoryapp.Utils;
+package com.donald.musictheoryapp.Utils.Button;
 
 import android.content.Context;
 import android.widget.Button;
@@ -15,9 +15,10 @@ public class QuestionCheckBox extends androidx.appcompat.widget.AppCompatButton
 	private boolean isChecked = false;
 	private boolean isCorrect = false;
 
-	public QuestionCheckBox(@NonNull Context context)
+	public QuestionCheckBox(Context context)
 	{
 		super(context);
+		setBackgroundResource(R.drawable.background_check_box);
 	}
 
 	public void setChecked(boolean isChecked)

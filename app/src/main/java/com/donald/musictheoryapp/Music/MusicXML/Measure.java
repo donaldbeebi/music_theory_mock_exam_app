@@ -1,5 +1,7 @@
 package com.donald.musictheoryapp.Music.MusicXML;
 
+import androidx.annotation.NonNull;
+
 import java.util.ArrayList;
 
 public class Measure
@@ -19,6 +21,22 @@ public class Measure
 			this.time = time;
 			this.staves = staves;
 			this.clefs = clefs;
+		}
+
+		public Attributes clone()
+		{
+			Clef[] otherClefs = new Clef[clefs.length];
+			for(int i = 0; i < otherClefs.length; i++)
+			{
+				otherClefs[i] = clefs[i].clone();
+			}
+
+			return new Attributes(
+				divisions,
+				(key != null ? key.clone() : null),
+				(time != null ? time.clone() : null),
+				staves,
+				otherClefs);
 		}
 	}
 
@@ -53,6 +71,12 @@ public class Measure
 		{
 			this.barlineStyle = barlineStyle;
 		}
+
+		@NonNull
+		public Barline clone()
+		{
+			return new Barline(barlineStyle);
+		}
 	}
 
 	public final Attributes attributes;
@@ -69,5 +93,19 @@ public class Measure
 	public Note[] notes()
 	{
 		return notes;
+	}
+
+	public Measure clone()
+	{
+		Note[] otherNotes = new Note[notes.length];
+		for(int i = 0; i < otherNotes.length; i++)
+		{
+			otherNotes[i] = notes[i].clone();
+		}
+		return new Measure(
+			(attributes != null ? attributes.clone() : null),
+			otherNotes,
+			(barline != null ? barline.clone() : null)
+		);
 	}
 }

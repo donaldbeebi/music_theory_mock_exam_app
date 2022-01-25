@@ -133,6 +133,11 @@ public class Note
 				this.alter == that.alter &&
 				this.octave == that.octave;
 		}
+
+		public Pitch clone()
+		{
+			return new Pitch(step, alter, octave);
+		}
 	}
 
 	public static class Type
@@ -273,7 +278,6 @@ public class Note
 		this.color = color;
 	}
 
-
 	public boolean printObject()
 	{
 		return printObject;
@@ -309,7 +313,6 @@ public class Note
 	public static Note fromJSON(JSONObject object) throws JSONException
 	{
 		int accidental = Accidental.NULL;
-		boolean printObject = true;
 		if(object.has("accidental"))
 		{
 			accidental = Accidental.fromString(object.getString("accidental"));
@@ -320,7 +323,8 @@ public class Note
 			notations = Notations.fromJSON(object.getJSONObject("notations"));
 		}
 		return new Note(
-			printObject = object.getBoolean("print-object"),
+			// removed printObject = ...
+			object.isNull("print-object") || object.getBoolean("print-object"),
 			Pitch.fromJSON(object.getJSONObject("pitch")),
 			object.getInt("duration"),
 			Type.fromString(object.getString("type")),
@@ -328,6 +332,20 @@ public class Note
 			false, // chord not implemented
 			object.getInt("staff"),
 			notations
+		);
+	}
+
+	public Note clone()
+	{
+		return new Note(
+			printObject,
+			(pitch != null ? pitch.clone() : null),
+			duration,
+			type,
+			accidental,
+			chord,
+			staff,
+			(notations != null ? notations.clone() : null)
 		);
 	}
 }

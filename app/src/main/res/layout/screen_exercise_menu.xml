@@ -4,12 +4,6 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <com.donald.musictheoryapp.Music.ScoreView.ScoreView
-        android:id="@+id/debug_score_view"
-        android:layout_width="match_parent"
-        android:layout_height="200dp"
-        android:layout_alignParentBottom="true"/>
-
     <Button
         android:id="@+id/exercise_menu_start_button"
         android:layout_width="wrap_content"

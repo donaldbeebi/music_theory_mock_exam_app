@@ -1,9 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <dimen name="button_corner_radius">10sp</dimen>
-    <dimen name="button_stroke_width">3sp</dimen>
-    <dimen name="button_stroke_dash_width">10sp</dimen>
-    <dimen name="button_stroke_dash_gap">10sp</dimen>
-    <dimen name="check_box_stroke_width">2sp</dimen>
-    <dimen name="check_box_corner_radius">5sp</dimen>
+    <dimen name="question_button_corner_radius">10dp</dimen>
+    <dimen name="question_button_stroke_width">3dp</dimen>
+    <dimen name="question_button_stroke_dash_width">10dp</dimen>
+    <dimen name="question_button_stroke_dash_gap">10dp</dimen>
+    <dimen name="check_box_stroke_width">2dp</dimen>
+    <dimen name="check_box_corner_radius">5dp</dimen>
+    <dimen name="image_button_elevation">2dp</dimen>
 </resources>

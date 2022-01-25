@@ -33,18 +33,24 @@ public abstract class Question
         boolean correct();
     }
 
-    public int number;
     public QuestionGroup group;
+    public int number;
     public Description[] descriptions;
+    public String inputHint;
 
     public abstract int points();
+
+    public int fullPoints()
+    {
+        return 1;
+    }
 
     public abstract void acceptVisitor(QuestionVisitor visitor);
 
     public static Question fromJSON(JSONObject object, QuestionGroup group) throws JSONException, IOException, XmlPullParserException
     {
         Question question;
-        switch (object.getInt("type"))
+        switch(object.getInt("type"))
             {
                 case MULTIPLE_CHOICE:
                     question = MultipleChoiceQuestion.fromJSON(object, group);
@@ -63,7 +69,17 @@ public abstract class Question
                     break;
                 default:
                     throw new JSONException("Question type " + object.getInt("type") + " unrecognized.");
-            };
+            }
+
+        if(object.isNull("input_hint"))
+        {
+            question.inputHint = null;
+        }
+        else
+        {
+            question.inputHint = object.getString("input_hint");
+        }
+
         return question;
     }
 }

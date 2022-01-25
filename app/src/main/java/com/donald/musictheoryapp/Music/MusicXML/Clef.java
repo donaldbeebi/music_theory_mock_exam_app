@@ -60,4 +60,9 @@ public class Clef
 		return Note.Pitch.absStep(note.pitch) - Clef.Sign.BASE_NOTE_POS_BY_SIGN[clef.sign]
 			+ (clef.line - 1) * 2;
 	}
+
+	public Clef clone()
+	{
+		return new Clef(sign, line, printObject);
+	}
 }

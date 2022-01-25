@@ -1,5 +1,7 @@
 package com.donald.musictheoryapp.Question;
 
+import android.util.Log;
+
 import com.donald.musictheoryapp.Music.MusicXML.Note;
 import com.donald.musictheoryapp.Music.MusicXML.Score;
 import com.donald.musictheoryapp.Utils.JSONArrayUtil;
@@ -26,7 +28,7 @@ public class IntervalInputQuestion extends Question
 		@Override
 		public boolean correct()
 		{
-			return userAnswer.equals(correctAnswer);
+			return userAnswer != null && userAnswer.equals(correctAnswer);
 		}
 
 		public static Answer fromJSON(JSONObject object) throws JSONException
@@ -40,7 +42,6 @@ public class IntervalInputQuestion extends Question
 
 	public Answer answer;
 	public Score score;
-	public Note correctNote;
 	public String requiredInterval;
 
 	public IntervalInputQuestion() {}
@@ -48,8 +49,7 @@ public class IntervalInputQuestion extends Question
 	@Override
 	public int points()
 	{
-		Note[] notes = score.parts()[0].measures()[0].notes();
-		if(notes[1].equals(correctNote))
+		if(answer.correct())
 		{
 			return 1;
 		}

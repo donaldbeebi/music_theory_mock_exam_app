@@ -1,5 +1,7 @@
 package com.donald.musictheoryapp.Music.MusicXML;
 
+import androidx.annotation.NonNull;
+
 import com.donald.musictheoryapp.Music.ScoreView.MusicXMLParser;
 
 import org.xmlpull.v1.XmlPullParserException;
@@ -25,4 +27,15 @@ public class Score
 	}
 
 	public Part[] parts() { return parts; }
+
+	@NonNull
+	public Score clone()
+	{
+		Part[] otherParts = new Part[parts.length];
+		for(int i = 0; i < otherParts.length; i++)
+		{
+			otherParts[i] = parts[i].clone();
+		}
+		return new Score(otherParts);
+	}
 }

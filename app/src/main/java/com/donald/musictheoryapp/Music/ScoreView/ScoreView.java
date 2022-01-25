@@ -3,11 +3,14 @@ package com.donald.musictheoryapp.Music.ScoreView;
 import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Color;
+import android.graphics.Outline;
 import android.graphics.Paint;
 import android.graphics.RectF;
+import android.os.Build;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.View;
+import android.view.ViewOutlineProvider;
 
 import com.donald.musictheoryapp.Music.MusicXML.Key;
 import com.donald.musictheoryapp.Music.MusicXML.Measure;
@@ -22,6 +25,34 @@ import java.util.HashMap;
 
 public class ScoreView extends View
 {
+	/*
+	 * *****************
+	 * INNER CLASS START
+	 * *****************
+	 */
+
+	private static class ScoreViewOutline extends ViewOutlineProvider
+	{
+		int width;
+		int height;
+
+		private ScoreViewOutline(int width, int height) {
+			this.width = width;
+			this.height = height;
+		}
+
+		@Override
+		public void getOutline(View view, Outline outline) {
+			outline.setRect(0, 0, width, height);
+		}
+	}
+
+	/*
+	 * ***************
+	 * INNER CLASS END
+	 * ***************
+	 */
+
 	// TODO: IF THE SCORE ONLY HAS A CLEF, IT IS NOT CENTERED
 	// TODO: THIS IS BECAUSE IF THE WIDTH IS LONGER THAN THE MIN RATIO, THE BODY RECT IS STRETCHED
 	public static final int BASE_LINE_STAFF_POS = 0;
@@ -33,9 +64,10 @@ public class ScoreView extends View
 	private static final float CLEF_REL_WIDTH = 1f / 1.4f;
 	private static final float H_SPACING_REL_SIZE = 1f / 6f;
 	private static final float H_PADDING_REL_SIZE = NOTE_REL_WIDTH * 1f;
-	private static final float STAFF_REL_HEIGHT = 1f; // REL_HEIGHT???
+	private static final float STAFF_REL_HEIGHT = 1f;
 	private static final float STAFF_STEP_HALF_REL_HEIGHT = 1f / 8f;
 	private static final float NOTE_HEIGHT = 1f / 4f;
+	private static final float NOTE_ARROW_REL_HEAD_ROOM = 1f;
 
 	private float fixedRatio = 1f;
 	private boolean hasFixedRatio = false;
@@ -91,6 +123,12 @@ public class ScoreView extends View
 	public ScoreView(Context context, AttributeSet attrs)
 	{
 		super(context, attrs);
+		//setBackgroundResource(R.drawable.shape_score_view_background);
+		//setElevation(
+		//	context.getResources().getDimension(
+		//		R.dimen.image_button_elevation
+		//	)
+		//);
 		currentHeaderRect = new RectF();
 		currentBodyRect = new RectF();
 
@@ -160,6 +198,7 @@ public class ScoreView extends View
 		int numberOfNotes = 0;
 		int highestNotePos = 9;
 		int lowestNotePos = -1;
+		boolean hasNoteArrowNotation = false;
 		{
 			if (score != null)
 			{
@@ -183,12 +222,18 @@ public class ScoreView extends View
 									lowestNotePos = staffPos;
 								}
 							}
+							if(note.notations != null && note.notations.noteArrow != null)
+							{
+								Log.d("inside score view", "note arrow detected!");
+								hasNoteArrowNotation = true;
+							}
 						}
 					}
 				}
 			}
 		}
 		float topRelPadding = ((float) highestNotePos + 4 - 8) * STAFF_STEP_HALF_REL_HEIGHT;
+		if(hasNoteArrowNotation) topRelPadding = Math.max(topRelPadding, NOTE_ARROW_REL_HEAD_ROOM);
 		float bottomRelPadding = ((float) -(lowestNotePos - 4)) * STAFF_STEP_HALF_REL_HEIGHT;
 
 		float minRelWidth;
@@ -294,6 +339,8 @@ public class ScoreView extends View
 				MeasureSpec.makeMeasureSpec((int) reqHeight, MeasureSpec.EXACTLY)
 			);
 		}
+
+		//setOutlineProvider(new ScoreViewOutline(reqWidth, reqHeight));
 	}
 
 	@Override
@@ -485,26 +532,6 @@ public class ScoreView extends View
 	protected Paint textPaint() { return textPaint; }
 	protected Paint glyphPaint() { return glyphPaint; }
 	protected Paint linePaint() { return linePaint; }
-
-	private static int numberOfNotes(Score score)
-	{
-		int numberOfNotes = 0;
-		if (score != null)
-		{
-			for (Part part : score.parts)
-			{
-				for (Measure measure : part.measures)
-				{
-					numberOfNotes += measure.notes.length;
-					//for (Note note : measure.notes)
-					//{
-					//	numberOfNotes++;
-					//}
-				}
-			}
-		}
-		return numberOfNotes;
-	}
 
 	private static void setAccidentalMemory(Key key, int[] accidentalsMemory)
 	{

@@ -48,6 +48,5 @@ public class NumberTracker
 		count++;
 		onIncrementListener.onIncrement(this);
 		if(target == count) onTargetListener.onTarget(this);
-		Log.d("inside number tracker", "hi");
 	}
 }

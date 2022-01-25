@@ -61,6 +61,12 @@ public class CheckBoxQuestion extends Question
     }
 
     @Override
+    public int fullPoints()
+    {
+        return answers.length;
+    }
+
+    @Override
     public void acceptVisitor(QuestionVisitor visitor) { visitor.visit(this); }
 
     public static CheckBoxQuestion fromJSON(JSONObject object, QuestionGroup group) throws JSONException

@@ -10,4 +10,9 @@ public class Time
 		this.beats = beats;
 		this.beatType = beatType;
 	}
+
+	public Time clone()
+	{
+		return new Time(beats, beatType);
+	}
 }

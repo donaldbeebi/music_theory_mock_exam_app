@@ -6,6 +6,10 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.util.Objects;
+
+// TODO: 1 ANSWER PER TEXT INPUT? OR NOT?
+
 public class TextInputQuestion extends Question
 {
     // TODO: CHANGE TO INT
@@ -45,7 +49,7 @@ public class TextInputQuestion extends Question
         @Override
         public boolean correct()
         {
-            return userAnswer.equals(correctAnswer);
+            return userAnswer != null && userAnswer.equals(correctAnswer);
         }
     }
 
@@ -63,6 +67,12 @@ public class TextInputQuestion extends Question
             if(answer.correct()) points++;
         }
         return points;
+    }
+
+    @Override
+    public int fullPoints()
+    {
+        return answers.length;
     }
 
     @Override

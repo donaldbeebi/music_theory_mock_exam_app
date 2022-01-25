@@ -31,6 +31,7 @@ public class PanelOnTouchListener implements View.OnTouchListener
 		Score score = question.score();
 		this.inputNote = score.parts()[0].measures()[0].notes()[1];
 		this.scoreView = scoreView;
+		question.answer.userAnswer = inputNote;
 		Measure measure = score.parts()[0].measures()[0];
 		firstNoteAbsStep = measure.notes()[0].pitch().absStep();
 		//firstNoteAbsStep = measure.notes()[0].pitch().alter();
