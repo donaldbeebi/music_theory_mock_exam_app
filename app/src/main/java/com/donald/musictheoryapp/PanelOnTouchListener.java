@@ -1,5 +1,6 @@
 package com.donald.musictheoryapp;
 
+import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.TextView;
@@ -86,6 +87,7 @@ public class PanelOnTouchListener implements View.OnTouchListener
 			}
 			case MotionEvent.ACTION_UP:
 			{
+				Log.d("inputNote alter before", String.valueOf(inputNote.pitch().alter()));
 				float currentY = event.getY();
 				float distance = currentY - initialY;
 				if(event.getEventTime() - event.getDownTime() < 200d && Math.abs((int) distance / 60) < 1)
@@ -109,6 +111,7 @@ public class PanelOnTouchListener implements View.OnTouchListener
 						inputNote.pitch().setAlter(Note.Accidental.alter(accidental));
 					}
 					scoreView.postInvalidate();
+					Log.d("inputNote alter after", String.valueOf(inputNote.pitch().alter()));
 				}
 				return true;
 			}

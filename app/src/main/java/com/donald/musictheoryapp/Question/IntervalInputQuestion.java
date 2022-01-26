@@ -28,7 +28,7 @@ public class IntervalInputQuestion extends Question
 		@Override
 		public boolean correct()
 		{
-			return userAnswer != null && userAnswer.equals(correctAnswer);
+			return userAnswer != null && userAnswer.pitch.equals(correctAnswer.pitch);
 		}
 
 		public static Answer fromJSON(JSONObject object) throws JSONException

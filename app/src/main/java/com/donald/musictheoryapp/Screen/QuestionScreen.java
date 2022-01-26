@@ -68,7 +68,8 @@ public class QuestionScreen extends Screen
      * *******
      */
 
-    public QuestionScreen(Context context, View view,
+    public QuestionScreen(Context context,
+                          View view,
                           OnFinishExerciseListener onFinishExerciseListener,
                           OnReturnToOverviewListener onReturnToOverviewListener)
     {
