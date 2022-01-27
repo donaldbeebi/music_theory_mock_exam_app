@@ -91,8 +91,9 @@
         android:layout_marginStart="16dp"
         android:layout_marginEnd="16dp"
         android:layout_marginBottom="8dp"
-        app:cardElevation="16dp"
-        app:cardCornerRadius="10dp" >
+        app:cardElevation="6dp"
+        app:cardCornerRadius="10dp"
+        android:backgroundTint="#EAEAEA">
 
         <LinearLayout
             android:id="@+id/fuck"

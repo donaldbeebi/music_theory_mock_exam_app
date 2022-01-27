@@ -61,7 +61,7 @@ public class CheckBoxQuestion extends Question
     }
 
     @Override
-    public int fullPoints()
+    public int maxPoints()
     {
         return answers.length;
     }

@@ -367,7 +367,7 @@ public class ScoreView extends View
 		int measuresPerLine = 1;
 		int numberOfLines = (measures.length + measuresPerLine - 1) / measuresPerLine;
 		int firstMeasureIndex = 0;
-		canvas.drawColor(Color.WHITE);
+		//canvas.drawColor(Color.WHITE);
 
 		// TODO: WHAT IF DIVISION CHANGED MID-WAY
 		for(int lineIndex = 0; lineIndex < numberOfLines; lineIndex++)

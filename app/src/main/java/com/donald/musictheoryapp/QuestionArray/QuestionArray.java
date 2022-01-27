@@ -119,4 +119,9 @@ public class QuestionArray
 
         return new QuestionArray(sections, groups, questions);
     }
+
+    public int sectionCount()
+    {
+        return sections.length;
+    }
 }

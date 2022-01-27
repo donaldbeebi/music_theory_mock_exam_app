@@ -31,6 +31,7 @@ import android.widget.ImageView
 import com.android.volley.Request
 import com.donald.musictheoryapp.QuestionArray.QuestionArray
 import com.donald.musictheoryapp.Screen.FinishExerciseConfirmationDialog
+import org.json.JSONArray
 import java.io.ByteArrayOutputStream
 import java.io.File
 import java.io.FileOutputStream
@@ -90,24 +91,25 @@ class MainActivity : AppCompatActivity(),
         exerciseMenuStatusTextView.setText(R.string.contacting_server_status)
         val queue = Volley.newRequestQueue(this)
         val request = StringRequest(
-                Request.Method.GET,
-                URL + "exercise",
-                { response ->
-                    try {
-                        val `object` = JSONObject(response)
-                        val images = `object`.getJSONArray("images")
-                        val numberTracker = NumberTracker(
-                                images.length(),
-                                { tracker: NumberTracker ->
-                                    exerciseMenuStatusTextView.text = getString(
-                                            R.string.image_download_status,
-                                            tracker.count(),
-                                            tracker.target()
-                                    )
-                                }
-                        ) { tracker: NumberTracker? ->
+            Request.Method.GET,
+            URL + "exercise",
+            { response ->
+                try {
+                    val jsonObject = JSONObject(response)
+                    val images = jsonObject.getJSONArray("images")
+                    val numberOfImagesNeeded = countImagesNeeded(images)
+                    val numberTracker = NumberTracker(
+                        numberOfImagesNeeded,
+                        { tracker: NumberTracker ->
+                            exerciseMenuStatusTextView.text = getString(
+                                    R.string.image_download_status,
+                                    tracker.count(),
+                                    tracker.target()
+                            )
+                        },
+                        { tracker: NumberTracker? ->
                             try {
-                                onRetrieveQuestions(`object`)
+                                onRetrieveQuestions(jsonObject)
                             } catch (e: JSONException) {
                                 e.printStackTrace()
                                 exerciseMenuStatusTextView.setText(R.string.json_error_status)
@@ -119,14 +121,17 @@ class MainActivity : AppCompatActivity(),
                                 exerciseMenuStatusTextView.setText(R.string.xml_error_status)
                             }
                         }
-                        for (i in 0 until images.length()) {
+                    )
+                    for (i in 0 until images.length()) {
+                        if (!imageExists(images.getString(i))) {
                             downloadImage(images.getString(i), numberTracker)
                         }
-                    } catch (e: JSONException) {
-                        exerciseMenuStatusTextView.setText(R.string.volley_error_status)
-                        e.printStackTrace()
                     }
+                } catch (e: JSONException) {
+                    exerciseMenuStatusTextView.setText(R.string.volley_error_status)
+                    e.printStackTrace()
                 }
+            }
         ) { error ->
             Log.d("from string request", "error: " + error.message)
             exerciseMenuStatusTextView.setText(R.string.server_error_status)
@@ -134,7 +139,23 @@ class MainActivity : AppCompatActivity(),
         queue.add(request)
     }
 
-    fun downloadImage(title: String, tracker: NumberTracker) {
+    private fun countImagesNeeded(images: JSONArray): Int
+    {
+        var count = 0
+        for (i in 0 until images.length()) {
+            if (!imageExists(images.getString(i))) {
+                count++
+            }
+        }
+        return count
+    }
+
+    private fun imageExists(title: String): Boolean {
+        val dir = File(filesDir, "images/$title.png")
+        return dir.exists();
+    }
+
+    private fun downloadImage(title: String, tracker: NumberTracker) {
         val dir = File(filesDir, "images")
         if (!dir.exists()) dir.mkdir()
         val destination = File(dir, "$title.png")
@@ -161,8 +182,6 @@ class MainActivity : AppCompatActivity(),
         ) { error: VolleyError -> Log.d("Volley error while fetch image $title", error.toString()) }
         Volley.newRequestQueue(this).add(request)
     }
-
-    fun onImagesReady() {}
 
     @kotlin.Throws(JSONException::class, IOException::class, XmlPullParserException::class)
     fun onRetrieveQuestions(jsonObject: JSONObject?) {

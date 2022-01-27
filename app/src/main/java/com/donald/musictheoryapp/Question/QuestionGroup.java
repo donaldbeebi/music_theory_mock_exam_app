@@ -15,7 +15,7 @@ public class QuestionGroup
     public int number;
     public Description[] descriptions;
     public Question[] questions;
-    public String topic;
+    public String name;
 
     @Deprecated
     public int getNumber() { return number; }
@@ -24,14 +24,24 @@ public class QuestionGroup
     @Deprecated
     public Question[] getQuestions() { return questions; }
     @Deprecated
-    public String getTopic() { return topic; }
+    public String getName() { return name; }
 
-    public int totalPoints()
+    public int points()
     {
-        int score = 0;
+        int points = 0;
         for(Question question : questions)
-            score += question.points();
-        return score;
+            points += question.points();
+        return points;
+    }
+
+    public int maxPoints()
+    {
+        int maxPoints = 0;
+        for(Question question : questions)
+        {
+            maxPoints += question.maxPoints();
+        }
+        return maxPoints;
     }
 
     @Override
@@ -40,7 +50,7 @@ public class QuestionGroup
         return
             "[Question Group] " +
             "Number: " + number + " " +
-            "Topic: " + topic + " " +
+            "Topic: " + name + " " +
             "Descriptions: " + Arrays.toString(descriptions) + " "+
             "Number of questions: " + questions.length + " ";
     }
@@ -50,7 +60,7 @@ public class QuestionGroup
         QuestionGroup group = new QuestionGroup();
         group.section = section;
         group.number = object.getInt("number");
-        group.topic = object.getString("topic");
+        group.name = object.getString("topic");
         group.descriptions = JSONArrayUtil.descriptions(object);
         group.questions = JSONArrayUtil.questions(object, group);
         return group;

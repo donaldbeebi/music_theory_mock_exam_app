@@ -8,27 +8,26 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.donald.musictheoryapp.QuestionArray.QuestionArray;
 import com.donald.musictheoryapp.R;
-import com.donald.musictheoryapp.Utils.ResultOverviewAdapter;
 
 public class ResultOverviewScreen extends Screen
 {
     public interface OnProceedToDetailListener
     { void onProceedToDetail(QuestionArray questions, int targetGroup); }
 
-    private RecyclerView m_RecyclerView;
-    private ResultOverviewAdapter m_Adapter;
-    private final OnProceedToDetailListener m_OnProceedToDetailListener;
+    private RecyclerView recyclerView;
+    private ResultOverviewAdapter adapter;
+    private final OnProceedToDetailListener onProceedToDetailListener;
 
     public ResultOverviewScreen(Context context, View view, OnProceedToDetailListener listener) {
         super(context, view);
-        m_OnProceedToDetailListener = listener;
+        onProceedToDetailListener = listener;
     }
 
     public void setQuestions(QuestionArray questions) {
         // load questions
-        m_RecyclerView = getView().findViewById(R.id.result_recycler_view);
-        m_Adapter = new ResultOverviewAdapter(questions, m_OnProceedToDetailListener);
-        m_RecyclerView.setAdapter(m_Adapter);
-        m_RecyclerView.setLayoutManager(new LinearLayoutManager(context()));
+        recyclerView = getView().findViewById(R.id.result_recycler_view);
+        adapter = new ResultOverviewAdapter(questions, onProceedToDetailListener);
+        recyclerView.setAdapter(adapter);
+        recyclerView.setLayoutManager(new LinearLayoutManager(context()));
     }
 }

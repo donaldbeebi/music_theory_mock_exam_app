@@ -185,7 +185,7 @@ public class QuestionDisplayHelper implements Question.QuestionVisitor
         currentQuestion = question;
         question.acceptVisitor(this);
 
-        if(readingMode && question.points() < question.fullPoints())
+        if(readingMode && question.points() < question.maxPoints())
         {
             correctAnswerView.setVisibility(View.VISIBLE);
             correctAnswerGridLayout.setVisibility(View.VISIBLE);
@@ -407,7 +407,7 @@ public class QuestionDisplayHelper implements Question.QuestionVisitor
                 }
             });
 
-            if(question.points() < question.fullPoints())
+            if(question.points() < question.maxPoints())
             {
                 correctAnswerGridLayout.setColumnCount(1);
                 correctAnswerGridLayout.setRowCount(1);
@@ -962,6 +962,7 @@ public class QuestionDisplayHelper implements Question.QuestionVisitor
         );
         if(bitmap == null)
         {
+            // not working
             bitmap = BitmapFactory.decodeFile(
                 context.getFilesDir() + "/images/image_not_found.png"
             );

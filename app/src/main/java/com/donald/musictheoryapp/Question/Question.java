@@ -40,7 +40,7 @@ public abstract class Question
 
     public abstract int points();
 
-    public int fullPoints()
+    public int maxPoints()
     {
         return 1;
     }

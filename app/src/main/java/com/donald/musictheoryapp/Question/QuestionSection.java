@@ -14,6 +14,26 @@ public class QuestionSection
 	public String name;
 	public QuestionGroup[] groups;
 
+	public int points()
+	{
+		int points = 0;
+		for(QuestionGroup group : groups)
+		{
+			points += group.points();
+		}
+		return points;
+	}
+
+	public int maxPoints()
+	{
+		int maxPoints = 0;
+		for(QuestionGroup group : groups)
+		{
+			maxPoints += group.maxPoints();
+		}
+		return maxPoints;
+	}
+
 	public static QuestionSection fromJSON(JSONObject object) throws JSONException, IOException, XmlPullParserException
 	{
 		QuestionSection section = new QuestionSection();
