@@ -24,7 +24,7 @@ public class FinishExerciseConfirmationDialog extends AppCompatDialogFragment
     public Dialog onCreateDialog(Bundle savedInstanceState)
     {
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-        builder.setTitle("Are you sure?")
+        builder.setTitle("Confirm finishing exercise")
                 .setPositiveButton("Finish", new DialogInterface.OnClickListener()
                 {
                     @Override
@@ -33,7 +33,7 @@ public class FinishExerciseConfirmationDialog extends AppCompatDialogFragment
                         m_OnConfirmDialogListener.onConfirmDialog();
                     }
                 })
-                .setNegativeButton("Continue Exercise", new DialogInterface.OnClickListener()
+                .setNegativeButton("Back to exercise", new DialogInterface.OnClickListener()
                 {
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i)

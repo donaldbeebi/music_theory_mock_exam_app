@@ -19,7 +19,7 @@ public abstract class Screen
         m_LayoutInflater = LayoutInflater.from(context);
     }
 
-    public Context context() { return m_Context; }
+    public Context getContext() { return m_Context; }
 
     public View getView() { return m_View; }
 

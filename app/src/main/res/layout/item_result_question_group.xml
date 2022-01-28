@@ -11,6 +11,8 @@
         android:id="@+id/result_group_name"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
+        android:textSize="16sp"
+        android:gravity="center_vertical"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent"
@@ -19,8 +21,10 @@
 
     <TextView
         android:id="@+id/result_group_score"
+        android:gravity="center"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
+        android:textSize="16sp"
         app:layout_constraintStart_toEndOf="@+id/result_group_name"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent"

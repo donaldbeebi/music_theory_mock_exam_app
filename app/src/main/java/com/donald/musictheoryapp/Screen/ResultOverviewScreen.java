@@ -11,11 +11,10 @@ import com.donald.musictheoryapp.R;
 
 public class ResultOverviewScreen extends Screen
 {
-    public interface OnProceedToDetailListener
-    { void onProceedToDetail(QuestionArray questions, int targetGroup); }
+    public interface OnProceedToDetailListener {
+        void onProceedToDetail(QuestionArray questions, int targetGroup);
+    }
 
-    private RecyclerView recyclerView;
-    private ResultOverviewAdapter adapter;
     private final OnProceedToDetailListener onProceedToDetailListener;
 
     public ResultOverviewScreen(Context context, View view, OnProceedToDetailListener listener) {
@@ -25,9 +24,9 @@ public class ResultOverviewScreen extends Screen
 
     public void setQuestions(QuestionArray questions) {
         // load questions
-        recyclerView = getView().findViewById(R.id.result_recycler_view);
-        adapter = new ResultOverviewAdapter(questions, onProceedToDetailListener);
+        RecyclerView recyclerView = getView().findViewById(R.id.result_recycler_view);
+        ResultOverviewAdapter adapter = new ResultOverviewAdapter(questions, onProceedToDetailListener);
         recyclerView.setAdapter(adapter);
-        recyclerView.setLayoutManager(new LinearLayoutManager(context()));
+        recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
     }
 }

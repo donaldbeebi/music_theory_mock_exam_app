@@ -2,54 +2,43 @@ package com.donald.musictheoryapp
 
 import androidx.appcompat.app.AppCompatActivity
 import com.google.android.material.bottomnavigation.BottomNavigationView
-import com.donald.musictheoryapp.Screen.ExerciseMenuScreen.OnStartExerciseListener
 import com.donald.musictheoryapp.Screen.QuestionScreen.OnFinishExerciseListener
 import com.donald.musictheoryapp.Screen.QuestionScreen.OnReturnToOverviewListener
 import com.donald.musictheoryapp.Screen.FinishExerciseConfirmationDialog.OnConfirmDialogListener
 import com.donald.musictheoryapp.Screen.ResultOverviewScreen.OnProceedToDetailListener
-import com.donald.musictheoryapp.Screen.ExerciseMenuScreen
-import com.donald.musictheoryapp.Screen.QuestionScreen
-import com.donald.musictheoryapp.Screen.ResultOverviewScreen
-import com.donald.musictheoryapp.Screen.Screen
-import android.widget.TextView
 import android.view.ViewGroup
 import android.os.Bundle
 import androidx.activity.OnBackPressedCallback
-import com.android.volley.toolbox.Volley
-import com.android.volley.toolbox.StringRequest
 import org.json.JSONObject
-import com.donald.musictheoryapp.Utils.NumberTracker
 import org.json.JSONException
 import org.xmlpull.v1.XmlPullParserException
-import com.android.volley.VolleyError
-import com.android.volley.toolbox.ImageRequest
-import android.graphics.Bitmap
-import android.util.Log
+import android.os.Handler
+import android.os.Looper
 import android.view.MenuItem
 import android.view.View
-import android.widget.ImageView
-import com.android.volley.Request
+import android.widget.Toast
 import com.donald.musictheoryapp.QuestionArray.QuestionArray
-import com.donald.musictheoryapp.Screen.FinishExerciseConfirmationDialog
-import org.json.JSONArray
-import java.io.ByteArrayOutputStream
-import java.io.File
-import java.io.FileOutputStream
+import com.donald.musictheoryapp.Screen.*
 import java.io.IOException
 
 class MainActivity : AppCompatActivity(),
         BottomNavigationView.OnNavigationItemSelectedListener,
-        OnStartExerciseListener,
         OnFinishExerciseListener,
         OnReturnToOverviewListener,
         OnConfirmDialogListener,
         OnProceedToDetailListener {
 
+    companion object {
+        const val URL = "http://161.81.107.94/"
+        const val DOUBLE_BACK_PRESS_DELAY_FOR_EXIT = 2000L
+    }
+
+    private var backPressCountForExit = 0
+
     private lateinit var exerciseMenuScreen: ExerciseMenuScreen
     private lateinit var questionScreen: QuestionScreen
     private lateinit var resultOverviewScreen: ResultOverviewScreen
-    private lateinit var currentScreenForExerciseTab: Screen
-    private lateinit var exerciseMenuStatusTextView: TextView
+    private lateinit var currentExerciseScreen: Screen
     private lateinit var mainFrame: ViewGroup
 
     //private ExerciseGenerator m_ExerciseGenerator;
@@ -58,15 +47,14 @@ class MainActivity : AppCompatActivity(),
         setContentView(R.layout.activity_main)
         (findViewById<View>(R.id.bottom_navigation_view) as BottomNavigationView).setOnNavigationItemSelectedListener(this)
         mainFrame = findViewById(R.id.main_frame_layout)
-        exerciseMenuScreen = ExerciseMenuScreen(this, layoutInflater.inflate(R.layout.screen_exercise_menu, null), this)
-        exerciseMenuStatusTextView = exerciseMenuScreen.view.findViewById(R.id.exercise_menu_status_text_view)
+        exerciseMenuScreen = ExerciseMenuScreen(this, layoutInflater.inflate(R.layout.screen_exercise_menu, null), this::onRetrieveQuestions)
         questionScreen = QuestionScreen(this, layoutInflater.inflate(R.layout.screen_question, null), this, this)
         resultOverviewScreen = ResultOverviewScreen(this, layoutInflater.inflate(R.layout.screen_result_overview, null), this)
-        currentScreenForExerciseTab = exerciseMenuScreen
-        mainFrame.addView(currentScreenForExerciseTab.view)
+        currentExerciseScreen = exerciseMenuScreen
+        mainFrame.addView(currentExerciseScreen.view)
         onBackPressedDispatcher.addCallback(object : OnBackPressedCallback(true) {
             override fun handleOnBackPressed() {
-                if (currentScreenForExerciseTab === questionScreen) questionScreen.onBackPressed()
+                if (currentExerciseScreen === questionScreen) questionScreen.onBackPressed()
             }
         })
     }
@@ -79,7 +67,7 @@ class MainActivity : AppCompatActivity(),
     override fun onNavigationItemSelected(item: MenuItem): Boolean {
         if (item.itemId == R.id.exercise_nav_button) {
             mainFrame.removeAllViews()
-            mainFrame.addView(currentScreenForExerciseTab.view)
+            mainFrame.addView(currentExerciseScreen.view)
         } else {
             mainFrame.removeAllViews()
             mainFrame.addView(resultOverviewScreen.view)
@@ -87,142 +75,72 @@ class MainActivity : AppCompatActivity(),
         return true
     }
 
-    override fun onStartExercise() {
-        exerciseMenuStatusTextView.setText(R.string.contacting_server_status)
-        val queue = Volley.newRequestQueue(this)
-        val request = StringRequest(
-            Request.Method.GET,
-            URL + "exercise",
-            { response ->
-                try {
-                    val jsonObject = JSONObject(response)
-                    val images = jsonObject.getJSONArray("images")
-                    val numberOfImagesNeeded = countImagesNeeded(images)
-                    val numberTracker = NumberTracker(
-                        numberOfImagesNeeded,
-                        { tracker: NumberTracker ->
-                            exerciseMenuStatusTextView.text = getString(
-                                    R.string.image_download_status,
-                                    tracker.count(),
-                                    tracker.target()
-                            )
-                        },
-                        { tracker: NumberTracker? ->
-                            try {
-                                onRetrieveQuestions(jsonObject)
-                            } catch (e: JSONException) {
-                                e.printStackTrace()
-                                exerciseMenuStatusTextView.setText(R.string.json_error_status)
-                            } catch (e: IOException) {
-                                e.printStackTrace()
-                                exerciseMenuStatusTextView.setText(R.string.xml_error_status)
-                            } catch (e: XmlPullParserException) {
-                                e.printStackTrace()
-                                exerciseMenuStatusTextView.setText(R.string.xml_error_status)
-                            }
-                        }
-                    )
-                    for (i in 0 until images.length()) {
-                        if (!imageExists(images.getString(i))) {
-                            downloadImage(images.getString(i), numberTracker)
-                        }
-                    }
-                } catch (e: JSONException) {
-                    exerciseMenuStatusTextView.setText(R.string.volley_error_status)
-                    e.printStackTrace()
-                }
-            }
-        ) { error ->
-            Log.d("from string request", "error: " + error.message)
-            exerciseMenuStatusTextView.setText(R.string.server_error_status)
-        }
-        queue.add(request)
-    }
-
-    private fun countImagesNeeded(images: JSONArray): Int
-    {
-        var count = 0
-        for (i in 0 until images.length()) {
-            if (!imageExists(images.getString(i))) {
-                count++
-            }
-        }
-        return count
-    }
-
-    private fun imageExists(title: String): Boolean {
-        val dir = File(filesDir, "images/$title.png")
-        return dir.exists();
-    }
-
-    private fun downloadImage(title: String, tracker: NumberTracker) {
-        val dir = File(filesDir, "images")
-        if (!dir.exists()) dir.mkdir()
-        val destination = File(dir, "$title.png")
-        val request = ImageRequest(
-                URL + "images/" + title,
-                { response: Bitmap ->
-                    try {
-                        destination.createNewFile()
-                        val bos = ByteArrayOutputStream()
-                        response.compress(Bitmap.CompressFormat.PNG, 100, bos)
-                        val fos = FileOutputStream(destination)
-                        fos.write(bos.toByteArray())
-                        fos.flush()
-                        fos.close()
-                        tracker.increment()
-                    } catch (e: IOException) {
-                        e.printStackTrace()
-                    }
-                },
-                2000,
-                2000,
-                ImageView.ScaleType.CENTER,
-                Bitmap.Config.RGB_565
-        ) { error: VolleyError -> Log.d("Volley error while fetch image $title", error.toString()) }
-        Volley.newRequestQueue(this).add(request)
-    }
-
     @kotlin.Throws(JSONException::class, IOException::class, XmlPullParserException::class)
-    fun onRetrieveQuestions(jsonObject: JSONObject?) {
+    private fun onRetrieveQuestions(jsonObject: JSONObject?) {
         mainFrame.removeAllViews()
         val questions = QuestionArray.fromJSON(jsonObject)
-        questionScreen.questions = questions
+        questionScreen.setQuestions(questions)
         //m_QuestionScreen.setQuestions(m_ExerciseGenerator.generateExercise());
         questionScreen.startExercise()
         questionScreen.startTimer()
-        currentScreenForExerciseTab = questionScreen
-        mainFrame.addView(currentScreenForExerciseTab.view)
-        exerciseMenuStatusTextView.setText(R.string.exercise_menu_start_button_default_text)
+        currentExerciseScreen = questionScreen
+        mainFrame.addView(currentExerciseScreen.view)
+        exerciseMenuScreen.setStatus(getString(R.string.exercise_menu_start_button_default_text), true)
     }
 
-    override fun onFinishExercise() {
-        val dialog = FinishExerciseConfirmationDialog(this)
-        dialog.show(supportFragmentManager, "exercise_finish_confirmation_dialog")
+    override fun onFinishExercise(outOfTime: Boolean) {
+        if (outOfTime) {
+            val dialog = OutOfTimeDialog { onConfirmDialog() }
+            dialog.show(supportFragmentManager, "exercise_out_of_time_dialog")
+        } else {
+            val dialog = FinishExerciseConfirmationDialog(this)
+            dialog.show(supportFragmentManager, "exercise_finish_confirmation_dialog")
+        }
     }
 
     override fun onConfirmDialog() {
         mainFrame.removeAllViews()
         resultOverviewScreen.setQuestions(questionScreen.questions)
-        currentScreenForExerciseTab = resultOverviewScreen
-        mainFrame.addView(currentScreenForExerciseTab.view)
+        currentExerciseScreen = resultOverviewScreen
+        mainFrame.addView(currentExerciseScreen.view)
     }
 
     override fun onProceedToDetail(questions: QuestionArray, targetGroup: Int) {
         mainFrame.removeAllViews()
-        questionScreen.questions = questions
-        questionScreen.displayQuestion(questions.questionIndexOf(questions.groupAt(targetGroup).getQuestion(0)))
-        currentScreenForExerciseTab = questionScreen
-        mainFrame.addView(currentScreenForExerciseTab.view)
+        questionScreen.setQuestions(questions)
+        questionScreen.displayQuestion(questions.questionIndexOf(questions.groupAt(targetGroup).questions[0]))
+        currentExerciseScreen = questionScreen
+        mainFrame.addView(currentExerciseScreen.view)
     }
 
     override fun onReturnToOverview() {
         mainFrame.removeAllViews()
-        currentScreenForExerciseTab = resultOverviewScreen
-        mainFrame.addView(currentScreenForExerciseTab.view)
+        currentExerciseScreen = resultOverviewScreen
+        mainFrame.addView(currentExerciseScreen.view)
     }
 
-    companion object {
-        const val URL = "http://161.81.107.94/"
+    private fun onExit() {
+        if (backPressCountForExit == 0) {
+            backPressCountForExit = 1
+            Toast.makeText(this, "Back again to exit the app", Toast.LENGTH_SHORT).show()
+            Handler(Looper.getMainLooper()).postDelayed(
+                { backPressCountForExit = 0 },
+                DOUBLE_BACK_PRESS_DELAY_FOR_EXIT
+            )
+        }
+        else {
+            backPressCountForExit = 0
+            finishAffinity()
+        }
+    }
+
+    override fun onBackPressed() {
+        if (currentExerciseScreen == questionScreen && questionScreen.readingMode) {
+            // reading on question screen
+            onReturnToOverview()
+        } else if (currentExerciseScreen == resultOverviewScreen || currentExerciseScreen == exerciseMenuScreen) {
+            // result overview screen or exercise menu screen
+            onExit()
+        }
     }
 }

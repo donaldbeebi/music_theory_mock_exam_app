@@ -62,6 +62,15 @@ public class QuestionArray
         return -1;
     }
 
+    public int groupIndexOf(QuestionGroup group)
+    {
+        for(int i = 0; i < groups.length; i++)
+        {
+            if(groups[i] == group) return i;
+        }
+        return -1;
+    }
+
     public int sectionIndexOf(QuestionSection section)
     {
         for(int i = 0; i < sections.length; i++)

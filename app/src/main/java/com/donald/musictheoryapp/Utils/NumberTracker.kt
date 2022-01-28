@@ -1,52 +1,36 @@
-package com.donald.musictheoryapp.Utils;
+package com.donald.musictheoryapp.Utils
 
-import android.util.Log;
+class NumberTracker(
+    private val target: Int,
+    private val onIncrement: () -> Unit,
+    private val onTarget: () -> Unit,
+) {
+    private var count = 0
+    private var counting = true
 
-public class NumberTracker
-{
-	public interface OnIncrementListener
-	{
-		void onIncrement(NumberTracker tracker);
-	}
+    init {
+        if (target == 0) onTarget()
+        require(target >= 0)
+    }
 
-	public interface OnTargetListener
-	{
-		void onTarget(NumberTracker tracker);
-	}
+    fun count(): Int {
+        return count
+    }
 
-	private int count;
-	private final int target;
-	private final OnIncrementListener onIncrementListener;
-	private final OnTargetListener onTargetListener;
+    fun target(): Int {
+        return target
+    }
 
-	public NumberTracker(
-		int target,
-		OnIncrementListener onIncrementListener,
-		OnTargetListener onTargetListener
-		)
-	{
-		count = 0;
-		if(target == 0) onTargetListener.onTarget(this);
-		this.target = target;
-		if(target < 0) throw new IllegalArgumentException();
-		this.onIncrementListener = onIncrementListener;
-		this.onTargetListener = onTargetListener;
-	}
+    fun increment() {
+        if(counting)
+        {
+            count++
+            onIncrement()
+            if (target == count) onTarget()
+        }
+    }
 
-	public int count()
-	{
-		return count;
-	}
-
-	public int target()
-	{
-		return target;
-	}
-
-	public void increment()
-	{
-		count++;
-		onIncrementListener.onIncrement(this);
-		if(target == count) onTargetListener.onTarget(this);
-	}
+    fun abort() {
+        counting = false
+    }
 }

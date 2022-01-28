@@ -95,7 +95,7 @@ public class QuestionDisplayHelper implements Question.QuestionVisitor
     public QuestionDisplayHelper(Screen screen)
     {
         final View view = screen.getView();
-        context = screen.context();
+        context = screen.getContext();
         inflater = screen.getLayoutInflater();
 
         if (BuildConfig.DEBUG && !view.getTag().toString().equals("question_layout"))

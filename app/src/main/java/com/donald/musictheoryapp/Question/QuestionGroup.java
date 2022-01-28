@@ -20,8 +20,6 @@ public class QuestionGroup
     @Deprecated
     public int getNumber() { return number; }
     @Deprecated
-    public Question getQuestion(int index) { return questions[index]; }
-    @Deprecated
     public Question[] getQuestions() { return questions; }
     @Deprecated
     public String getName() { return name; }

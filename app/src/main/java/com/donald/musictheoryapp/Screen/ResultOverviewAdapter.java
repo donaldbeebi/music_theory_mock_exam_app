@@ -7,6 +7,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.donald.musictheoryapp.Question.QuestionGroup;
@@ -26,8 +27,9 @@ public class ResultOverviewAdapter extends RecyclerView.Adapter<ResultOverviewAd
         private final ResultOverviewAdapter adapter;
         private final LayoutInflater inflater;
         private final TextView sectionNumber;
-        private final TextView sectionTitle;
+        private final TextView sectionName;
         private final TextView sectionScore;
+        private final View sectionGroup;
         private final ResultOverviewScreen.OnProceedToDetailListener onProceedToDetailListener;
         private final LinearLayout groupsLinearLayout;
         private int groupIndexToDisplay;
@@ -43,10 +45,27 @@ public class ResultOverviewAdapter extends RecyclerView.Adapter<ResultOverviewAd
             this.adapter = adapter;
             this.inflater = inflater;
             sectionNumber = itemView.findViewById(R.id.result_section_number);
-            sectionTitle = itemView.findViewById(R.id.result_section_name);
+            sectionName = itemView.findViewById(R.id.result_section_name);
             sectionScore = itemView.findViewById(R.id.result_section_score);
+            sectionGroup = itemView.findViewById(R.id.result_section_group);
             groupsLinearLayout = itemView.findViewById(R.id.result_section_groups);
+            groupsLinearLayout.setVisibility(View.GONE);
             onProceedToDetailListener = listener;
+
+            sectionGroup.setOnClickListener(new View.OnClickListener()
+            {
+                @Override
+                public void onClick(View view)
+                {
+                    groupsLinearLayout.setVisibility(
+                        groupsLinearLayout.getVisibility() == View.VISIBLE ?
+                            View.GONE :
+                            View.VISIBLE
+                    );
+                }
+            });
+
+
         }
 
         public void setQuestions(QuestionArray questions)
@@ -58,37 +77,32 @@ public class ResultOverviewAdapter extends RecyclerView.Adapter<ResultOverviewAd
         {
             QuestionSection section = questions.sectionAt(sectionIndex);
             sectionNumber.setText(String.valueOf(section.number));
-            sectionTitle.setText(section.name);
+            sectionName.setText(section.name);
             sectionScore.setText(section.points() + "/" + section.maxPoints());
             this.groupIndexToDisplay = sectionIndex;
 
             groupsLinearLayout.removeAllViews();
-            for(QuestionGroup group : section.groups)
+            QuestionGroup[] groups = section.groups;
+            for(int i = 0, groupsLength = groups.length; i < groupsLength; i++)
             {
-                View groupItem =  inflater.inflate(
+                QuestionGroup group = groups[i];
+                View groupItem = inflater.inflate(
                     R.layout.item_result_question_group, groupsLinearLayout, false
                 );
                 ((TextView) groupItem.findViewById(R.id.result_group_name)).setText(group.name);
                 ((TextView) groupItem.findViewById(R.id.result_group_score)).setText(
                     group.points() + "/" + group.maxPoints()
                 );
+                groupItem.setOnClickListener(
+                    (View view) ->
+                    {
+                        onProceedToDetailListener.onProceedToDetail(
+                            questions, questions.groupIndexOf(group)
+                        );
+                    }
+                );
                 groupsLinearLayout.addView(groupItem);
             }
-            itemView.setOnClickListener(new View.OnClickListener()
-            {
-                @Override
-                public void onClick(View view)
-                {
-                    //onProceedToDetailListener.onProceedToDetail(questions, groupIndexToDisplay);
-                    groupsLinearLayout.setVisibility(
-                        groupsLinearLayout.getVisibility() ==
-                            View.VISIBLE ?
-                            View.GONE :
-                            View.VISIBLE
-                    );
-                    adapter.notifyItemChanged(sectionIndex);
-                }
-            });
         }
     }
     /*

@@ -27,4 +27,6 @@
     <string name="text_input_hint">Write your answer here...</string>
     <string name="question_string">Question</string>
     <string name="question_correct_answer_string">Correct answer:</string>
+    <string name="image_download_error">Error Downloading Image</string>
+    <string name="image_save_error">Error Saving Image</string>
 </resources>
