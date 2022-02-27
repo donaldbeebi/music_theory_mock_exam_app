@@ -1,39 +1,74 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:tag="question_layout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical">
 
     <TextView
-        android:id="@+id/question_timer_display"
+        android:id="@+id/question_pause_overlay"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:text="@string/paused"
+        android:gravity="center"
+        android:textSize="32sp"
+        android:textColor="#BBBBBB"
+        android:background="#DDDDDD"
+        android:visibility="invisible"
+        app:layout_constraintTop_toTopOf="@+id/question_main_body"
+        app:layout_constraintBottom_toBottomOf="@+id/question_answer_panel"
+        app:layout_constraintStart_toStartOf="@+id/question_main_body"
+        app:layout_constraintEnd_toEndOf="@+id/question_main_body"/>
+
+    <LinearLayout
+        android:id="@+id/question_timer"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:orientation="horizontal"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        android:layout_marginEnd="20dp"
         android:layout_marginTop="12dp"
-        android:text="##:##"
-        android:textSize="20sp" />
+        android:layout_marginEnd="16dp"
+        android:gravity="center_vertical">
 
-    <TextView
-        android:id="@+id/question_timer_head"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        app:layout_constraintEnd_toStartOf="@+id/question_timer_display"
-        app:layout_constraintTop_toTopOf="@+id/question_timer_display"
-        android:text="@string/time_remaining"
-        android:textSize="20sp"
-        android:layout_marginEnd="8dp"/>
+        <TextView
+            android:id="@+id/question_timer_head"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="8dp"
+            android:text="@string/time_remaining"
+            android:textSize="20sp"
+            app:layout_constraintEnd_toStartOf="@+id/question_timer_display"
+            app:layout_constraintTop_toTopOf="@+id/question_timer_display" />
+
+        <TextView
+            android:id="@+id/question_timer_display"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="##:##"
+            android:textSize="20sp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <Button
+            android:id="@+id/question_timer_pause_button"
+            android:background="@drawable/ic_baseline_pause_24"
+            android:layout_width="24sp"
+            android:layout_height="24sp"
+            android:layout_marginStart="8dp"/>
+
+    </LinearLayout>
+
 
     <TextView
         android:id="@+id/question_section_number"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/question_timer_display"
-        android:layout_marginStart="20dp"
+        app:layout_constraintTop_toTopOf="@+id/question_timer"
+        android:layout_marginStart="16dp"
         android:text="#"
         android:textSize="20sp" />
 
@@ -41,39 +76,41 @@
         android:id="@+id/question_section_name"
         android:layout_width="0dp"
         android:layout_height="0dp"
-        app:layout_constraintStart_toEndOf="@+id/question_section_number"
-        app:layout_constraintTop_toTopOf="@+id/question_timer_display"
-        app:layout_constraintBottom_toBottomOf="@+id/question_timer_display"
-        app:layout_constraintEnd_toStartOf="@+id/question_timer_head"
-        android:text="Section"
-        android:gravity="center_vertical"
         android:layout_marginStart="8sp"
         android:layout_marginEnd="8dp"
         android:autoSizeMaxTextSize="20sp"
         android:autoSizeStepGranularity="1px"
-        android:autoSizeTextType="uniform" />
+        android:autoSizeTextType="uniform"
+        android:gravity="center_vertical"
+        android:text="Section"
+        app:layout_constraintBottom_toBottomOf="@+id/question_section_number"
+        app:layout_constraintEnd_toStartOf="@+id/question_timer"
+        app:layout_constraintStart_toEndOf="@+id/question_section_number"
+        app:layout_constraintTop_toTopOf="@+id/question_section_number" />
 
     <TextView
         android:id="@+id/question_number"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        app:layout_constraintTop_toBottomOf="@+id/question_timer_display"
+        app:layout_constraintTop_toBottomOf="@+id/question_section_number"
         app:layout_constraintStart_toStartOf="parent"
-        android:layout_marginStart="24dp"
+        android:layout_marginStart="16dp"
         android:layout_marginTop="12dp"
         android:text="#.#"
         android:textSize="14sp"
         android:textStyle="bold" />
 
     <ScrollView
+        android:id="@+id/question_main_body"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:fadeScrollbars="false"
-        app:layout_constraintTop_toBottomOf="@+id/question_number"
-        app:layout_constraintBottom_toTopOf="@+id/question_answer_panel"
-        android:layout_marginStart="24dp"
         android:layout_marginTop="12dp"
-        android:layout_marginEnd="24dp" >
+        android:layout_marginStart="16dp"
+        android:layout_marginEnd="16dp"
+        android:fadeScrollbars="false"
+        app:layout_constraintBottom_toTopOf="@+id/question_answer_panel"
+        app:layout_constraintTop_toBottomOf="@+id/question_number"
+        tools:layout_editor_absoluteX="24dp">
 
         <LinearLayout
             android:id="@+id/question_content"
@@ -96,48 +133,73 @@
         android:backgroundTint="#EAEAEA">
 
         <LinearLayout
-            android:id="@+id/fuck"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical" >
 
-            <TextView
-                android:id="@+id/question_input_hint_text_view"
+            <FrameLayout
+                android:id="@+id/question_input_panel_close_button"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:textSize="24sp"
-                android:textAlignment="center"
-                android:layout_marginTop="16dp"
-                android:layout_marginStart="16dp"
-                android:layout_marginEnd="16dp" />
+                android:minHeight="0dp"
+                android:minWidth="0dp">
 
-            <GridLayout
-                android:id="@+id/question_input_grid_layout"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:layout_margin="16dp" />
+                <FrameLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="8dp"
+                    android:layout_marginStart="128dp"
+                    android:layout_marginEnd="128dp"
+                    android:layout_marginTop="8dp"
+                    android:layout_marginBottom="8dp"
+                    android:background="@drawable/background_question_input_panel_close_button_shape" />
 
-            <TextView
-                android:id="@+id/question_correct_answer_text_view"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:textSize="24sp"
-                android:textAlignment="center"
-                android:text="@string/question_correct_answer_string"
-                android:layout_marginBottom="16dp"
-                android:layout_marginStart="16dp"
-                android:layout_marginEnd="16dp"
-                android:textColor="@color/question_correct_answer_text" />
+            </FrameLayout>
 
-            <GridLayout
-                android:id="@+id/question_correct_answer_grid_layout"
+            <LinearLayout
+                android:id="@+id/question_input_panel_collapsible"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:layout_marginStart="16dp"
-                android:layout_marginEnd="16dp"
-                android:layout_marginBottom="16dp" />
+                android:orientation="vertical">
+
+                <TextView
+                    android:id="@+id/question_input_hint_text_view"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:textSize="24sp"
+                    android:textAlignment="center"
+                    android:layout_marginTop="16dp"
+                    android:layout_marginStart="16dp"
+                    android:layout_marginEnd="16dp" />
+
+                <GridLayout
+                    android:id="@+id/question_input_grid_layout"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:layout_margin="16dp" />
+
+                <TextView
+                    android:id="@+id/question_correct_answer_text_view"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:textSize="24sp"
+                    android:textAlignment="center"
+                    android:text="@string/question_correct_answer_string"
+                    android:layout_marginBottom="16dp"
+                    android:layout_marginStart="16dp"
+                    android:layout_marginEnd="16dp"
+                    android:textColor="@color/question_correct_answer_text" />
+
+                <GridLayout
+                    android:id="@+id/question_correct_answer_grid_layout"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:layout_marginStart="16dp"
+                    android:layout_marginEnd="16dp"
+                    android:layout_marginBottom="16dp" />
+
+            </LinearLayout>
 
         </LinearLayout>
 

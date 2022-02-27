@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "453228511123",
+    "project_id": "music-theory-app-1643350728268",
+    "storage_bucket": "music-theory-app-1643350728268.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:453228511123:android:aea8adbf68245de098f266",
+        "android_client_info": {
+          "package_name": "com.donald.musictheoryapp"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "453228511123-n42f0hh5ehl6a37c094t3n6oajeb9sd3.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.donald.musictheoryapp",
+            "certificate_hash": "5c2d4527581ae0fef1fd60251ec044886316a05e"
+          }
+        },
+        {
+          "client_id": "453228511123-2i0jeo2td5t2cuqbi53edmd9q8nfvns1.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAwTxi1NCX2y7ZtuSJw3M9SEEQKE0Isip4"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "453228511123-2i0jeo2td5t2cuqbi53edmd9q8nfvns1.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

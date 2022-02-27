@@ -8,7 +8,7 @@
         android:title="@string/exercise_nav_title"/>
 
     <item
-        android:id="@+id/reference_nav_button"
+        android:id="@+id/review_nav_button"
         android:enabled="true"
         android:icon="@drawable/image_reference_nav_icon"
         android:title="@string/reference_nav_title"/>

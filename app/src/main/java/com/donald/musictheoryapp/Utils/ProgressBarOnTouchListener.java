@@ -4,9 +4,6 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.widget.SeekBar;
 
-import com.donald.musictheoryapp.Music.MusicXML.Clef;
-import com.donald.musictheoryapp.Music.MusicXML.Note;
-
 public class ProgressBarOnTouchListener implements View.OnTouchListener
 {
 	private final SeekBar seekBar;

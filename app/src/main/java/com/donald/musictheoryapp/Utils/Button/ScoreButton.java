@@ -2,16 +2,14 @@ package com.donald.musictheoryapp.Utils.Button;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
-import android.util.TypedValue;
 import android.view.LayoutInflater;
-import android.view.ViewGroup;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import androidx.core.content.ContextCompat;
 
-import com.donald.musictheoryapp.Music.MusicXML.Score;
-import com.donald.musictheoryapp.Music.ScoreView.ScoreView;
+import com.donald.musictheoryapp.music.MusicXML.Score;
+import com.donald.musictheoryapp.music.scoreview.ScoreView;
 import com.donald.musictheoryapp.R;
 
 @SuppressLint("ViewConstructor")

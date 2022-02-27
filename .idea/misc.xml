@@ -3,10 +3,33 @@
   <component name="DesignSurface">
     <option name="filePathToZoomLevelMap">
       <map>
+        <entry key="..\:/Users/Donald/AndroidStudioProjects/MusicTheoryApp/app/src/main/res/drawable/background.xml" value="0.241" />
+        <entry key="..\:/Users/Donald/AndroidStudioProjects/MusicTheoryApp/app/src/main/res/drawable/background_description_text_emphasize.xml" value="0.2" />
+        <entry key="..\:/Users/Donald/AndroidStudioProjects/MusicTheoryApp/app/src/main/res/drawable/background_question_button.xml" value="0.241" />
+        <entry key="..\:/Users/Donald/AndroidStudioProjects/MusicTheoryApp/app/src/main/res/drawable/background_question_input_panel_close_button_shape.xml" value="0.1115" />
+        <entry key="..\:/Users/Donald/AndroidStudioProjects/MusicTheoryApp/app/src/main/res/drawable/ic_baseline_pause_24.xml" value="0.279" />
+        <entry key="..\:/Users/Donald/AndroidStudioProjects/MusicTheoryApp/app/src/main/res/drawable/ic_baseline_play_arrow_24.xml" value="0.148" />
+        <entry key="..\:/Users/Donald/AndroidStudioProjects/MusicTheoryApp/app/src/main/res/drawable/ic_check.xml" value="0.279" />
+        <entry key="..\:/Users/Donald/AndroidStudioProjects/MusicTheoryApp/app/src/main/res/drawable/ic_cross.xml" value="0.279" />
+        <entry key="..\:/Users/Donald/AndroidStudioProjects/MusicTheoryApp/app/src/main/res/drawable/ic_launcher_background.xml" value="0.279" />
+        <entry key="..\:/Users/Donald/AndroidStudioProjects/MusicTheoryApp/app/src/main/res/drawable/image_reference_nav_icon.xml" value="0.135" />
+        <entry key="..\:/Users/Donald/AndroidStudioProjects/MusicTheoryApp/app/src/main/res/drawable/screen_profile.xml" value="0.1745" />
+        <entry key="..\:/Users/Donald/AndroidStudioProjects/MusicTheoryApp/app/src/main/res/drawable/shape_button_number_background.xml" value="0.241" />
+        <entry key="..\:/Users/Donald/AndroidStudioProjects/MusicTheoryApp/app/src/main/res/layout/activity_main.xml" value="0.1453804347826087" />
+        <entry key="..\:/Users/Donald/AndroidStudioProjects/MusicTheoryApp/app/src/main/res/layout/activity_sign_in.xml" value="0.2838541666666667" />
+        <entry key="..\:/Users/Donald/AndroidStudioProjects/MusicTheoryApp/app/src/main/res/layout/description_text.xml" value="0.1766304347826087" />
+        <entry key="..\:/Users/Donald/AndroidStudioProjects/MusicTheoryApp/app/src/main/res/layout/dialog_sign_in.xml" value="0.12689969604863222" />
+        <entry key="..\:/Users/Donald/AndroidStudioProjects/MusicTheoryApp/app/src/main/res/layout/item_exercise_list.xml" value="0.2" />
         <entry key="..\:/Users/Donald/AndroidStudioProjects/MusicTheoryApp/app/src/main/res/layout/item_result_overview.xml" value="0.176" />
         <entry key="..\:/Users/Donald/AndroidStudioProjects/MusicTheoryApp/app/src/main/res/layout/item_result_question_group.xml" value="0.19655521783181357" />
+        <entry key="..\:/Users/Donald/AndroidStudioProjects/MusicTheoryApp/app/src/main/res/layout/part_description_image.xml" value="0.16621376811594202" />
+        <entry key="..\:/Users/Donald/AndroidStudioProjects/MusicTheoryApp/app/src/main/res/layout/part_description_image_scrollview.xml" value="0.21105072463768115" />
+        <entry key="..\:/Users/Donald/AndroidStudioProjects/MusicTheoryApp/app/src/main/res/layout/part_image_description.xml" value="0.1" />
+        <entry key="..\:/Users/Donald/AndroidStudioProjects/MusicTheoryApp/app/src/main/res/layout/part_score_view_description.xml" value="0.11094224924012158" />
+        <entry key="..\:/Users/Donald/AndroidStudioProjects/MusicTheoryApp/app/src/main/res/layout/screen_exercise_list.xml" value="0.12664640324214793" />
         <entry key="..\:/Users/Donald/AndroidStudioProjects/MusicTheoryApp/app/src/main/res/layout/screen_exercise_menu.xml" value="0.18425925925925926" />
-        <entry key="..\:/Users/Donald/AndroidStudioProjects/MusicTheoryApp/app/src/main/res/layout/screen_question.xml" value="0.18425925925925926" />
+        <entry key="..\:/Users/Donald/AndroidStudioProjects/MusicTheoryApp/app/src/main/res/layout/screen_profile.xml" value="0.1621376811594203" />
+        <entry key="..\:/Users/Donald/AndroidStudioProjects/MusicTheoryApp/app/src/main/res/layout/screen_question.xml" value="0.4" />
         <entry key="..\:/Users/Donald/AndroidStudioProjects/MusicTheoryApp/app/src/main/res/layout/screen_result_overview.xml" value="0.19655521783181357" />
       </map>
     </option>

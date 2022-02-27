@@ -1,6 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <dimen name="question_button_number_text_size">
-        12sp
-    </dimen>
+    <dimen name="question_button_corner_radius">10dp</dimen>
+    <dimen name="question_button_stroke_width">3dp</dimen>
+    <dimen name="question_button_stroke_dash_width">10dp</dimen>
+    <dimen name="question_button_stroke_dash_gap">10dp</dimen>
+    <dimen name="check_box_stroke_width">2dp</dimen>
+    <dimen name="check_box_corner_radius">5dp</dimen>
+    <dimen name="image_button_elevation">2dp</dimen>
+    <dimen name="question_button_number_radius">16sp</dimen>
+    <dimen name="question_input_panel_close_button_shape_corner_radius">8dp</dimen>
+    <dimen name="question_button_number_text_size">12sp</dimen>
+    <!-- Default screen margins, per the Android Design guidelines. -->
+    <dimen name="activity_horizontal_margin">16dp</dimen>
+    <dimen name="activity_vertical_margin">16dp</dimen>
 </resources>

@@ -23,7 +23,7 @@ public abstract class QuestionButton extends RelativeLayout
 		this.background = background;
 		selectionBorder = (GradientDrawable) ContextCompat.getDrawable(
 			context, R.drawable.shape_selection_border
-		);
+		).mutate();
 		assert selectionBorder != null;
 		selectionBorder.setAlpha(0);
 

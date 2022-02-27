@@ -1,7 +1,7 @@
 <resources>
     <string name="app_name">MusicTheoryApp</string>
     <string name="exercise_nav_title">Exercise</string>
-    <string name="reference_nav_title">Reference</string>
+    <string name="reference_nav_title">Review</string>
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="enter_button_text">ENTER</string>
@@ -29,4 +29,23 @@
     <string name="question_correct_answer_string">Correct answer:</string>
     <string name="image_download_error">Error Downloading Image</string>
     <string name="image_save_error">Error Saving Image</string>
+    <string name="web_client_id" translatable="false">453228511123-2i0jeo2td5t2cuqbi53edmd9q8nfvns1.apps.googleusercontent.com</string>
+    <string name="out_of_time_dialog_title">Time is up!</string>
+    <string name="no_thanks_dialog_confirmation">No thanks.</string>
+    <string name="toast_successful_sign_in">Sign-in successful! Welcome, %1$s.</string>
+    <string name="toast_unsuccessful_sign_up">Error signing up unsuccessful!</string>
+    <string name="toast_google_sign_in_exception">There were problems while signing in to Google!</string>
+    <string name="toast_no_account_found">Please sign up instead.</string>
+    <string name="toast_successful_sign_up">Sign-up successful! Welcome, %1$s.</string>
+    <string name="ok_dialog_confirmation">OK</string>
+    <string name="auth0_domain">donaldmntam.us.auth0.com</string>
+    <string name="auth0_client_id">aDwvx74aeFzIZ67IXxK8ewZQd5drIjhq</string>
+    <string name="click_to_download_exercise_status">Click Start To Download Exercise</string>
+    <string name="nickname">Nickname</string>
+    <string name="sign_up_dialog_title">Signing up via %1$s</string>
+    <string name="sign_up">Sign up</string>
+    <string name="cancel">Cancel</string>
+    <string name="sign_up_dialog_nick_name_title">How shall I call you?</string>
+    <string name="paused">PAUSED</string>
+    <string name="question_correct_string">Correct!</string>
 </resources>

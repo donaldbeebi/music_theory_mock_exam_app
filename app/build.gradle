@@ -9,12 +9,14 @@ android {
 
     defaultConfig {
         applicationId "com.donald.musictheoryapp"
-        minSdkVersion 28
+        minSdk defaultMinSdkVersion
         targetSdkVersion 31
         versionCode 1
         versionName "1.0"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+
+        manifestPlaceholders = [auth0Domain: "@string/auth0_domain", auth0Scheme: "https"]
     }
 
     buildTypes {
@@ -27,6 +29,9 @@ android {
         sourceCompatibility JavaVersion.VERSION_1_8
         targetCompatibility JavaVersion.VERSION_1_8
     }
+    buildFeatures {
+        viewBinding true
+    }
 }
 
 dependencies {
@@ -35,13 +40,27 @@ dependencies {
     implementation 'androidx.constraintlayout:constraintlayout:2.0.4'
     implementation 'androidx.legacy:legacy-support-v4:1.0.0'
     implementation 'junit:junit:4.12'
+    implementation 'androidx.annotation:annotation:1.2.0'
+    implementation 'androidx.lifecycle:lifecycle-livedata-ktx:2.3.1'
+    implementation 'androidx.lifecycle:lifecycle-viewmodel-ktx:2.3.1'
     testImplementation 'junit:junit:4.12'
     androidTestImplementation 'androidx.test.ext:junit:1.1.2'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.3.0'
     implementation 'com.android.volley:volley:1.2.0'
-    implementation "androidx.core:core-ktx:+"
+    implementation 'androidx.core:core-ktx:1.7.0'
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
+    implementation 'com.google.android.gms:play-services-auth:20.0.1'
+    implementation 'com.auth0.android:auth0:2.+'
+    implementation 'com.auth0:java-jwt:3.18.3'
+    implementation platform('com.google.firebase:firebase-bom:29.0.4')
+    implementation 'com.google.firebase:firebase-storage-ktx'
+    implementation 'org.dom4j:dom4j:2.1.3'
+    implementation 'org.skyscreamer:jsonassert:1.5.0'
 }
+
+apply plugin: 'com.google.gms.google-services'
+
 repositories {
     mavenCentral()
+    maven { url 'https://jitpack.io' }
 }

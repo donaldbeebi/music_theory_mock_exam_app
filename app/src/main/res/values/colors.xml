@@ -27,4 +27,5 @@
     <color name="question_correct_answer_text">#00E60C</color>
     <color name="question_button_number_text">#FFFFFF</color>
     <color name="question_button_number_background">#30000000</color>
+    <color name="question_input_panel_close_button_shape">#BBBBBB</color>
 </resources>
