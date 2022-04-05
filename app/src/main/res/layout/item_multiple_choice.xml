@@ -1,8 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<com.google.android.material.button.MaterialButton
-    android:theme="@style/Widget.MaterialComponents.Button.TextButton"
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="0dp"
-    android:layout_height="0dp"
-    android:text="hi"
-    android:textSize="24sp" />

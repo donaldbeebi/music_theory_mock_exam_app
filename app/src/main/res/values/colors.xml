@@ -28,4 +28,11 @@
     <color name="question_button_number_text">#FFFFFF</color>
     <color name="question_button_number_background">#30000000</color>
     <color name="question_input_panel_close_button_shape">#BBBBBB</color>
+    <color name="recycler_view_divider">#ECECEC</color>
+    <color name="custom_ripple_shadow">#25000000</color>
+    <color name="description_text_emphasize_background">#222222</color>
+    <color name="exercise_list_next_button_resume">#E33B3B</color>
+    <color name="exercise_list_paused_text">#E33B3B</color>
+    <color name="exercise_list_next_button_view">#333333</color>
+    <color name="exercise_overview_expand_button">#333333</color>
 </resources>

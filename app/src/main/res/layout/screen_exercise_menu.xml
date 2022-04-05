@@ -21,4 +21,24 @@
         android:layout_below="@id/exercise_menu_start_button"
         android:layout_marginTop="8dp" />
 
+    <Button
+        android:id="@+id/exercise_menu_sign_out_button"
+        android:text="@string/sign_out_button_text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_above="@+id/exercise_menu_disconnect_account_button"
+        android:layout_marginBottom="32dp"
+        android:backgroundTint="#FF0000"/>
+
+    <Button
+        android:id="@+id/exercise_menu_disconnect_account_button"
+        android:text="@string/disconnect_account_button_text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_alignParentBottom="true"
+        android:layout_marginBottom="64dp"
+        android:backgroundTint="#FF0000"/>
+
 </RelativeLayout>

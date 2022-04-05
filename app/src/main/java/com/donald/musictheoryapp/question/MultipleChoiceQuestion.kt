@@ -1,7 +1,6 @@
 package com.donald.musictheoryapp.question
 
-import android.util.Log
-import com.donald.musictheoryapp.Utils.*
+import com.donald.musictheoryapp.util.*
 import kotlin.Throws
 import org.json.JSONArray
 import org.json.JSONException
@@ -52,7 +51,7 @@ class MultipleChoiceQuestion(
             return MultipleChoiceQuestion(
                 number = jsonObject.getInt("number"),
                 descriptions = jsonObject.getDescriptions(),
-                inputHint = jsonObject.getInputHint(),
+                inputHint = jsonObject.getInputHintOrNull(),
                 options = jsonObject.getOptions(),
                 optionType = jsonObject.getOptionType(),
                 answer = Answer.fromJson(jsonObject.getJSONObject("answer")),
@@ -65,15 +64,18 @@ class MultipleChoiceQuestion(
         TEXT, IMAGE, SCORE
     }
 
-    class Answer(var userAnswer: Int?, val correctAnswer: Int) : Question.Answer {
+    class Answer(var userAnswer: Int?, val correctAnswers: List<Int>) : Question.Answer {
 
         override val correct: Boolean
-            get() = userAnswer == correctAnswer
+            get() = correctAnswers.any { it == userAnswer }
 
         fun toJson(): JSONObject {
             val jsonObject = JSONObject()
             jsonObject.put("user_answer", userAnswer ?: JSONObject.NULL)
-            jsonObject.put("correct_answer", correctAnswer)
+            jsonObject.put(
+                "correct_answers",
+                JSONArray().apply { correctAnswers.forEach { put(it) } }
+            )
             return jsonObject
         }
 
@@ -82,7 +84,7 @@ class MultipleChoiceQuestion(
             fun fromJson(jsonObject: JSONObject): Answer {
                 return Answer(
                     if (jsonObject.isNull("user_answer")) null else jsonObject.getInt("user_answer"),
-                    jsonObject.getInt("correct_answer")
+                    jsonObject.getCorrectAnswers()
                 )
             }
 

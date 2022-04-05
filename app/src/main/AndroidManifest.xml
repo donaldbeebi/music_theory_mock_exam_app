@@ -16,6 +16,24 @@
         android:theme="@style/Theme.MusicTheoryApp"
         android:usesCleartextTraffic="true">
         <activity
+            android:name=".PracticeOptionsActivity"
+            android:exported="false" />
+        <activity
+            android:name=".ProfileActivity"
+            android:exported="false" />
+        <activity
+            android:name=".QuestionReadingActivity"
+            android:exported="false" />
+        <activity
+            android:name=".ExerciseOverviewActivity"
+            android:exported="false" />
+        <activity
+            android:name=".ExerciseListActivity"
+            android:exported="false" />
+        <activity
+            android:name=".ExerciseActivity"
+            android:exported="false" />
+        <activity
             android:name=".question.ExerciseActivity"
             android:exported="false" />
         <activity
@@ -29,7 +47,7 @@
         </activity>
         <activity
             android:name=".MainActivity"
-            android:exported="false"></activity>
+            android:exported="false" />
     </application>
 
 </manifest>

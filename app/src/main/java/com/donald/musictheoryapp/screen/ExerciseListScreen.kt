@@ -1,91 +1,132 @@
 package com.donald.musictheoryapp.screen
 
 import android.annotation.SuppressLint
-import android.content.Context
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
+import android.app.Activity
+import android.widget.ImageView
+import android.widget.PopupMenu
 import android.widget.TextView
+import androidx.appcompat.content.res.AppCompatResources
+import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.donald.musictheoryapp.ExerciseListItem
-import com.donald.musictheoryapp.MainActivity
 import com.donald.musictheoryapp.R
-import com.donald.musictheoryapp.getExerciseList
-import java.text.SimpleDateFormat
-import java.util.*
+import com.donald.musictheoryapp.adapter.ExerciseListAdapter
+import com.donald.musictheoryapp.util.*
 
 class ExerciseListScreen(
-    activity: MainActivity,
-    onViewExercise: (String) -> Unit
-    ) : Screen(activity, R.layout.screen_exercise_list) {
+    activity: Activity,
+    onViewExercise: (ExerciseData) -> Unit,
+    onStartExercise: (ExerciseData) -> Unit
+) : Screen(activity, R.layout.screen_exercise_list) {
 
-    private val adapter: ExerciseListAdapter = ExerciseListAdapter(context, onViewExercise)
+    var editable: Boolean
+        get() = adapter.editable
+        set(editable) {
+            adapter.editable = editable
+        }
+
+    private var currentSortType = ExerciseListAdapter.SortType.DATE
+    private var currentSortByAscending = true
+    private val adapter: ExerciseListAdapter = ExerciseListAdapter(activity, onViewExercise, onStartExercise)
     private val recyclerView: RecyclerView = view.findViewById(R.id.exercise_list_recycler_view)
 
     init {
         recyclerView.apply {
             adapter = this@ExerciseListScreen.adapter
-            layoutManager = LinearLayoutManager(context)
+            layoutManager = LinearLayoutManager(activity)
+            val decoration = DividerItemDecoration(activity, DividerItemDecoration.VERTICAL).apply {
+                AppCompatResources.getDrawable(activity, R.drawable.recycler_view_divider)?.let { setDrawable(it) }
+            }
+            addItemDecoration(decoration)
+        }
+        runBackground {
+            val exerciseList = sortedExerciseList(getExerciseList(activity))
+            runMain { adapter.exerciseList = exerciseList }
+        }
+
+        val sortOrderImageView = view.findViewById<ImageView>(R.id.exercise_list_sort_order)
+        sortOrderImageView.setOnClickListener {
+            val ascending = toggle(currentSortByAscending)
+            sortOrderImageView.setImageResource(
+                when (ascending) {
+                    true -> R.drawable.ic_exercise_list_sort_ascending
+                    false -> R.drawable.ic_exercise_list_sort_descending
+                }
+            )
+            setSortOrder(ascending)
+        }
+
+        val sortByTextView = view.findViewById<TextView>(R.id.exercise_list_sort_by)
+        sortByTextView.setOnClickListener { view ->
+            PopupMenu(activity, view).apply {
+                menuInflater.inflate(R.menu.exercise_list_sort_menu, menu)
+                setOnMenuItemClickListener { item ->
+                    sortByTextView.text = item.title
+                    when (item.itemId) {
+                        R.id.exercise_list_menu_date -> {
+                            setSortType(ExerciseListAdapter.SortType.DATE)
+                            true
+                        }
+                        R.id.exercise_list_menu_type -> {
+                            setSortType(ExerciseListAdapter.SortType.TYPE)
+                            true
+                        }
+                        R.id.exercise_list_menu_ended -> {
+                            setSortType(ExerciseListAdapter.SortType.ENDED)
+                            true
+                        }
+                        R.id.exercise_list_menu_points -> {
+                            setSortType(ExerciseListAdapter.SortType.POINTS)
+                            true
+                        }
+                        else -> false
+                    }
+                }
+            }.show()
         }
     }
 
-    fun refreshExerciseList() {
-        adapter.refreshExerciseList()
+    fun toggleEditable() = adapter.toggleEditable()
+
+    fun refreshExerciseList() = runBackground {
+        val exerciseList = getExerciseList(activity)
+        runMain { adapter.exerciseList = exerciseList }
     }
 
-}
+    private fun setSortType(sortType: ExerciseListAdapter.SortType) {
+        currentSortType = sortType
+        val exerciseList = adapter.exerciseList ?: return
+        runBackground {
+            val sortedExerciseList = sortedExerciseList(exerciseList)
+            runMain { adapter.exerciseList = sortedExerciseList }
+        }
+    }
 
-private class ExerciseListAdapter(
-    private val context: Context,
-    val onViewExercise: (String) -> Unit
-) : RecyclerView.Adapter<ExerciseListViewHolder>() {
-
-    private val dateFormatter = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault())
-    private var exerciseList: Array<ExerciseListItem> = getExerciseList(context)
+    private fun setSortOrder(ascending: Boolean) {
+        currentSortByAscending = ascending
+        val exerciseList = adapter.exerciseList ?: return
+        runBackground {
+            val sortedExerciseList = sortedExerciseList(exerciseList)
+            runMain { adapter.exerciseList = sortedExerciseList }
+        }
+    }
 
     @SuppressLint("NotifyDataSetChanged")
-    fun refreshExerciseList() {
-        exerciseList = getExerciseList(context)
-        notifyDataSetChanged()
-    }
-
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ExerciseListViewHolder {
-        val itemView = LayoutInflater.from(context).inflate(R.layout.item_exercise_list, parent, false)
-        return ExerciseListViewHolder(itemView, onViewExercise, dateFormatter)
-    }
-
-    override fun onBindViewHolder(holder: ExerciseListViewHolder, position: Int) {
-        holder.bindData(exerciseList[position])
-    }
-
-    override fun getItemCount(): Int {
-        return exerciseList.size
-    }
-
-}
-
-private class ExerciseListViewHolder(
-
-    itemView: View,
-    private val onViewExercise: (String) -> Unit,
-    private val dateFormatter: SimpleDateFormat
-) : RecyclerView.ViewHolder(itemView) {
-
-    private val titleTextView: TextView = itemView.findViewById(R.id.exercise_list_item_title)
-    private val scoreTextView: TextView = itemView.findViewById(R.id.exercise_list_item_score)
-    private val dateTextView: TextView = itemView.findViewById(R.id.exercise_list_item_date)
-    private lateinit var exerciseTitle: String
-
-    init {
-        itemView.setOnClickListener { onViewExercise(exerciseTitle) }
-    }
-
-    fun bindData(item: ExerciseListItem) {
-        titleTextView.text = item.title
-        scoreTextView.text = "${item.points}/${item.maxPoints}"
-        dateTextView.text = dateFormatter.format(item.date)
-        exerciseTitle = "${item.title} ${item.date.time}"
+    private fun sortedExerciseList(exerciseList: List<ExerciseData>): List<ExerciseData> {
+        return when (currentSortByAscending) {
+            true -> when (currentSortType) {
+                ExerciseListAdapter.SortType.DATE -> exerciseList.sortedBy { it.date }
+                ExerciseListAdapter.SortType.TYPE -> exerciseList.sortedBy { it.type }
+                ExerciseListAdapter.SortType.ENDED -> exerciseList.sortedBy { it.ended }
+                ExerciseListAdapter.SortType.POINTS -> exerciseList.sortedBy { it.points }
+            }
+            false -> when (currentSortType) {
+                ExerciseListAdapter.SortType.DATE -> exerciseList.sortedByDescending { it.date }
+                ExerciseListAdapter.SortType.TYPE -> exerciseList.sortedByDescending { it.type }
+                ExerciseListAdapter.SortType.ENDED -> exerciseList.sortedByDescending { it.ended }
+                ExerciseListAdapter.SortType.POINTS -> exerciseList.sortedByDescending { it.points }
+            }
+        }
     }
 
 }

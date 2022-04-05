@@ -1,9 +1,8 @@
 package com.donald.musictheoryapp.question
 
-import android.util.Log
 import kotlin.Throws
-import com.donald.musictheoryapp.Utils.getDescriptions
-import com.donald.musictheoryapp.Utils.getInputHint
+import com.donald.musictheoryapp.util.getDescriptions
+import com.donald.musictheoryapp.util.getInputHintOrNull
 import org.json.JSONArray
 import org.json.JSONException
 import org.json.JSONObject
@@ -44,7 +43,7 @@ class CheckBoxQuestion(
             val question = CheckBoxQuestion(
                 number = jsonObject.getInt("number"),
                 descriptions = jsonObject.getDescriptions(),
-                inputHint = jsonObject.getInputHint(),
+                inputHint = jsonObject.getInputHintOrNull(),
                 answers = jsonObject.getJSONArray("answers").run {
                     Array(this.length()) { index ->
                         Answer.fromJson(this.getJSONObject(index))

@@ -1,24 +1,32 @@
 package com.donald.musictheoryapp.question
 
-import com.donald.musictheoryapp.Utils.*
+import com.donald.musictheoryapp.R
+import com.donald.musictheoryapp.util.*
 import org.json.JSONObject
-import com.donald.musictheoryapp.Utils.Time.Companion.hr
+import com.donald.musictheoryapp.util.Time.Companion.sec
 import org.json.JSONArray
 import java.lang.StringBuilder
 import java.util.*
 
 class Exercise(
+    var savedPageIndex: Int,
+    val type: Type,
     val title: String,
     val date: Date,
     var timeRemaining: Time,
-    private val sections: Array<QuestionSection>,
-    private val groups: Array<QuestionGroup>,
-    private val questions: Array<Question>
+    val sections: Array<QuestionSection>,
+    val groups: Array<QuestionGroup>,
+    val questions: Array<Question>
 ) {
 
-    val points = questions.sumOf { it.points }
-    val maxPoints = questions.sumOf { it.maxPoints }
-    val questionCount = questions.size
+    val ended: Boolean
+        get() = timeRemaining == 0.sec
+    val points: Int
+        get() = if (ended) questions.sumOf { it.points } else -1
+    val maxPoints: Int
+        get() = questions.sumOf { it.maxPoints }
+    val questionCount: Int
+        get() = questions.size
 
     fun sectionOf(group: QuestionGroup): QuestionSection {
         sections.forEach { section ->
@@ -41,18 +49,22 @@ class Exercise(
         throw IllegalStateException("Question is not found in this section")
     }
 
+    @Deprecated("Use property instead", ReplaceWith("sections[sectionIndex]"))
     fun sectionAt(sectionIndex: Int): QuestionSection {
         return sections[sectionIndex]
     }
 
+    @Deprecated("Use property instead", ReplaceWith("groups[groupIndex]"))
     fun groupAt(groupIndex: Int): QuestionGroup {
         return groups[groupIndex]
     }
 
+    @Deprecated("Use property instead", ReplaceWith("questions[questionIndex]"))
     fun questionAt(questionIndex: Int): Question {
         return questions[questionIndex]
     }
 
+    @Deprecated("Use property instead", ReplaceWith("groups.size"))
     fun groupCount(): Int {
         return groups.size
     }
@@ -61,26 +73,26 @@ class Exercise(
         return groups[groupIndex].questions[localQuestionIndex]
     }
 
-    @Deprecated("Use property")
+    @Deprecated("Use property", ReplaceWith("questions.size"))
     fun questionCount(): Int {
         return questions.size
     }
 
-    fun questionIndexOf(question: Question): Int {
+    fun indexOf(question: Question): Int {
         for (i in questions.indices) {
             if (questions[i] === question) return i
         }
         return -1
     }
 
-    fun groupIndexOf(group: QuestionGroup): Int {
+    fun indexOf(group: QuestionGroup): Int {
         for (i in groups.indices) {
             if (groups[i] === group) return i
         }
         return -1
     }
 
-    fun sectionIndexOf(section: QuestionSection): Int {
+    fun indexOf(section: QuestionSection): Int {
         for (i in sections.indices) {
             if (sections[i] === section) return i
         }
@@ -112,6 +124,8 @@ class Exercise(
         }
         jsonObject.apply {
             put("images", imageArray)
+            put("saved_page_index", savedPageIndex)
+            put("type", type.toString())
             put("title", title)
             put("date", date.time)
             put("time_remaining", timeRemaining.millis)
@@ -124,8 +138,8 @@ class Exercise(
 
     companion object {
 
-        fun fromJson(jsonObject: JSONObject): Exercise {
-            val sections = jsonObject.getSections()
+        fun fromJsonOrNull(jsonObject: JSONObject): Exercise? {
+            val sections = jsonObject.getSectionsOrNull() ?: return null
             val groups = ArrayList<QuestionGroup>()
             sections.forEach { section ->
                 groups.addAll(section.groups)
@@ -137,13 +151,48 @@ class Exercise(
                 }
             }
             return Exercise(
-                title = jsonObject.getString("title"),
-                date = jsonObject.getDate("date"),
-                timeRemaining = if (jsonObject.isNull("time_remaining")) 2.hr else jsonObject.getTime("time_remaining"),
+                savedPageIndex = jsonObject.getIntOrNull("saved_page_index") ?: return null,
+                type = jsonObject.getExerciseTypeOrNull() ?: return null,
+                title = jsonObject.getExerciseTitleOrNull() ?: return null,
+                date = jsonObject.getDateOrNull() ?: return null,
+                timeRemaining = jsonObject.getTimeRemainingOrNull() ?: return null,
                 sections = sections,
                 groups = groups.toTypedArray(),
                 questions = questions.toTypedArray()
             )
+        }
+
+    }
+
+    enum class Type(private val string: String, val resId: Int) {
+
+        TEST("test", R.string.exercise_type_test), PRACTICE("practice", R.string.exercise_type_practice);
+
+        override fun toString() = string
+
+        companion object {
+
+            private val types = listOf(TEST, PRACTICE)
+
+            fun fromString(string: String): Type {
+                types.forEach {
+                    if (it.string == string) return it
+                }
+                throw IllegalStateException("No matching string")
+            }
+
+            fun fromStringOrNull(string: String): Type? {
+                types.forEach {
+                    if (it.string == string) return it
+                }
+                return null
+            }
+
+            fun fromOrdinal(ordinal: Int): Type {
+                if (ordinal !in 0..types.size) throw IllegalStateException("No matching ordinal")
+                return types[ordinal]
+            }
+
         }
 
     }

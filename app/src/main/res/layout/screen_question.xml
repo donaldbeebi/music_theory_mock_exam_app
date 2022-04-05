@@ -18,7 +18,7 @@
         android:background="#DDDDDD"
         android:visibility="invisible"
         app:layout_constraintTop_toTopOf="@+id/question_main_body"
-        app:layout_constraintBottom_toBottomOf="@+id/question_answer_panel"
+        app:layout_constraintBottom_toBottomOf="@+id/question_input_panel"
         app:layout_constraintStart_toStartOf="@+id/question_main_body"
         app:layout_constraintEnd_toEndOf="@+id/question_main_body"/>
 
@@ -78,9 +78,9 @@
         android:layout_height="0dp"
         android:layout_marginStart="8sp"
         android:layout_marginEnd="8dp"
-        android:autoSizeMaxTextSize="20sp"
-        android:autoSizeStepGranularity="1px"
-        android:autoSizeTextType="uniform"
+        app:autoSizeMaxTextSize="20sp"
+        app:autoSizeStepGranularity="1px"
+        app:autoSizeTextType="uniform"
         android:gravity="center_vertical"
         android:text="Section"
         app:layout_constraintBottom_toBottomOf="@+id/question_section_number"
@@ -108,7 +108,7 @@
         android:layout_marginStart="16dp"
         android:layout_marginEnd="16dp"
         android:fadeScrollbars="false"
-        app:layout_constraintBottom_toTopOf="@+id/question_answer_panel"
+        app:layout_constraintBottom_toTopOf="@+id/question_input_panel"
         app:layout_constraintTop_toBottomOf="@+id/question_number"
         tools:layout_editor_absoluteX="24dp">
 
@@ -121,7 +121,7 @@
     </ScrollView>
 
     <com.google.android.material.card.MaterialCardView
-        android:id="@+id/question_answer_panel"
+        android:id="@+id/question_input_panel"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         app:layout_constraintBottom_toTopOf="@+id/question_progress_bar"
@@ -184,7 +184,7 @@
                     android:layout_height="wrap_content"
                     android:textSize="24sp"
                     android:textAlignment="center"
-                    android:text="@string/question_correct_answer_string"
+                    android:text="@string/question_correct_answer_title_text_view_string"
                     android:layout_marginBottom="16dp"
                     android:layout_marginStart="16dp"
                     android:layout_marginEnd="16dp"
@@ -239,5 +239,11 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toEndOf="@+id/question_previous_button"
         app:layout_constraintEnd_toStartOf="@+id/question_next_button" />
+
+    <ImageView
+        android:visibility="gone"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@drawable/ic_section_7_peek_button" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

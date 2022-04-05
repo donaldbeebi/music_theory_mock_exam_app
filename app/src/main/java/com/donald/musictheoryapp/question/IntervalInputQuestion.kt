@@ -1,12 +1,12 @@
 package com.donald.musictheoryapp.question
 
 import kotlin.Throws
-import com.donald.musictheoryapp.music.MusicXML.Score
+import com.donald.musictheoryapp.music.musicxml.Score
 import org.xmlpull.v1.XmlPullParserException
-import com.donald.musictheoryapp.Utils.getDescriptions
-import com.donald.musictheoryapp.Utils.getInputHint
-import com.donald.musictheoryapp.Utils.getScore
-import com.donald.musictheoryapp.music.MusicXML.Note
+import com.donald.musictheoryapp.util.getDescriptions
+import com.donald.musictheoryapp.util.getInputHintOrNull
+import com.donald.musictheoryapp.util.getScore
+import com.donald.musictheoryapp.music.musicxml.Note
 import org.json.JSONException
 import org.json.JSONObject
 import java.io.IOException
@@ -45,7 +45,7 @@ class IntervalInputQuestion(
             val question = IntervalInputQuestion(
                 number = jsonObject.getInt("number"),
                 descriptions = jsonObject.getDescriptions(),
-                inputHint = jsonObject.getInputHint(),
+                inputHint = jsonObject.getInputHintOrNull(),
                 score = jsonObject.getScore(),
                 requiredInterval = jsonObject.getString("required_interval"),
                 answer = Answer.fromJson(jsonObject.getJSONObject("answer"))
@@ -63,10 +63,10 @@ class IntervalInputQuestion(
 
         @Throws(JSONException::class)
         fun toJson(): JSONObject {
-            val jsonObject = JSONObject()
-            jsonObject.put("user_answer", if (userAnswer == null) JSONObject.NULL else userAnswer)
-            jsonObject.put("correct_answer", correctAnswer.toJson())
-            return jsonObject
+            return JSONObject().apply {
+                put("user_answer", userAnswer?.toJson() ?: JSONObject.NULL)
+                put("correct_answer", correctAnswer.toJson())
+            }
         }
 
         companion object {

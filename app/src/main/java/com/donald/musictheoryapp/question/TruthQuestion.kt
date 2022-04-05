@@ -1,8 +1,7 @@
 package com.donald.musictheoryapp.question
 
-import android.util.Log
-import com.donald.musictheoryapp.Utils.getDescriptions
-import com.donald.musictheoryapp.Utils.getInputHint
+import com.donald.musictheoryapp.util.getDescriptions
+import com.donald.musictheoryapp.util.getInputHintOrNull
 import org.json.JSONObject
 
 class TruthQuestion(
@@ -35,7 +34,7 @@ class TruthQuestion(
             return TruthQuestion(
                 number = jsonObject.getInt("number"),
                 descriptions = jsonObject.getDescriptions(),
-                inputHint = jsonObject.getInputHint(),
+                inputHint = jsonObject.getInputHintOrNull(),
                 answer = Answer.fromJson(jsonObject.getJSONObject("answer"))
             )
         }
@@ -46,7 +45,6 @@ class TruthQuestion(
 
         override val correct: Boolean
             get() {
-                Log.d("TruthQuestion", "$userAnswer and $correctAnswer = ${userAnswer == correctAnswer}")
                 return userAnswer == correctAnswer
             }
 
@@ -69,4 +67,5 @@ class TruthQuestion(
         }
 
     }
+
 }

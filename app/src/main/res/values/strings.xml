@@ -25,27 +25,116 @@
     <string name="image_download_status">Downloading Images...(%1$d/%2$d)</string>
     <string name="volley_error_status">Error Processing Exercise (Volley).</string>
     <string name="text_input_hint">Write your answer here...</string>
-    <string name="question_string">Question</string>
-    <string name="question_correct_answer_string">Correct answer:</string>
+    <string name="question_string">Question %1$s</string>
+    <string name="question_correct_answer_title_text_view_string">Correct answer:</string>
     <string name="image_download_error">Error Downloading Image</string>
     <string name="image_save_error">Error Saving Image</string>
-    <string name="web_client_id" translatable="false">453228511123-2i0jeo2td5t2cuqbi53edmd9q8nfvns1.apps.googleusercontent.com</string>
+    <string name="auth0_domain">donaldmntam.us.auth0.com</string>
+    <string name="auth0_client_id">aDwvx74aeFzIZ67IXxK8ewZQd5drIjhq</string>
+    <string name="click_to_download_exercise_status">Click Start To Download Exercise</string>
+    <string name="nickname">Nickname</string>
+    <string name="paused">PAUSED</string>
+    <string name="question_correct_string">Correct!</string>
+    <string name="question_correct_also_correct_string">Correct!\nAlso correct:</string>
+    <string name="back">Back</string>
+    <string name="menu_screen_title">Menu</string>
+    <string name="sign_out_button_text">Sign out</string>
+    <string name="disconnect_account_button_text">Delete account</string>
+
     <string name="out_of_time_dialog_title">Time is up!</string>
     <string name="no_thanks_dialog_confirmation">No thanks.</string>
+    <string name="ok_dialog_confirmation">OK</string>
+    <string name="sign_up_dialog_title">Signing up via %1$s</string>
+    <string name="sign_up_dialog_nick_name_title">How shall I call you?</string>
+    <string name="sign_up">Sign up</string>
+    <string name="cancel">Cancel</string>
+    <string name="pause_exercise_dialog_title">Do you want to pause the exercise?</string>
+    <string name="pause_exercise_dialog_message">You may resume doing this exercise in the \"Past Exercise\" screen from the main menu.</string>
+    <string name="pause_exercise_dialog_confirm">Confirm</string>
+    <string name="pause_exercise_back_to_exercise">Back to exercise</string>
+    <string name="exit_exercise_dialog_title">You are about to exit the exercise</string>
+    <string name="exit_exercise_dialog_message">Save the exercise to resume later from the \"Past Exercise\" screen or end the exercise to check the answers.</string>
+    <string name="exit_exercise_dialog_end">End</string>
+    <string name="exit_exercise_dialog_save">Save</string>
+    <string name="exit_exercise_dialog_back_to_exercise">Back to exercise</string>
+
     <string name="toast_successful_sign_in">Sign-in successful! Welcome, %1$s.</string>
     <string name="toast_unsuccessful_sign_up">Error signing up unsuccessful!</string>
     <string name="toast_google_sign_in_exception">There were problems while signing in to Google!</string>
     <string name="toast_no_account_found">Please sign up instead.</string>
     <string name="toast_successful_sign_up">Sign-up successful! Welcome, %1$s.</string>
-    <string name="ok_dialog_confirmation">OK</string>
-    <string name="auth0_domain">donaldmntam.us.auth0.com</string>
-    <string name="auth0_client_id">aDwvx74aeFzIZ67IXxK8ewZQd5drIjhq</string>
-    <string name="click_to_download_exercise_status">Click Start To Download Exercise</string>
-    <string name="nickname">Nickname</string>
-    <string name="sign_up_dialog_title">Signing up via %1$s</string>
-    <string name="sign_up">Sign up</string>
-    <string name="cancel">Cancel</string>
-    <string name="sign_up_dialog_nick_name_title">How shall I call you?</string>
-    <string name="paused">PAUSED</string>
-    <string name="question_correct_string">Correct!</string>
+    <string name="toast_sign_out_successful">You have successfully signed out.</string>
+    <string name="toast_sign_out_failed">Sign out unsuccessful :(</string>
+    <string name="toast_disconnect_successful">You have successfully disconnected your Google account from the app.</string>
+    <string name="toast_disconnect_unsuccessful_google">There were problems while disconnecting your Google account.</string>
+    <string name="toast_disconnect_unsuccessful_amta">There were problems while deleting the record of your account from the server.</string>
+    <string name="toast_zero_question_groups">You do not have at least one question group selected</string>
+    <string name="toast_exit_confirmation">Back again to exit the app</string>
+    <string name="toast_successful_exercise_deletion">Exercise successfully deleted</string>
+    <string name="toast_failed_exercise_deletion">Error deleting exercise</string>
+    <string name="toast_failed_exercise_retrieval">Error retrieving exercise</string>
+    <string name="toast_json_parsing_error">There was an error parsing a json file.</string>
+    <string name="toast_access_token_error">Error while trying to obtain an access token to the server.</string>
+    <string name="toast_exercise_list_paused_info">The exercise has not ended; click the arrow to continue the exercise</string>
+
+    <string name="button_begin_test">Begin Test</string>
+    <string name="button_practice_mode">Practice Mode</string>
+    <string name="button_profile">Profile</string>
+    <string name="button_past_exercise">Past Exercise</string>
+
+    <string name="main_activity_title">Main</string>
+    <string name="profile_activity_title">Profile</string>
+    <string name="practice_options_activity_title">Practice Options</string>
+    <string name="exercise_activity_title">Exercise</string>
+    <string name="exercise_list_activity_title">Past Exercise</string>
+    <string name="question_overview_activity_title">Overview</string>
+    <string name="question_reading_activity_title">Exercise Review</string>
+
+    <string name="group_time_signature">Time Signature</string>
+    <string name="group_simple_compound">Simple Compound</string>
+    <string name="group_rhythm">Rhythm</string>
+    <string name="group_note_grouping">Note Grouping</string>
+    <string name="group_rests">Rests</string>
+    <string name="group_note_naming">Note Naming</string>
+    <string name="group_enharmonic_equivalent">Enharmonic Equivalent</string>
+    <string name="group_transposition">Transposition</string>
+    <string name="group_clef_comparison">Clef Comparison</string>
+    <string name="group_key_signature">Key Signature</string>
+    <string name="group_melody_key">Melody Key</string>
+    <string name="group_scale_note">Scale Note</string>
+    <string name="group_scale_clef">Scale Clef</string>
+    <string name="group_chromatic_scale">Chromatic Scale</string>
+    <string name="group_technical_name">Technical Name</string>
+    <string name="group_interval_naming">Interval Naming</string>
+    <string name="group_interval_quality">Interval Quality</string>
+    <string name="group_interval_drawing">Interval Drawing</string>
+    <string name="group_cadence_chord">Cadence Chord</string>
+    <string name="group_cadence_naming">Cadence Naming</string>
+    <string name="group_chord_naming">Chord Naming</string>
+    <string name="group_instrument_fact">Instrument Fact</string>
+    <string name="group_musical_term">Musical Term</string>
+    <string name="group_ornament_naming">Ornament Naming</string>
+
+    <string name="practice_options_confirm">CONFIRM</string>
+
+    <string name="section_rhythm">Rhythm</string>
+    <string name="section_pitch">Pitch</string>
+    <string name="section_keys_and_scales">Keys and Scales</string>
+    <string name="section_intervals">Intervals</string>
+    <string name="section_chords">Chords</string>
+    <string name="section_terms_signs_and_instruments">Terms, Signs, and Instruments</string>
+
+    <string name="web_client_id" translatable="false">453228511123-2i0jeo2td5t2cuqbi53edmd9q8nfvns1.apps.googleusercontent.com</string>
+    <string name="exercise_type_test">Test</string>
+    <string name="exercise_type_practice">Practice</string>
+    <string name="exercise_list_paused_text">PAUSED</string>
+    <string name="exercise_list_menu_type">Type</string>
+    <string name="exercise_list_menu_date">Date</string>
+    <string name="exercise_list_menu_ended">Ended</string>
+    <string name="exercise_list_menu_points">Points</string>
+    <string name="exercise_list_sort_by">Sort by:</string>
+
+    <string name="exercise_overview_section_name">Section %1$d</string>
+    <string name="toast_failed_exercise_save">There was an error saving the exercise. Please try again!</string>
+
 </resources>

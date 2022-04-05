@@ -1,51 +1,81 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.cardview.widget.CardView
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    app:cardCornerRadius="12dp"
-    app:cardElevation="16dp"
-    android:layout_margin="8dp">
+    android:layout_height="wrap_content">
 
-    <androidx.constraintlayout.widget.ConstraintLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:padding="12dp">
+    <TextView
+        android:id="@+id/exercise_list_item_type"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="24dp"
+        android:text="type"
+        android:textSize="36sp"
+        android:layout_marginTop="16dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
-        <TextView
-            android:id="@+id/exercise_list_item_title"
-            android:text="title"
-            android:textSize="36sp"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent" />
+    <TextView
+        android:id="@+id/exercise_list_item_score"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="##/##"
+        android:textSize="24sp"
+        android:layout_marginEnd="16dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/exercise_list_item_paused_text"
+        app:layout_constraintTop_toTopOf="parent" />
 
-        <TextView
-            android:id="@+id/exercise_list_item_score"
-            android:text="score"
-            android:textSize="24sp"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/exercise_list_item_title"
-            app:layout_constraintBottom_toTopOf="@+id/exercise_list_item_date"
-            app:layout_constraintEnd_toEndOf="parent"
-            android:layout_marginTop="8dp"/>
+    <TextView
+        android:id="@+id/exercise_list_item_paused_text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="16dp"
+        android:text="@string/exercise_list_paused_text"
+        android:textSize="18sp"
+        android:padding="4dp"
+        android:textColor="@android:color/white"
+        android:background="@drawable/background_exercise_list_paused_text"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintEnd_toStartOf="@id/exercise_list_item_delete_button"/>
 
-        <TextView
-            android:id="@+id/exercise_list_item_date"
-            android:text="date"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textSize="14sp"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/exercise_list_item_score"
-            app:layout_constraintEnd_toEndOf="parent"
-            android:layout_margin="8dp"/>
+    <TextView
+        android:id="@+id/exercise_list_item_date"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="date"
+        android:textSize="20sp"
+        android:layout_marginBottom="16dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="@+id/exercise_list_item_type"
+        app:layout_constraintTop_toBottomOf="@+id/exercise_list_item_type" />
 
-    </androidx.constraintlayout.widget.ConstraintLayout>
+    <ImageView
+        android:id="@+id/exercise_list_item_delete_button"
+        android:src="@drawable/ic_delete"
+        android:visibility="visible"
+        android:layout_width="40dp"
+        android:layout_height="0dp"
+        android:layout_marginEnd="16dp"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/exercise_list_item_next_button"
+        app:layout_constraintBottom_toBottomOf="parent" />
 
-</androidx.cardview.widget.CardView>
+    <ImageView
+        android:id="@+id/exercise_list_item_next_button"
+        android:src="@drawable/ic_next_button"
+        android:visibility="visible"
+        android:background="@drawable/background_exercise_list_next_button"
+        android:layout_width="60dp"
+        android:layout_height="0dp"
+        android:paddingStart="10dp"
+        android:paddingEnd="10dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        android:clickable="true"
+        android:focusable="true" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

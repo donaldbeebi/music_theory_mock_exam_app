@@ -1,3 +1,4 @@
+/*
 package com.donald.musictheoryapp.screen
 
 import android.graphics.Bitmap
@@ -11,8 +12,11 @@ import com.android.volley.toolbox.StringRequest
 import com.android.volley.toolbox.Volley
 import com.auth0.jwt.JWT
 import com.donald.musictheoryapp.*
-import com.donald.musictheoryapp.Utils.NumberTracker
+import com.donald.musictheoryapp.util.NumberTracker
 import com.donald.musictheoryapp.question.Exercise
+import com.donald.musictheoryapp.util.saveExercise
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
 import org.json.JSONArray
 import org.json.JSONException
 import org.json.JSONObject
@@ -25,7 +29,9 @@ import java.util.*
 
 class ExerciseMenuScreen(
     activity: MainActivity,
-    private val onRetrieveQuestions: (exercise: Exercise) -> Unit,
+    private val retrieveQuestionsCallback: (exercise: Exercise) -> Unit,
+    signOutCallback: () -> Unit,
+    disconnectAccountCallback: () -> Unit
     ) : Screen(activity, R.layout.screen_exercise_menu) {
 
     private val startButton = view.findViewById<Button>(R.id.exercise_menu_start_button)
@@ -34,6 +40,8 @@ class ExerciseMenuScreen(
 
     init {
         startButton.setOnClickListener { onStartExercise() }
+        view.findViewById<Button>(R.id.exercise_menu_sign_out_button).setOnClickListener { signOutCallback() }
+        view.findViewById<Button>(R.id.exercise_menu_disconnect_account_button).setOnClickListener { disconnectAccountCallback() }
     }
 
     fun setStatus(messageResource: String, reEnableButton: Boolean) {
@@ -104,7 +112,7 @@ class ExerciseMenuScreen(
                         },
                         onTarget = {
                             try {
-                                onRetrieveQuestions(exercise)
+                                retrieveQuestionsCallback(exercise)
                                 setStatus(context.getString(R.string.click_to_download_exercise_status), true)
                             } catch (e: JSONException) {
                                 e.printStackTrace()
@@ -200,3 +208,5 @@ class ExerciseMenuScreen(
     }
 
 }
+
+ */

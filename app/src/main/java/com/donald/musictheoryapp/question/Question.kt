@@ -1,6 +1,6 @@
 package com.donald.musictheoryapp.question
 
-import com.donald.musictheoryapp.Utils.getQuestionType
+import com.donald.musictheoryapp.util.getQuestionType
 import kotlin.Throws
 import org.xmlpull.v1.XmlPullParserException
 import org.json.JSONArray
@@ -27,6 +27,24 @@ abstract class Question(
         }
     }
 
+    inline fun visit(
+        crossinline whenMultipleChoice: (MultipleChoiceQuestion) -> Unit,
+        crossinline whenTextInput: (TextInputQuestion) -> Unit,
+        crossinline whenTruth: (TruthQuestion) -> Unit,
+        crossinline whenCheckBox: (CheckBoxQuestion) -> Unit,
+        crossinline whenIntervalInput: (IntervalInputQuestion) ->  Unit
+    ) {
+        acceptVisitor(
+            object : QuestionVisitor {
+                override fun visit(question: MultipleChoiceQuestion) = whenMultipleChoice(question)
+                override fun visit(question: TextInputQuestion) = whenTextInput(question)
+                override fun visit(question: TruthQuestion) = whenTruth(question)
+                override fun visit(question: CheckBoxQuestion) = whenCheckBox(question)
+                override fun visit(question: IntervalInputQuestion) = whenIntervalInput(question)
+            }
+        )
+    }
+
     @Throws(JSONException::class)
     protected abstract fun toPartialJson(): JSONObject
     @Throws(JSONException::class)
@@ -41,7 +59,9 @@ abstract class Question(
         jsonObject.put("descriptions", currentArray)
 
         // 3. panel hint
-        jsonObject.put("input_hint", inputHint ?: JSONObject.NULL)
+        val inputHint = inputHint
+        if (inputHint == null) jsonObject.put("input_hint", JSONObject.NULL)
+        else jsonObject.put("input_hint", inputHint)
         return jsonObject
     }
 

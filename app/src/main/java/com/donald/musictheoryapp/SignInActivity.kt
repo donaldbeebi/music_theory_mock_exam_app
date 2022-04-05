@@ -5,8 +5,9 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
 import android.widget.Toast
-import com.android.volley.toolbox.StringRequest
-import com.android.volley.toolbox.Volley
+import com.auth0.jwt.JWT
+import com.donald.musictheoryapp.util.TokenManager
+import com.donald.musictheoryapp.util.Profile
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount
 import com.google.android.gms.auth.api.signin.GoogleSignInClient
@@ -14,6 +15,12 @@ import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.android.gms.common.SignInButton
 import com.google.android.gms.common.api.ApiException
 import com.google.android.gms.tasks.OnCompleteListener
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
+import org.http4k.client.OkHttp
+import org.http4k.core.*
 import org.json.JSONObject
 
 class SignInActivity : AppCompatActivity() {
@@ -30,6 +37,7 @@ class SignInActivity : AppCompatActivity() {
             .requestIdToken(getString(R.string.web_client_id))
             .requestEmail()
             .build()
+
         googleSignInClient = GoogleSignIn.getClient(this, gso)
 
         signInButton = findViewById(R.id.exercise_menu_sign_in_button)
@@ -41,7 +49,7 @@ class SignInActivity : AppCompatActivity() {
         // check if the user has already signed in
         GoogleSignIn.getLastSignedInAccount(this)?.let {
             if (!it.isExpired) {
-                continueToAmta(it)
+                GlobalScope.launch { continueToAmta(it) }
             }
             else {
                 silentSignInToGoogle()
@@ -54,7 +62,7 @@ class SignInActivity : AppCompatActivity() {
             .addOnCompleteListener(this) {
                 OnCompleteListener<GoogleSignInAccount> { task ->
                     try {
-                        continueToAmta(task.result)
+                        GlobalScope.launch { continueToAmta(task.result) }
                     } catch (e: ApiException) {
                         Toast.makeText(this, R.string.toast_google_sign_in_exception, Toast.LENGTH_LONG).show()
                     }
@@ -66,83 +74,80 @@ class SignInActivity : AppCompatActivity() {
         startActivityForResult(googleSignInClient.signInIntent, RC_SIGN_IN)
     }
 
-    private fun continueToAmta(account: GoogleSignInAccount) {
+    private suspend fun continueToAmta(account: GoogleSignInAccount) {
+        Log.d("SignInActivity", "continueToAmta called")
         val idToken = account.idToken ?: throw IllegalStateException("Error getting idToken from Google Account")
-        val queue = Volley.newRequestQueue(this)
-        val request = object : StringRequest(
-            // method
-            Method.GET,
-            // url
-            "$SERVER_URL/user/",
-            // on response
-            { response ->
-                val jsonObject = JSONObject(response)
-                val accessToken = jsonObject.getString("access_token")
-                val nickname = jsonObject.getString("nickname")
-                Toast.makeText(this, getString(R.string.toast_successful_sign_in, nickname), Toast.LENGTH_SHORT).show()
-                val intent = Intent(this, MainActivity::class.java)
-                intent.putExtra("id_token", idToken)
-                intent.putExtra("access_token", accessToken)
-                startActivity(intent)
-                finish()
-            },
-            // on error
-            { error ->
-                when (error.networkResponse.statusCode) {
-                    404 -> {
-                        Log.d("SignInActivity", "User not found. Signing up instead.")
-                        Toast.makeText(this, R.string.toast_no_account_found, Toast.LENGTH_LONG).show()
-                        signUpForAmta(account)
-                    }
-                    else -> {
-                        error.printStackTrace()
-                        Log.d("SignInActivity", "Volley error with status code: ${error.networkResponse.statusCode}")
-                    }
-                }
-            }
-        ) {
-            override fun getHeaders(): MutableMap<String, String> {
-                return mutableMapOf("Authorization" to "Bearer $idToken")
-            }
+        TokenManager.idToken = JWT.decode(idToken)
+        val client = OkHttp()
+        val request = Request(Method.GET, "$SERVER_URL/user")
+            .header("Authorization", "Bearer $idToken")
+        val response = withContext(Dispatchers.IO) {
+            client(request)
         }
-
-        queue.add(request)
-    }
-
-    private fun signUpForAmta(account: GoogleSignInAccount) {
-        val idToken = account.idToken ?: throw IllegalStateException("Error getting email from Google Account")
-        val dialog = SignUpDialog("Google") { nickname ->
-            val queue = Volley.newRequestQueue(this)
-            object : StringRequest(
-                Method.POST,
-                "$SERVER_URL/user/",
-                { response ->
-                    val jsonObject = JSONObject(response)
+        val context = this
+        withContext(Dispatchers.Main) {
+            when (response.status) {
+                Status.OK -> {
+                    val jsonObject = JSONObject(response.bodyString())
                     val accessToken = jsonObject.getString("access_token")
-                    Toast.makeText(this, getString(R.string.toast_successful_sign_up, nickname), Toast.LENGTH_SHORT).show()
-                    val intent = Intent(this, MainActivity::class.java)
+                    val nickname = jsonObject.getString("nickname")
+                    Toast.makeText(context, getString(R.string.toast_successful_sign_in, nickname), Toast.LENGTH_SHORT).show()
+                    val intent = Intent(context, MainActivity::class.java)
                     intent.putExtra("id_token", idToken)
                     intent.putExtra("access_token", accessToken)
+                    intent.putExtra("profile", Profile(nickname))
                     startActivity(intent)
                     finish()
-                },
-                { Toast.makeText(this, R.string.toast_unsuccessful_sign_up, Toast.LENGTH_SHORT).show() }
-            ) {
-                override fun getHeaders(): MutableMap<String, String> {
-                    return mutableMapOf("Authorization" to "Bearer $idToken")
                 }
-                override fun getBodyContentType(): String {
-                    return "application/json; charset=utr-8"
+                Status.NO_CONTENT -> {
+                    Toast.makeText(context, R.string.toast_no_account_found, Toast.LENGTH_LONG).show()
+                    SignUpDialog("Google") { nickname ->
+                        GlobalScope.launch { signUpForAmta(idToken, nickname, "en") }
+                    }.show(supportFragmentManager, "sign_up_dialog")
+
                 }
-                override fun getBody(): ByteArray {
-                    return JSONObject().apply {
-                        put("nickname", nickname)
-                        put("lang_pref", "en")
-                    }.toString().toByteArray()
+                else -> {
+                    Log.d("SignInActivity", "Error with status code: ${response.status}")
                 }
-            }.also { queue.add(it) }
+            }
         }
-        dialog.show(supportFragmentManager, "sign_up_dialog")
+    }
+
+    private suspend fun signUpForAmta(idToken: String, nickname: String, langPref: String) {
+        val client = OkHttp()
+        val request = Request(Method.POST, "$SERVER_URL/user")
+            .header("Content-Type", "application/json; charset=utr-8")
+            .header("Authorization", "Bearer $idToken")
+            .body(
+                JSONObject().apply {
+                    put("nickname", nickname)
+                    put("lang_pref", "en")
+                }.toString()
+            )
+        val response = withContext(Dispatchers.IO) {
+            client(request)
+        }
+        val context = this
+        withContext(Dispatchers.Main) {
+            when (response.status) {
+                Status.CREATED -> {
+                    val jsonObject = JSONObject(response.bodyString())
+                    val accessToken = jsonObject.getString("access_token")
+                    TokenManager.idToken = JWT.decode(idToken)
+                    Toast.makeText(context, getString(R.string.toast_successful_sign_up, nickname), Toast.LENGTH_SHORT).show()
+                    val intent = Intent(context, MainActivity::class.java).apply {
+                        putExtra("id_token", idToken)
+                        putExtra("access_token", accessToken)
+                        putExtra("profile", Profile(nickname))
+                    }
+                    startActivity(intent)
+                    finish()
+                }
+                else -> {
+                    Toast.makeText(context, R.string.toast_unsuccessful_sign_up, Toast.LENGTH_SHORT).show()
+                }
+            }
+        }
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
@@ -151,7 +156,7 @@ class SignInActivity : AppCompatActivity() {
             // return the sign in result back to exercise menu screen
             val task = GoogleSignIn.getSignedInAccountFromIntent(data)
             try {
-                continueToAmta(task.result)
+                GlobalScope.launch { continueToAmta(task.result) }
             } catch (e: ApiException) {
                 Toast.makeText(this, R.string.toast_google_sign_in_exception, Toast.LENGTH_LONG).show()
             }

@@ -1,76 +1,70 @@
 package com.donald.musictheoryapp
 
+import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
-import com.google.android.material.bottomnavigation.BottomNavigationView
-import com.donald.musictheoryapp.screen.QuestionListScreen.OnViewExerciseListener
-import android.view.ViewGroup
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
-import android.view.MenuItem
+import android.util.Log
 import android.view.View
+import android.widget.ImageView
+import android.widget.LinearLayout
+import android.widget.TextView
 import android.widget.Toast
-import com.auth0.jwt.JWT
-import com.auth0.jwt.interfaces.DecodedJWT
-import com.donald.musictheoryapp.question.Exercise
-import com.donald.musictheoryapp.screen.*
+import androidx.cardview.widget.CardView
+import com.donald.musictheoryapp.util.TokenManager
+import com.donald.musictheoryapp.util.Profile
+import com.google.android.gms.auth.api.signin.GoogleSignIn
+import com.google.android.gms.auth.api.signin.GoogleSignInClient
+import com.google.android.gms.auth.api.signin.GoogleSignInOptions
+import com.google.android.material.appbar.MaterialToolbar
+import kotlinx.coroutines.*
+import org.http4k.client.OkHttp
+import org.http4k.core.Method
+import org.http4k.core.Status
 
-class MainActivity : AppCompatActivity(),
-        BottomNavigationView.OnNavigationItemSelectedListener,
-        OnViewExerciseListener {
+class MainActivity : AppCompatActivity() {
 
-    companion object {
-
-        const val DOUBLE_BACK_PRESS_DELAY_FOR_EXIT = 2000L
-        val NAVIGATION_BAR_ITEM_IDS = arrayOf(R.id.exercise_nav_button, R.id.review_nav_button)
-
-    }
-
-    lateinit var idToken: DecodedJWT
-    lateinit var accessToken: DecodedJWT
+    private lateinit var profile: Profile
+    private lateinit var signInClient: GoogleSignInClient
 
     private var backPressCountForExit = 0
 
-    private lateinit var exerciseMenuScreen: ExerciseMenuScreen
-    private lateinit var questionScreen: QuestionScreen
-    private lateinit var questionReadingScreen: QuestionReadingScreen
-    private lateinit var questionListScreen: QuestionListScreen
-    private lateinit var exerciseListScreen: ExerciseListScreen
-    private lateinit var screens: Array<Screen>
-    private lateinit var currentScreen: Screen
-    private var currentScreenIndex: Int = 0
-    private lateinit var mainFrame: ViewGroup
-    private lateinit var navigationBar: BottomNavigationView
+    private lateinit var titleText: TextView
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        navigationBar = (findViewById<View>(R.id.bottom_navigation_view) as BottomNavigationView).apply {
-            setOnNavigationItemSelectedListener(this@MainActivity)
+        intent.getParcelableExtra<Profile>("profile")?.let { profile = it } ?: throw IllegalStateException("Profile not found")
+        signInClient = GoogleSignIn.getClient(this, GoogleSignInOptions.DEFAULT_SIGN_IN)
+
+        val toolbar = findViewById<MaterialToolbar>(R.id.toolbar)
+        toolbar.findViewById<LinearLayout>(R.id.toolbar_back_button).apply { visibility = View.INVISIBLE; isEnabled = false }
+        titleText = toolbar.findViewById<TextView>(R.id.toolbar_title_text).apply { setText(R.string.main_activity_title) }
+
+        findViewById<CardView>(R.id.main_begin_test_button).setOnClickListener {
+            val intent = Intent(this, ExerciseActivity::class.java).apply {
+                putExtra("action", "download")
+                putExtra("mode", "test")
+            }
+            startActivity(intent)
         }
 
-        mainFrame = findViewById(R.id.main_frame_layout)
+        findViewById<CardView>(R.id.main_begin_practice_button).setOnClickListener {
+            startActivity(Intent(this, PracticeOptionsActivity::class.java))
+        }
 
-        idToken = JWT.decode(intent.getStringExtra("id_token")!!)
-        accessToken = JWT.decode(intent.getStringExtra("access_token")!!)
+        findViewById<CardView>(R.id.main_exercise_list_button).setOnClickListener {
+            startActivity(Intent(this, ExerciseListActivity::class.java))
+        }
 
-        exerciseMenuScreen = ExerciseMenuScreen(this, this::onRetrieveQuestions)
-        questionScreen = QuestionScreen(this, this::onFinishExercise, this::onExerciseTimeOut)
-
-        questionReadingScreen = QuestionReadingScreen(this, this::onReturnToQuestionList)
-        questionListScreen = QuestionListScreen(this, this)
-        exerciseListScreen = ExerciseListScreen(this, this::onViewExercise)
-
-        screens = arrayOf(exerciseMenuScreen, exerciseListScreen)
-        currentScreen = exerciseMenuScreen
-        mainFrame.addView(exerciseMenuScreen.view)
-
-        //onBackPressedDispatcher.addCallback(object : OnBackPressedCallback(true) {
-        //    override fun handleOnBackPressed() {
-        //        if (currentExerciseScreen === questionScreen) questionScreen.onBackPressed()
-        //    }
-        //})
+        findViewById<CardView>(R.id.main_profile_button).setOnClickListener {
+            val intent = Intent(this, ProfileActivity::class.java).apply {
+                putExtra("profile", profile)
+            }
+            startActivity(intent)
+        }
     }
 
     /*
@@ -79,57 +73,14 @@ class MainActivity : AppCompatActivity(),
      * *********
      */
 
-    private fun onRetrieveQuestions(exercise: Exercise) {
-        swapScreen(questionScreen, 0)
-        questionScreen.startExercise(exercise)
-        exerciseListScreen.refreshExerciseList()
-    }
-
-    private fun onExerciseTimeOut() {
-        val dialog = OutOfTimeDialog(this::onExitExercise)
-        dialog.show(supportFragmentManager, "out_of_time_dialog")
-    }
-
-    private fun onFinishExercise() {
-        val dialog = FinishExerciseConfirmationDialog(this::onExitExercise)
-        dialog.show(supportFragmentManager, "finish_confirmation_dialog")
-    }
-
-    private fun onExitExercise() {
-        questionListScreen.setExercise(questionScreen.exercise)
-        swapScreen(exerciseMenuScreen, 0)
-        swapScreen(questionListScreen, 1)
-        switchToScreen(1)
-    }
-
-    override fun onViewQuestion(exercise: Exercise, groupIndex: Int) {
-        swapScreen(questionReadingScreen, 1)
-        questionReadingScreen.readExercise(exercise, groupIndex)
-    }
-
-    private fun onViewExercise(exerciseFileName: String) {
-        try {
-            questionListScreen.setExercise(retrieveExerciseLocal(this, exerciseFileName))
-            swapScreen(questionListScreen, 1)
-        } catch (e: Exception) {
-            Toast.makeText(this, "Error loading the exercise from file.", Toast.LENGTH_LONG).show()
-            e.printStackTrace()
-        }
-
-    }
-
-    private fun onReturnToQuestionList() {
-        swapScreen(questionListScreen, 1)
-    }
-
-    private fun onReturnToExerciseList() {
-        swapScreen(exerciseListScreen, 1)
+    override fun onBackPressed() {
+        onExit()
     }
 
     private fun onExit() {
         if (backPressCountForExit == 0) {
             backPressCountForExit = 1
-            Toast.makeText(this, "Back again to exit the app", Toast.LENGTH_SHORT).show()
+            Toast.makeText(this, R.string.toast_exit_confirmation, Toast.LENGTH_SHORT).show()
             Handler(Looper.getMainLooper()).postDelayed(
                 { backPressCountForExit = 0 },
                 DOUBLE_BACK_PRESS_DELAY_FOR_EXIT
@@ -141,59 +92,50 @@ class MainActivity : AppCompatActivity(),
         }
     }
 
-    override fun onSupportNavigateUp(): Boolean {
-        onBackPressed()
-        return true
-    }
-
-    override fun onNavigationItemSelected(item: MenuItem): Boolean {
-        if (item.itemId == R.id.exercise_nav_button) {
-            switchToScreen(0)
-        } else {
-            switchToScreen(1)
+    private fun onSignOut() {
+        signInClient.signOut().addOnCompleteListener {
+            Toast.makeText(this, R.string.toast_sign_out_successful, Toast.LENGTH_LONG).show()
+        }.addOnFailureListener { e ->
+            e.printStackTrace()
+            Toast.makeText(this, R.string.toast_sign_out_failed , Toast.LENGTH_LONG).show()
         }
-        return true
+        startActivity(Intent(this, SignInActivity::class.java))
+        finishAffinity()
     }
 
-    override fun onBackPressed() {
-        if (currentScreenIndex == 1 && currentScreen === questionReadingScreen) {
-            onReturnToQuestionList()
-        } else if (currentScreenIndex == 0 && currentScreen === questionScreen) {
-            onFinishExercise()
-        } else if (currentScreenIndex == 1 && currentScreen === questionListScreen) {
-            onReturnToExerciseList()
-        } else if ((currentScreenIndex == 0 && currentScreen === exerciseMenuScreen) ||
-            (currentScreenIndex == 1 && currentScreen === exerciseListScreen)) {
-            // result overview screen or exercise menu screen
-            onExit()
-        }
-    }
+    private fun onDisconnectAccount() {
+        val client = OkHttp()
+        val request = org.http4k.core.Request(Method.DELETE, "$SERVER_URL/user")
+            .header("Authorization", "Bearer ${TokenManager.idToken.token}")
 
-    private fun switchToScreen(screenIndex: Int) {
-        if (currentScreenIndex != screenIndex) {
-            updateActionBarBackButton()
-            mainFrame.removeAllViews()
-            currentScreen = screens[screenIndex]
-            currentScreenIndex = screenIndex
-            mainFrame.addView(currentScreen.view)
-            navigationBar.selectedItemId = NAVIGATION_BAR_ITEM_IDS[screenIndex]
-        }
-    }
-
-    private fun swapScreen(targetScreen: Screen, screenIndex: Int) {
-        screens[screenIndex] = targetScreen
-        if (currentScreenIndex == screenIndex) {
-            updateActionBarBackButton()
-            mainFrame.removeAllViews()
-            currentScreen = targetScreen
-            mainFrame.addView(currentScreen.view)
+        val context = this
+        CoroutineScope(Dispatchers.Main).launch {
+            val response = withContext(Dispatchers.IO) {
+                client(request)
+            }
+            when (response.status) {
+                Status.OK -> {
+                    signInClient.revokeAccess().addOnCompleteListener {
+                        Toast.makeText(context, R.string.toast_disconnect_successful, Toast.LENGTH_LONG).show()
+                        startActivity(Intent(context, SignInActivity::class.java))
+                        finishAffinity()
+                    }.addOnFailureListener { e ->
+                        e.printStackTrace()
+                        Toast.makeText(context, R.string.toast_disconnect_unsuccessful_google, Toast.LENGTH_LONG).show()
+                    }
+                }
+                else -> {
+                    Log.d("MainActivity", "Request failed with status ${response.status}")
+                    Toast.makeText(context, R.string.toast_disconnect_unsuccessful_amta, Toast.LENGTH_LONG).show()
+                }
+            }
         }
     }
 
-    private fun updateActionBarBackButton() {
-        if (currentScreen !== exerciseMenuScreen || currentScreen !== exerciseListScreen) {
-            supportActionBar?.setDisplayHomeAsUpEnabled(true)
-        }
+    companion object {
+
+        const val DOUBLE_BACK_PRESS_DELAY_FOR_EXIT = 2000L
+
     }
 
 }

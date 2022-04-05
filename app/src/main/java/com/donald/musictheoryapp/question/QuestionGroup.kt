@@ -2,8 +2,8 @@ package com.donald.musictheoryapp.question
 
 import kotlin.Throws
 import org.xmlpull.v1.XmlPullParserException
-import com.donald.musictheoryapp.Utils.getDescriptions
-import com.donald.musictheoryapp.Utils.getQuestions
+import com.donald.musictheoryapp.util.getDescriptions
+import com.donald.musictheoryapp.util.getQuestions
 import org.json.JSONArray
 import org.json.JSONException
 import org.json.JSONObject

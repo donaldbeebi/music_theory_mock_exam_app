@@ -1,10 +1,9 @@
 package com.donald.musictheoryapp.question
 
-import android.util.Log
 import kotlin.Throws
-import com.donald.musictheoryapp.Utils.getDescriptions
-import com.donald.musictheoryapp.Utils.getInputHint
-import com.donald.musictheoryapp.Utils.getInputType
+import com.donald.musictheoryapp.util.getDescriptions
+import com.donald.musictheoryapp.util.getInputHintOrNull
+import com.donald.musictheoryapp.util.getInputType
 import org.json.JSONArray
 import org.json.JSONException
 import org.json.JSONObject
@@ -46,7 +45,7 @@ class TextInputQuestion(
             return TextInputQuestion(
                 number = jsonObject.getInt("number"),
                 descriptions = jsonObject.getDescriptions(),
-                inputHint = jsonObject.getInputHint(),
+                inputHint = jsonObject.getInputHintOrNull(),
                 inputType = jsonObject.getInputType(),
                 answers = jsonObject.getJSONArray("answers").run {
                     Array(this.length()) { index ->
