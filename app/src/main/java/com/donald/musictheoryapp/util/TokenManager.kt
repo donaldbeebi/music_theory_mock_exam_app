@@ -11,6 +11,8 @@ import org.http4k.core.Status
 
 object TokenManager {
 
+    private val debug = true
+
     lateinit var idToken: DecodedJWT
     private var accessToken: DecodedJWT? = null
 
@@ -41,14 +43,18 @@ object TokenManager {
     }
 
     fun getAccessTokenAsync(callback: (DecodedJWT?) -> Unit) {
-        val idToken = idToken
+        //val idToken = idToken
         val accessToken = accessToken
         when {
 
             accessToken == null || accessToken.expiresSoon() -> {
                 val client = OkHttp()
-                val request = Request(Method.GET, "$SERVER_URL/access-token")
-                    .header("Authorization", "Bearer ${idToken.token}")
+                val request = if (debug) {
+                    Request(Method.GET, "$SERVER_URL/access-token")
+                } else {
+                    Request(Method.GET, "$SERVER_URL/access-token")
+                        .header("Authorization", "Bearer ${idToken.token}")
+                }
                 runBackground {
                     val response = client(request)
                     when (response.status) {

@@ -15,10 +15,7 @@ import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.android.gms.common.SignInButton
 import com.google.android.gms.common.api.ApiException
 import com.google.android.gms.tasks.OnCompleteListener
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
+import kotlinx.coroutines.*
 import org.http4k.client.OkHttp
 import org.http4k.core.*
 import org.json.JSONObject
@@ -28,6 +25,8 @@ class SignInActivity : AppCompatActivity() {
     private lateinit var googleSignInClient: GoogleSignInClient
     private lateinit var signInButton: SignInButton
     private lateinit var gso: GoogleSignInOptions
+
+    private val debug = true
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -41,18 +40,22 @@ class SignInActivity : AppCompatActivity() {
         googleSignInClient = GoogleSignIn.getClient(this, gso)
 
         signInButton = findViewById(R.id.exercise_menu_sign_in_button)
-        signInButton.setOnClickListener { signInToGoogle() }
+        if (debug) signInButton.setOnClickListener { CoroutineScope(Dispatchers.IO).launch { continueToAmtaDebug() } }
+        else signInButton.setOnClickListener { signInToGoogle() }
     }
 
     override fun onStart() {
         super.onStart()
         // check if the user has already signed in
-        GoogleSignIn.getLastSignedInAccount(this)?.let {
-            if (!it.isExpired) {
-                GlobalScope.launch { continueToAmta(it) }
-            }
-            else {
-                silentSignInToGoogle()
+        if (debug) {
+            CoroutineScope(Dispatchers.IO).launch { continueToAmtaDebug() }
+        } else {
+            GoogleSignIn.getLastSignedInAccount(this)?.let {
+                if (!it.isExpired) {
+                    GlobalScope.launch { continueToAmta(it) }
+                } else {
+                    silentSignInToGoogle()
+                }
             }
         }
     }
@@ -72,6 +75,34 @@ class SignInActivity : AppCompatActivity() {
 
     private fun signInToGoogle() {
         startActivityForResult(googleSignInClient.signInIntent, RC_SIGN_IN)
+    }
+
+    private suspend fun continueToAmtaDebug() {
+        Log.d("SignInActivity", "continueToAmta called")
+        val client = OkHttp()
+        val request = Request(Method.GET, "$SERVER_URL/user")
+        val response = withContext(Dispatchers.IO) {
+            client(request)
+        }
+        val context = this
+        withContext(Dispatchers.Main) {
+            when (response.status) {
+                Status.OK -> {
+                    val jsonObject = JSONObject(response.bodyString())
+                    val accessToken = jsonObject.getString("access_token")
+                    val nickname = jsonObject.getString("nickname")
+                    Toast.makeText(context, getString(R.string.toast_successful_sign_in, nickname), Toast.LENGTH_SHORT).show()
+                    val intent = Intent(context, MainActivity::class.java)
+                    intent.putExtra("access_token", accessToken)
+                    intent.putExtra("profile", Profile(nickname))
+                    startActivity(intent)
+                    finish()
+                }
+                else -> {
+                    Log.d("SignInActivity", "Error with status code: ${response.status}")
+                }
+            }
+        }
     }
 
     private suspend fun continueToAmta(account: GoogleSignInAccount) {
