@@ -33,7 +33,7 @@
 
     <Button
         android:id="@+id/exercise_menu_disconnect_account_button"
-        android:text="@string/disconnect_account_button_text"
+        android:text="@string/delete_account_button_text"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_centerHorizontal="true"

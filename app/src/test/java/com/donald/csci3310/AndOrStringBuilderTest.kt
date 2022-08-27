@@ -11,7 +11,7 @@ class AndOrStringBuilderTest {
 
     @Test
     fun test() {
-        val builder = AndOrStringBuilder()
+        val builder = AndOrStringBuilder("")
         builder.append(1)
         builder.append(2.5F)
         builder.append(Clazz())

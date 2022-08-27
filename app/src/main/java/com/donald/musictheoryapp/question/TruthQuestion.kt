@@ -1,22 +1,32 @@
 package com.donald.musictheoryapp.question
 
 import com.donald.musictheoryapp.util.getDescriptions
-import com.donald.musictheoryapp.util.getInputHintOrNull
+import com.donald.musictheoryapp.util.getInputHint
 import org.json.JSONObject
 
 class TruthQuestion(
     number: Int,
-    descriptions: Array<Description>,
+    descriptions: List<Description>,
     inputHint: String?,
     val answer: Answer
-) : Question(number, descriptions, inputHint) {
+) : ChildQuestion(number, descriptions, inputHint) {
 
     override val points: Int
         get() = if (answer.correct) 1 else 0
     override val maxPoints = 1
+    override val correctAnswerCount = 1
 
     override fun acceptVisitor(visitor: QuestionVisitor) {
         visitor.visit(this)
+    }
+
+    override fun copyNew(): TruthQuestion {
+        return TruthQuestion(
+            number,
+            List(descriptions.size) { i -> descriptions[i].copy() },
+            inputHint,
+            answer.copyNew()
+        )
     }
 
     override fun toPartialJson(): JSONObject {
@@ -27,21 +37,19 @@ class TruthQuestion(
     }
 
     companion object {
-
         const val TRUE_ANSWER = "true"
         const val FALSE_ANSWER = "false"
         fun fromJson(jsonObject: JSONObject): TruthQuestion {
             return TruthQuestion(
                 number = jsonObject.getInt("number"),
                 descriptions = jsonObject.getDescriptions(),
-                inputHint = jsonObject.getInputHintOrNull(),
+                inputHint = jsonObject.getInputHint(),
                 answer = Answer.fromJson(jsonObject.getJSONObject("answer"))
             )
         }
-
     }
 
-    class Answer(var userAnswer: Boolean?, val correctAnswer: Boolean) : Question.Answer {
+    class Answer(var userAnswer: Boolean?, val correctAnswer: Boolean) : ChildQuestion.Answer {
 
         override val correct: Boolean
             get() {
@@ -55,15 +63,17 @@ class TruthQuestion(
             }
         }
 
-        companion object {
+        override fun copyNew(): Answer {
+            return Answer(null, correctAnswer)
+        }
 
+        companion object {
             fun fromJson(jsonObject: JSONObject): Answer {
                 return Answer(
                     if (jsonObject.isNull("user_answer")) null else jsonObject.getBoolean("user_answer"),
                     jsonObject.getBoolean("correct_answer")
                 )
             }
-
         }
 
     }

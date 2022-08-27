@@ -5,6 +5,8 @@
       <map>
         <entry key="..\:/Users/Donald/AndroidStudioProjects/MusicTheoryApp/app/src/main/res/drawable-v24/background_bottom_shadow.xml" value="0.403" />
         <entry key="..\:/Users/Donald/AndroidStudioProjects/MusicTheoryApp/app/src/main/res/drawable-v24/background_exercise_list_item_type.xml" value="0.2825" />
+        <entry key="..\:/Users/Donald/AndroidStudioProjects/MusicTheoryApp/app/src/main/res/drawable-v24/ic_slider_bar_back_button.xml" value="0.281" />
+        <entry key="..\:/Users/Donald/AndroidStudioProjects/MusicTheoryApp/app/src/main/res/drawable-v24/ic_slider_bar_next_button.xml" value="0.281" />
         <entry key="..\:/Users/Donald/AndroidStudioProjects/MusicTheoryApp/app/src/main/res/drawable/background.xml" value="0.241" />
         <entry key="..\:/Users/Donald/AndroidStudioProjects/MusicTheoryApp/app/src/main/res/drawable/background_check_box.xml" value="0.2265" />
         <entry key="..\:/Users/Donald/AndroidStudioProjects/MusicTheoryApp/app/src/main/res/drawable/background_circular_image.xml" value="0.2285" />
@@ -32,6 +34,7 @@
         <entry key="..\:/Users/Donald/AndroidStudioProjects/MusicTheoryApp/app/src/main/res/drawable/ic_baseline_pause_24.xml" value="0.279" />
         <entry key="..\:/Users/Donald/AndroidStudioProjects/MusicTheoryApp/app/src/main/res/drawable/ic_baseline_play_arrow_24.xml" value="0.148" />
         <entry key="..\:/Users/Donald/AndroidStudioProjects/MusicTheoryApp/app/src/main/res/drawable/ic_check.xml" value="0.279" />
+        <entry key="..\:/Users/Donald/AndroidStudioProjects/MusicTheoryApp/app/src/main/res/drawable/ic_confirm.xml" value="0.2215" />
         <entry key="..\:/Users/Donald/AndroidStudioProjects/MusicTheoryApp/app/src/main/res/drawable/ic_continue_button.xml" value="0.185" />
         <entry key="..\:/Users/Donald/AndroidStudioProjects/MusicTheoryApp/app/src/main/res/drawable/ic_cross.xml" value="0.279" />
         <entry key="..\:/Users/Donald/AndroidStudioProjects/MusicTheoryApp/app/src/main/res/drawable/ic_delete.xml" value="0.1355" />
@@ -41,7 +44,13 @@
         <entry key="..\:/Users/Donald/AndroidStudioProjects/MusicTheoryApp/app/src/main/res/drawable/ic_expand_button_expanded.xml" value="0.403" />
         <entry key="..\:/Users/Donald/AndroidStudioProjects/MusicTheoryApp/app/src/main/res/drawable/ic_fab_confirm.xml" value="0.1355" />
         <entry key="..\:/Users/Donald/AndroidStudioProjects/MusicTheoryApp/app/src/main/res/drawable/ic_fab_continue.xml" value="0.2255" />
+        <entry key="..\:/Users/Donald/AndroidStudioProjects/MusicTheoryApp/app/src/main/res/drawable/ic_horizontal_expand_button.xml" value="0.327" />
         <entry key="..\:/Users/Donald/AndroidStudioProjects/MusicTheoryApp/app/src/main/res/drawable/ic_launcher_background.xml" value="0.279" />
+        <entry key="..\:/Users/Donald/AndroidStudioProjects/MusicTheoryApp/app/src/main/res/drawable/ic_popup_menu_back_button.xml" value="0.281" />
+        <entry key="..\:/Users/Donald/AndroidStudioProjects/MusicTheoryApp/app/src/main/res/drawable/ic_redo_bar_delete_-button.xml" value="0.269" />
+        <entry key="..\:/Users/Donald/AndroidStudioProjects/MusicTheoryApp/app/src/main/res/drawable/ic_redo_bar_delete_button.xml" value="0.2495" />
+        <entry key="..\:/Users/Donald/AndroidStudioProjects/MusicTheoryApp/app/src/main/res/drawable/ic_redo_button.xml" value="0.2495" />
+        <entry key="..\:/Users/Donald/AndroidStudioProjects/MusicTheoryApp/app/src/main/res/drawable/ic_reload_button.xml" value="0.2495" />
         <entry key="..\:/Users/Donald/AndroidStudioProjects/MusicTheoryApp/app/src/main/res/drawable/ic_result_group_expand_button_collapsed.xml" value="0.2185" />
         <entry key="..\:/Users/Donald/AndroidStudioProjects/MusicTheoryApp/app/src/main/res/drawable/ic_result_group_expand_button_expanded.xml" value="0.2185" />
         <entry key="..\:/Users/Donald/AndroidStudioProjects/MusicTheoryApp/app/src/main/res/drawable/ic_resume_button.xml" value="0.2185" />
@@ -56,14 +65,14 @@
         <entry key="..\:/Users/Donald/AndroidStudioProjects/MusicTheoryApp/app/src/main/res/layout-v26/screen_question.xml" value="0.275" />
         <entry key="..\:/Users/Donald/AndroidStudioProjects/MusicTheoryApp/app/src/main/res/layout/activity_exercise.xml" value="0.2" />
         <entry key="..\:/Users/Donald/AndroidStudioProjects/MusicTheoryApp/app/src/main/res/layout/activity_exercise2.xml" value="0.29791666666666666" />
-        <entry key="..\:/Users/Donald/AndroidStudioProjects/MusicTheoryApp/app/src/main/res/layout/activity_exercise_list.xml" value="0.4" />
-        <entry key="..\:/Users/Donald/AndroidStudioProjects/MusicTheoryApp/app/src/main/res/layout/activity_exercise_overview.xml" value="0.27395833333333336" />
+        <entry key="..\:/Users/Donald/AndroidStudioProjects/MusicTheoryApp/app/src/main/res/layout/activity_exercise_list.xml" value="0.25" />
+        <entry key="..\:/Users/Donald/AndroidStudioProjects/MusicTheoryApp/app/src/main/res/layout/activity_exercise_overview.xml" value="0.4" />
         <entry key="..\:/Users/Donald/AndroidStudioProjects/MusicTheoryApp/app/src/main/res/layout/activity_main.xml" value="0.1" />
         <entry key="..\:/Users/Donald/AndroidStudioProjects/MusicTheoryApp/app/src/main/res/layout/activity_practice_options.xml" value="0.28541666666666665" />
         <entry key="..\:/Users/Donald/AndroidStudioProjects/MusicTheoryApp/app/src/main/res/layout/activity_profile.xml" value="0.21105072463768115" />
         <entry key="..\:/Users/Donald/AndroidStudioProjects/MusicTheoryApp/app/src/main/res/layout/activity_question_overview.xml" value="0.12335359675785208" />
         <entry key="..\:/Users/Donald/AndroidStudioProjects/MusicTheoryApp/app/src/main/res/layout/activity_question_reading.xml" value="0.12335359675785208" />
-        <entry key="..\:/Users/Donald/AndroidStudioProjects/MusicTheoryApp/app/src/main/res/layout/activity_sign_in.xml" value="0.2838541666666667" />
+        <entry key="..\:/Users/Donald/AndroidStudioProjects/MusicTheoryApp/app/src/main/res/layout/activity_sign_in.xml" value="0.25" />
         <entry key="..\:/Users/Donald/AndroidStudioProjects/MusicTheoryApp/app/src/main/res/layout/description_text.xml" value="0.2" />
         <entry key="..\:/Users/Donald/AndroidStudioProjects/MusicTheoryApp/app/src/main/res/layout/description_text_emphasize.xml" value="0.13451086956521738" />
         <entry key="..\:/Users/Donald/AndroidStudioProjects/MusicTheoryApp/app/src/main/res/layout/description_text_spannable.xml" value="0.1947821681864235" />
@@ -75,10 +84,11 @@
         <entry key="..\:/Users/Donald/AndroidStudioProjects/MusicTheoryApp/app/src/main/res/layout/item_multiple_choice.xml" value="0.18432971014492755" />
         <entry key="..\:/Users/Donald/AndroidStudioProjects/MusicTheoryApp/app/src/main/res/layout/item_multiple_choice_option.xml" value="0.18432971014492755" />
         <entry key="..\:/Users/Donald/AndroidStudioProjects/MusicTheoryApp/app/src/main/res/layout/item_note_input.xml" value="0.18432971014492755" />
-        <entry key="..\:/Users/Donald/AndroidStudioProjects/MusicTheoryApp/app/src/main/res/layout/item_practice_options.xml" value="0.264" />
+        <entry key="..\:/Users/Donald/AndroidStudioProjects/MusicTheoryApp/app/src/main/res/layout/item_practice_options.xml" value="0.4" />
         <entry key="..\:/Users/Donald/AndroidStudioProjects/MusicTheoryApp/app/src/main/res/layout/item_result_overview.xml" value="0.176" />
-        <entry key="..\:/Users/Donald/AndroidStudioProjects/MusicTheoryApp/app/src/main/res/layout/item_result_question_group.xml" value="0.4" />
+        <entry key="..\:/Users/Donald/AndroidStudioProjects/MusicTheoryApp/app/src/main/res/layout/item_result_question_group.xml" value="0.31381733021077285" />
         <entry key="..\:/Users/Donald/AndroidStudioProjects/MusicTheoryApp/app/src/main/res/layout/item_result_question_section.xml" value="0.4569939183318853" />
+        <entry key="..\:/Users/Donald/AndroidStudioProjects/MusicTheoryApp/app/src/main/res/layout/item_result_question_section_header.xml" value="0.25" />
         <entry key="..\:/Users/Donald/AndroidStudioProjects/MusicTheoryApp/app/src/main/res/layout/item_text_entry.xml" value="0.25416666666666665" />
         <entry key="..\:/Users/Donald/AndroidStudioProjects/MusicTheoryApp/app/src/main/res/layout/item_text_entry_correct_answer.xml" value="0.25416666666666665" />
         <entry key="..\:/Users/Donald/AndroidStudioProjects/MusicTheoryApp/app/src/main/res/layout/item_text_entry_result.xml" value="0.25416666666666665" />
@@ -90,6 +100,8 @@
         <entry key="..\:/Users/Donald/AndroidStudioProjects/MusicTheoryApp/app/src/main/res/layout/part_image_description.xml" value="0.1" />
         <entry key="..\:/Users/Donald/AndroidStudioProjects/MusicTheoryApp/app/src/main/res/layout/part_score_description.xml" value="0.18432971014492755" />
         <entry key="..\:/Users/Donald/AndroidStudioProjects/MusicTheoryApp/app/src/main/res/layout/part_score_view_description.xml" value="0.11094224924012158" />
+        <entry key="..\:/Users/Donald/AndroidStudioProjects/MusicTheoryApp/app/src/main/res/layout/redo_history_bar_radio_button.xml" value="0.264" />
+        <entry key="..\:/Users/Donald/AndroidStudioProjects/MusicTheoryApp/app/src/main/res/layout/screen_exercise.xml" value="0.4" />
         <entry key="..\:/Users/Donald/AndroidStudioProjects/MusicTheoryApp/app/src/main/res/layout/screen_exercise_downloading.xml" value="0.29791666666666666" />
         <entry key="..\:/Users/Donald/AndroidStudioProjects/MusicTheoryApp/app/src/main/res/layout/screen_exercise_list.xml" value="0.4" />
         <entry key="..\:/Users/Donald/AndroidStudioProjects/MusicTheoryApp/app/src/main/res/layout/screen_exercise_menu.xml" value="0.1" />
@@ -100,7 +112,7 @@
         <entry key="..\:/Users/Donald/AndroidStudioProjects/MusicTheoryApp/app/src/main/res/layout/screen_result_overview.xml" value="0.19655521783181357" />
         <entry key="..\:/Users/Donald/AndroidStudioProjects/MusicTheoryApp/app/src/main/res/layout/text_color_button.xml" value="0.18432971014492755" />
         <entry key="..\:/Users/Donald/AndroidStudioProjects/MusicTheoryApp/app/src/main/res/layout/text_correct_answer.xml" value="0.18432971014492755" />
-        <entry key="..\:/Users/Donald/AndroidStudioProjects/MusicTheoryApp/app/src/main/res/layout/toolbar.xml" value="0.536" />
+        <entry key="..\:/Users/Donald/AndroidStudioProjects/MusicTheoryApp/app/src/main/res/layout/toolbar.xml" value="0.176" />
         <entry key="..\:/Users/Donald/AndroidStudioProjects/MusicTheoryApp/app/src/main/res/layout/toolbar_3_dots.xml" value="0.4041666666666667" />
         <entry key="..\:/Users/Donald/AndroidStudioProjects/MusicTheoryApp/app/src/main/res/menu/exercise_list_more_menu.xml" value="0.4036458333333333" />
         <entry key="..\:/Users/Donald/AndroidStudioProjects/MusicTheoryApp/app/src/main/res/menu/exercise_list_sort_menu.xml" value="0.21041666666666667" />

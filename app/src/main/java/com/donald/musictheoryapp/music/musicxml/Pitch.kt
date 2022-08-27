@@ -3,7 +3,7 @@ package com.donald.musictheoryapp.music.musicxml
 import org.dom4j.Element
 import org.json.JSONObject
 
-class Pitch(
+data class Pitch(
     var step: Step,
     var alter: Int,
     var octave: Int

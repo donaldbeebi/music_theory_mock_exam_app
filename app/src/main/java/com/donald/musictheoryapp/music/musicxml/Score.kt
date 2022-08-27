@@ -15,7 +15,7 @@ class Score(val parts: Array<Part>) {
         return parts
     }
 
-    fun clone(): Score {
+    fun copy(): Score {
         val otherParts = Array(parts.size) { index ->
             parts[index].clone()
         }

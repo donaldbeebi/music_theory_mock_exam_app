@@ -4,7 +4,7 @@ import android.graphics.Color
 import org.dom4j.Element
 import org.json.JSONObject
 
-class Note(
+data class Note(
     var printObject: Boolean,
     val pitch: Pitch?,
     val duration: Int,

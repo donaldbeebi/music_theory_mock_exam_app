@@ -16,4 +16,5 @@
     <dimen name="menu_button_corner_radius">10dp</dimen>
     <dimen name="menu_button_elevation">10dp</dimen>
     <dimen name="description_text_size">16sp</dimen>
+    <dimen name="fab_custom_size">48dp</dimen>
 </resources>

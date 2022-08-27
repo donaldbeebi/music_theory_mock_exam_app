@@ -20,27 +20,27 @@ internal class SAccidental(view: ScoreView) : ScoreStamp(view) {
 
     fun set(note: Note, clef: Clef) {
         when (note.accidental) {
-            Accidental.FLAT_FLAT -> {
+            Accidental.FlatFlat -> {
                 glyph = U.ACC_D_FLAT
                 accRelWidth = REL_DOUBLE_ACC_WIDTH //noteWidth() * 1.3f
                 draws = true
             }
-            Accidental.FLAT -> {
+            Accidental.Flat -> {
                 glyph = U.ACC_FLAT
                 accRelWidth = REL_SINGLE_ACC_WIDTH //noteWidth() * 0.8f
                 draws = true
             }
-            Accidental.NATURAL -> {
+            Accidental.Natural -> {
                 glyph = U.ACC_NATURAL
                 accRelWidth = REL_SINGLE_ACC_WIDTH //noteWidth() * 0.8f
                 draws = true
             }
-            Accidental.SHARP -> {
+            Accidental.Sharp -> {
                 glyph = U.ACC_SHARP
                 accRelWidth = REL_SINGLE_ACC_WIDTH //noteWidth() * 0.8f
                 draws = true
             }
-            Accidental.SHARP_SHARP -> {
+            Accidental.SharpSharp -> {
                 glyph = U.ACC_D_SHARP
                 accRelWidth = REL_SINGLE_ACC_WIDTH//noteWidth() * 0.8f
                 draws = true

@@ -13,7 +13,7 @@ inline fun <reified E: Exception, reified R: Any> tryOrNull(block: () -> R): R? 
 
  */
 
-fun <T> toggle(currentValue: T, firstValue: T, secondValue: T) = when (currentValue) {
+fun <T : Any> toggle(currentValue: T, firstValue: T, secondValue: T) = when (currentValue) {
     firstValue -> secondValue
     secondValue -> firstValue
     else -> throw IllegalStateException()

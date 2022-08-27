@@ -17,6 +17,8 @@ value class Time private constructor(val millis: Long) : Comparable<Time> {
         return String.format("%d:%02d:%02d", hours, minutes % 60, seconds % 60)
     }
 
+    fun toJsonValue(): Long = millis
+
     companion object {
 
         val Long.ms get() = Time(this)

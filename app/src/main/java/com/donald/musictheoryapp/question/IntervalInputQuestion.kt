@@ -4,28 +4,40 @@ import kotlin.Throws
 import com.donald.musictheoryapp.music.musicxml.Score
 import org.xmlpull.v1.XmlPullParserException
 import com.donald.musictheoryapp.util.getDescriptions
-import com.donald.musictheoryapp.util.getInputHintOrNull
 import com.donald.musictheoryapp.util.getScore
 import com.donald.musictheoryapp.music.musicxml.Note
+import com.donald.musictheoryapp.util.getInputHint
 import org.json.JSONException
 import org.json.JSONObject
 import java.io.IOException
 
 class IntervalInputQuestion(
     number: Int,
-    descriptions: Array<Description>,
+    descriptions: List<Description>,
     inputHint: String?,
     val score: Score,
     val requiredInterval: String,
     val answer: Answer
-) : Question(number, descriptions, inputHint) {
+) : ChildQuestion(number, descriptions, inputHint) {
 
     override val points: Int
         get() = if (answer.correct) 1 else 0
     override val maxPoints = 1
+    override val correctAnswerCount = 1
 
     override fun acceptVisitor(visitor: QuestionVisitor) {
         visitor.visit(this)
+    }
+
+    override fun copyNew(): IntervalInputQuestion {
+        return IntervalInputQuestion(
+            number,
+            List(descriptions.size) { i -> descriptions[i].copy() },
+            inputHint,
+            score.copy(),
+            requiredInterval,
+            answer.copyNew()
+        )
     }
 
     @Throws(JSONException::class)
@@ -45,7 +57,7 @@ class IntervalInputQuestion(
             val question = IntervalInputQuestion(
                 number = jsonObject.getInt("number"),
                 descriptions = jsonObject.getDescriptions(),
-                inputHint = jsonObject.getInputHintOrNull(),
+                inputHint = jsonObject.getInputHint(),
                 score = jsonObject.getScore(),
                 requiredInterval = jsonObject.getString("required_interval"),
                 answer = Answer.fromJson(jsonObject.getJSONObject("answer"))
@@ -56,10 +68,14 @@ class IntervalInputQuestion(
 
     }
 
-    class Answer(var userAnswer: Note?, val correctAnswer: Note) : Question.Answer {
+    class Answer(var userAnswer: Note?, val correctAnswer: Note) : ChildQuestion.Answer {
 
         override val correct: Boolean
             get() = userAnswer?.pitch?.equals(correctAnswer.pitch) ?: false
+
+        override fun copyNew(): Answer {
+            return Answer(null, correctAnswer)
+        }
 
         @Throws(JSONException::class)
         fun toJson(): JSONObject {

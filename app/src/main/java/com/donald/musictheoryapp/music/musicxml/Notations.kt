@@ -5,20 +5,14 @@ import org.json.JSONException
 import org.json.JSONObject
 import org.dom4j.Element
 
-class Notations {
+data class Notations(
+    val noteArrow: NoteArrow?
+) {
 
-    class NoteArrow {
-
-        @JvmField
-		val label: String
-
-        constructor(label: String) {
-            this.label = label
-        }
-
-        constructor(that: NoteArrow?) {
-            label = that!!.label
-        }
+    data class NoteArrow(
+        val label: String
+    ) {
+        constructor(that: NoteArrow) : this(that.label)
 
         fun addToXml(notations: Element) {
             notations.addElement("other-notation").apply {
@@ -49,16 +43,7 @@ class Notations {
 
     }
 
-    @JvmField
-	val noteArrow: NoteArrow?
-
-    constructor(noteArrow: NoteArrow?) {
-        this.noteArrow = noteArrow
-    }
-
-    constructor(that: Notations) {
-        noteArrow = NoteArrow(that.noteArrow)
-    }
+    constructor(that: Notations) : this(that.noteArrow!!)
 
     fun equals(that: Notations?): Boolean {
         return that != null &&

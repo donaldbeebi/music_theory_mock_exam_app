@@ -7,7 +7,7 @@ import com.donald.musictheoryapp.music.musicxml.Note
 import com.donald.musictheoryapp.music.musicxml.Type
 import java.lang.IllegalArgumentException
 
-internal class SNoteHead(view: ScoreView) : ScoreStamp(view) {
+internal class  SNoteHead(view: ScoreView) : ScoreStamp(view) {
 
     private var glyph = U.NOTE_HEAD_WHOLE
     var note: Note? = null
@@ -18,19 +18,19 @@ internal class SNoteHead(view: ScoreView) : ScoreStamp(view) {
 
     fun set(note: Note, clef: Clef) {
         when (note.type) {
-            Type.BREVE -> {
+            Type.Breve -> {
                 glyph = U.NOTE_HEAD_D_WHOLE
                 relContentWidth = REL_HOLLOW_NOTE_WIDTH
             }
-            Type.WHOLE -> {
+            Type.Whole -> {
                 glyph = U.NOTE_HEAD_WHOLE
                 relContentWidth = REL_HOLLOW_NOTE_WIDTH
             }
-            Type.HALF -> {
+            Type.Half -> {
                 glyph = U.NOTE_HEAD_HALF
                 relContentWidth = REL_SOLID_NOTE_WIDTH
             }
-            Type.QUARTER, Type.EIGHTH, Type.SIXTEENTH, Type.THIRTY_SECOND, Type.SIXTY_FOURTH -> {
+            Type.Quarter, Type.Eighth, Type.Sixteenth, Type.ThirtySecond, Type.SixtyFourth -> {
                 glyph = U.NOTE_HEAD_BLACK
                 relContentWidth = REL_SOLID_NOTE_WIDTH
             }

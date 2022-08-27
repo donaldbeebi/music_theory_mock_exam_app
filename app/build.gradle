@@ -4,9 +4,16 @@ plugins {
 apply plugin: 'kotlin-android'
 
 android {
+    signingConfigs {
+        release {
+            storeFile file('C:\\Users\\Donald\\keystores\\release-keystores.jks')
+            storePassword 'password'
+            keyAlias 'release'
+            keyPassword 'password'
+        }
+    }
     compileSdkVersion 31
     buildToolsVersion "30.0.3"
-
     dataBinding {
         enabled = true
     }
@@ -14,44 +21,62 @@ android {
         applicationId "com.donald.musictheoryapp"
         minSdk defaultMinSdkVersion
         targetSdkVersion 31
-        versionCode 1
-        versionName "1.0"
+        versionCode 12
+        versionName "1.11"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
 
         manifestPlaceholders = [auth0Domain: "@string/auth0_domain", auth0Scheme: "https"]
+        signingConfig signingConfigs.release
+        vectorDrawables {
+            useSupportLibrary true
+        }
     }
     buildTypes {
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+            debuggable false
         }
     }
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_1_8
         targetCompatibility JavaVersion.VERSION_1_8
     }
+    kotlinOptions {
+        jvmTarget = "1.8"
+    }
     buildFeatures {
         viewBinding true
+        compose true
+    }
+    composeOptions {
+        kotlinCompilerExtensionVersion '1.1.1'
+    }
+    packagingOptions {
+        resources {
+            excludes += '/META-INF/{AL2.0,LGPL2.1}'
+        }
     }
 }
 
 dependencies {
-    implementation 'androidx.appcompat:appcompat:1.2.0'
-    implementation 'com.google.android.material:material:1.3.0'
-    implementation 'androidx.constraintlayout:constraintlayout:2.0.4'
+    implementation 'androidx.appcompat:appcompat:1.4.1'
+    implementation 'com.google.android.material:material:1.6.0'
+    implementation 'androidx.constraintlayout:constraintlayout:2.1.3'
     implementation 'androidx.legacy:legacy-support-v4:1.0.0'
-    implementation 'junit:junit:4.13.2'
-    implementation 'androidx.annotation:annotation:1.2.0'
-    implementation 'androidx.lifecycle:lifecycle-livedata-ktx:2.3.1'
-    implementation 'androidx.lifecycle:lifecycle-viewmodel-ktx:2.3.1'
-    testImplementation 'junit:junit:4.13.2'
-    androidTestImplementation 'androidx.test.ext:junit:1.1.2'
-    androidTestImplementation 'androidx.test.espresso:espresso-core:3.3.0'
-    implementation 'com.android.volley:volley:1.2.0'
+    //implementation 'junit:junit:4.13.2'
+    implementation 'androidx.annotation:annotation:1.3.0'
+    implementation 'androidx.lifecycle:lifecycle-livedata-ktx:2.4.1'
+    implementation 'androidx.lifecycle:lifecycle-viewmodel-ktx:2.4.1'
+    //testImplementation 'junit:junit:4.13.2'
+    //testImplementation 'org.junit.jupiter:junit-jupiter'
+    //androidTestImplementation 'androidx.test.ext:junit:1.1.3'
+    //androidTestImplementation 'androidx.test.espresso:espresso-core:3.4.0'
+    implementation 'com.android.volley:volley:1.2.1'
     implementation 'androidx.core:core-ktx:1.7.0'
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
-    implementation 'com.google.android.gms:play-services-auth:20.0.1'
+    implementation 'com.google.android.gms:play-services-auth:20.1.0'
     implementation 'com.auth0.android:auth0:2.+'
     implementation 'com.auth0:java-jwt:3.18.3'
     implementation platform('com.google.firebase:firebase-bom:29.0.4')
@@ -62,6 +87,29 @@ dependencies {
     implementation platform("org.http4k:http4k-bom:4.19.4.0")
     implementation "org.http4k:http4k-core"
     implementation ("org.http4k:http4k-client-okhttp")
+    implementation 'com.firebaseui:firebase-ui-auth:7.2.0'
+    implementation 'com.facebook.android:facebook-android-sdk:13.2.0'
+    implementation 'com.facebook.android:facebook-login:latest.release'
+    implementation("com.android.billingclient:billing-ktx:4.1.0")
+    implementation "androidx.compose.ui:ui:$compose_version"
+    implementation "androidx.compose.ui:ui-tooling-preview:$compose_version"
+    implementation 'androidx.lifecycle:lifecycle-runtime-ktx:2.3.1'
+    testImplementation 'org.jetbrains.kotlin:kotlin-test'
+
+    // Integration with activities
+    implementation 'androidx.activity:activity-compose:1.4.0'
+    // Compose Material Design
+    implementation 'androidx.compose.material:material:1.1.1'
+    // Animations
+    implementation 'androidx.compose.animation:animation:1.1.1'
+    // Tooling support (Previews, etc.)
+    implementation 'androidx.compose.ui:ui-tooling:1.1.1'
+    // Integration with ViewModels
+    implementation 'androidx.lifecycle:lifecycle-viewmodel-compose:2.4.1'
+    // UI Tests
+    androidTestImplementation 'androidx.compose.ui:ui-test-junit4:1.1.1'
+    implementation 'androidx.compose.runtime:runtime:1.1.1'
+    debugImplementation "androidx.compose.ui:ui-test-manifest:$compose_version"
 }
 
 apply plugin: 'com.google.gms.google-services'

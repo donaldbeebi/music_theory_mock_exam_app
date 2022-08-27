@@ -53,6 +53,16 @@
                 { "identifier": "musical_term" },
                 { "identifier": "ornament_naming" }
             ]
+        },
+        {
+            "identifier": "music_in_context",
+            "groups": [
+                { "identifier": "octave_comparison" },
+                { "identifier": "score_fact" },
+                { "identifier": "instrument_pitch" },
+                { "identifier": "note_counting" },
+                { "identifier": "score_number" }
+            ]
         }
     ]
 }

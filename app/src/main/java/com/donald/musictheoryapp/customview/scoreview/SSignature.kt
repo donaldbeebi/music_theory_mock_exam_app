@@ -73,7 +73,8 @@ internal class SSignature(view: ScoreView) : ScoreStamp(view) {
     private val sAccidental: SSignatureAccidental = SSignatureAccidental(view)
     private lateinit var key: Key
     override val relContentWidth: Float
-        get() = abs(key.fifths) * REL_SOLID_NOTE_WIDTH
+        // TODO: THIS WAS abs(key.fifths) * REL_SOLID_NOTE_WIDTH
+        get() = abs(key.fifths) * REL_SINGLE_ACC_WIDTH
 
     fun setKey(key: Key, clef: Clef) {
         this.key = key

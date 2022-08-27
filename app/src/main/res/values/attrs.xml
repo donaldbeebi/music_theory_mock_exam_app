@@ -4,4 +4,5 @@
         <attr name="state_correct" format="boolean" />
         <attr name="state_checked" format="boolean" />
     </declare-styleable>
+    <attr name="weakTextFont" format="reference" />
 </resources>

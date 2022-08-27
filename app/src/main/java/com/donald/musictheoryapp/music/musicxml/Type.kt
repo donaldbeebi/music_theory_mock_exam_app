@@ -2,14 +2,14 @@ package com.donald.musictheoryapp.music.musicxml
 
 enum class Type(val xmlValue: String, val jsonValue: String) {
 
-    BREVE("breve", "breve"),
-    WHOLE("whole", "whole"),
-    HALF("half", "half"),
-    QUARTER("quarter", "quarter"),
-    EIGHTH("eighth", "eighth"),
-    SIXTEENTH("16th", "16th"),
-    THIRTY_SECOND("32nd", "32nd"),
-    SIXTY_FOURTH("64th", "64th");
+    Breve("breve", "breve"),
+    Whole("whole", "whole"),
+    Half("half", "half"),
+    Quarter("quarter", "quarter"),
+    Eighth("eighth", "eighth"),
+    Sixteenth("16th", "16th"),
+    ThirtySecond("32nd", "32nd"),
+    SixtyFourth("64th", "64th");
 
     companion object {
 

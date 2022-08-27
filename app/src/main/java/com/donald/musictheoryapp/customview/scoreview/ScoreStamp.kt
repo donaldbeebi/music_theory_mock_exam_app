@@ -29,13 +29,20 @@ abstract class ScoreStamp(private val view: ScoreView) {
     abstract val relContentWidth: Float
 
     var relLeftMargin = 0F
+
     var relRightMargin = 0F
+
+    val leftMargin
+        get() = relLeftMargin * glyphSize
+
+    val rightMargin
+        get() = relRightMargin * glyphSize
 
     val relWidth: Float
         get() = relLeftMargin + relContentWidth + relRightMargin
 
     val width: Float
-        get() = relContentWidth * glyphSize
+        get() = /*relContentWidth * glyphSize*/ relWidth * glyphSize
 
     open fun onDraw(canvas: Canvas, posX: Float, posY: Float) {}
 

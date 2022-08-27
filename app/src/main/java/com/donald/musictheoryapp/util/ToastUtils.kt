@@ -28,10 +28,10 @@ fun displayToastForFailedExerciseRetrieval(context: Context) {
     Toast.makeText(context, R.string.toast_failed_exercise_retrieval, Toast.LENGTH_LONG).show()
 }
 
-fun displayToast(message: String, context: Context) {
-    Toast.makeText(context, message, Toast.LENGTH_LONG).show()
+fun Context.displayToast(message: String) {
+    Toast.makeText(this, message, Toast.LENGTH_LONG).show()
 }
 
-fun displayToast(message: Int, context: Context) {
-    Toast.makeText(context, message, Toast.LENGTH_LONG).show()
+fun Context.displayToast(message: Int) {
+    Toast.makeText(this, message, Toast.LENGTH_LONG).show()
 }

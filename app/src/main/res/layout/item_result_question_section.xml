@@ -35,7 +35,7 @@
         android:gravity="center"
         android:text="Section #"
         android:textSize="18sp"
-        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintStart_toEndOf="@id/result_section_bar"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintBottom_toTopOf="@id/result_section_name" />
 
@@ -97,7 +97,7 @@
         android:layout_height="4px"
         android:background="@drawable/recycler_view_divider"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/result_section_bar"
+        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         tools:ignore="PxUsage" />
 

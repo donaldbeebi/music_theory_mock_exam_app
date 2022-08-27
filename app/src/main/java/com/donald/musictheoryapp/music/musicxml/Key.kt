@@ -9,8 +9,8 @@ import java.lang.IllegalArgumentException
 class Key(val fifths: Int, val mode: Int) {
 
     object Mode {
-        private const val MINOR = 0
-        private const val MAJOR = 1
+        const val MINOR = 0
+        const val MAJOR = 1
         private val STRINGS = arrayOf(
             "minor",
             "major"

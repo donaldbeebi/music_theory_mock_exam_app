@@ -1,5 +1,6 @@
 package com.donald.musictheoryapp.customview.scoreview
 
+import android.util.Log
 import org.xmlpull.v1.XmlPullParser
 import android.util.Xml
 import com.donald.musictheoryapp.music.musicxml.*

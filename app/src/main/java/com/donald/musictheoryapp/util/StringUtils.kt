@@ -31,4 +31,27 @@ inline fun String.forEachArg(block: (startIndex: Int, endIndex: Int, content: St
             }
         }
     }
+    require(argStart != true)
+}
+
+fun String.getArgs(): List<String> {
+    var argStart = false
+    val argCount = this.count { it == '{' }
+    val args = ArrayList<String>(argCount)
+    var startIndex = 0
+    this.forEachIndexed { index, char ->
+        when {
+            !argStart && char == '{' -> {
+                argStart = true
+                startIndex = index
+            }
+            argStart && char == '}' -> {
+                val endIndex = index + 1
+                args += this.substring(startIndex + 1, endIndex - 1)
+                argStart = false
+            }
+        }
+    }
+    require(argStart != true)
+    return args
 }

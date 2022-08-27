@@ -1,31 +1,39 @@
 package com.donald.musictheoryapp.question
 
-import kotlin.Throws
 import com.donald.musictheoryapp.util.getDescriptions
-import com.donald.musictheoryapp.util.getInputHintOrNull
+import com.donald.musictheoryapp.util.getInputHint
 import com.donald.musictheoryapp.util.getInputType
 import org.json.JSONArray
-import org.json.JSONException
 import org.json.JSONObject
 
 // TODO: 1 ANSWER PER TEXT INPUT? OR NOT?
 class TextInputQuestion(
     number: Int,
-    descriptions: Array<Description>,
+    descriptions: List<Description>,
     inputHint: String?,
     val inputType: InputType,
-    val answers: Array<Answer>
-) : Question(number, descriptions, inputHint) {
+    val answers: List<Answer>
+) : ChildQuestion(number, descriptions, inputHint) {
 
     override val points: Int
         get() = answers.count { it.correct }
     override val maxPoints = answers.size
+    override val correctAnswerCount = answers.sumOf { it.correctAnswers.size }
 
     override fun acceptVisitor(visitor: QuestionVisitor) {
         visitor.visit(this)
     }
 
-    @Throws(JSONException::class)
+    override fun copyNew(): TextInputQuestion {
+        return TextInputQuestion(
+            number,
+            List(descriptions.size) { i -> descriptions[i].copy() },
+            inputHint,
+            inputType,
+            List(answers.size) { i -> answers[i].copyNew() }
+        )
+    }
+
     override fun toPartialJson(): JSONObject {
         val jsonObject = JSONObject()
         jsonObject.put(QUESTION_TYPE, Type.TEXT_INPUT.ordinal)
@@ -40,15 +48,14 @@ class TextInputQuestion(
 
     companion object {
 
-        @Throws(JSONException::class)
         fun fromJson(jsonObject: JSONObject): TextInputQuestion {
             return TextInputQuestion(
                 number = jsonObject.getInt("number"),
                 descriptions = jsonObject.getDescriptions(),
-                inputHint = jsonObject.getInputHintOrNull(),
+                inputHint = jsonObject.getInputHint(),
                 inputType = jsonObject.getInputType(),
                 answers = jsonObject.getJSONArray("answers").run {
-                    Array(this.length()) { index ->
+                    List(this.length()) { index ->
                         Answer.fromJson(this.getJSONObject(index))
                     }
                 }
@@ -61,29 +68,29 @@ class TextInputQuestion(
         Text, Number
     }
 
-    class Answer(var userAnswer: String?, val correctAnswer: String) : Question.Answer {
+    class Answer(var userAnswer: String?, val correctAnswers: List<String>) : ChildQuestion.Answer {
 
         override val correct: Boolean
-            get() = userAnswer == correctAnswer
+            get() = correctAnswers.any { it == userAnswer }
 
-        @Throws(JSONException::class)
+        override fun copyNew(): Answer {
+            return Answer(null, correctAnswers)
+        }
+
         fun toJson(): JSONObject {
             return JSONObject().apply {
                 put("user_answer", userAnswer ?: JSONObject.NULL)
-                put("correct_answer", correctAnswer)
+                put("correct_answers", JSONArray().apply { correctAnswers.forEach { put(it) } })
             }
         }
 
         companion object {
-
-            @Throws(JSONException::class)
             fun fromJson(jsonObject: JSONObject): Answer {
                 return Answer(
                     if (jsonObject.isNull("user_answer")) null else jsonObject.getString("user_answer"),
-                    jsonObject.getString("correct_answer")
+                    jsonObject.getJSONArray("correct_answers").run { List(length()) { i -> getString(i) } }
                 )
             }
-
         }
 
     }

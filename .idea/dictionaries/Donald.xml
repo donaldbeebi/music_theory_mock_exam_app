@@ -9,15 +9,20 @@
       <w>consts</w>
       <w>excluder</w>
       <w>excluders</w>
+      <w>measurables</w>
       <w>neue</w>
       <w>notehead</w>
       <w>noteheads</w>
       <w>partwise</w>
+      <w>placeables</w>
       <w>populator</w>
+      <w>redos</w>
       <w>smufl</w>
+      <w>stackful</w>
       <w>staves</w>
       <w>structs</w>
       <w>unchecking</w>
+      <w>unpeek</w>
     </words>
   </dictionary>
 </component>

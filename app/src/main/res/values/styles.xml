@@ -18,4 +18,14 @@
         <item name="android:textColor">@color/design_default_color_primary</item>
         <item name="android:letterSpacing">0.05</item>
     </style>
+
+    <style name="weak_text_small">
+        <item name="android:textSize">12sp</item>
+        <item name="android:textColor">?attr/colorControlNormal</item>
+    </style>
+    <style name="weak_text_medium">
+        <item name="android:textSize">18sp</item>
+        <item name="android:textColor">?attr/colorControlNormal</item>
+    </style>
+
 </resources>

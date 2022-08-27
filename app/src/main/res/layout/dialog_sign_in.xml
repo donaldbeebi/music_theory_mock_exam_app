@@ -6,6 +6,7 @@
 
     <TextView
         android:id="@+id/sign_up_dialog_title"
+        android:text="@string/sign_up_create_a_profile"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:textColor="@color/white"
@@ -33,6 +34,6 @@
         android:layout_marginStart="32dp"
         android:layout_marginEnd="32dp"
         android:layout_marginBottom="4dp"
-        android:hint="@string/nickname" />
+        android:hint="@string/sign_up_dialog_nickname_text_field_hint" />
 
 </LinearLayout>

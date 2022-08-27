@@ -7,6 +7,17 @@
     android:layout_height="80dp">
 
     <TextView
+        android:id="@+id/practice_option_group_number"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="#.#"
+        android:textSize="20sp"
+        android:layout_margin="20dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent" />
+
+    <TextView
         android:id="@+id/practice_option_group_name"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
@@ -14,19 +25,21 @@
         android:layout_marginEnd="20dp"
         android:text="Question Group"
         android:textSize="20sp"
+        android:lines="2"
+        android:gravity="center_vertical"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@+id/practice_option_minus_button"
-        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/practice_option_group_number"
         app:layout_constraintTop_toTopOf="parent" />
 
     <ImageView
-        android:src="@drawable/ic_add_button"
+        android:src="@drawable/ic_plus_button"
         android:id="@+id/practice_option_plus_button"
-        android:layout_width="50dp"
+        android:layout_width="40dp"
         android:layout_height="match_parent"
         android:background="?selectableItemBackground"
         app:layout_constraintEnd_toEndOf="parent"
-        android:padding="12dp"
+        android:padding="8dp"
         tools:ignore="ContentDescription" />
 
     <TextView
@@ -34,7 +47,7 @@
         android:textSize="20sp"
         android:gravity="center"
         android:id="@+id/practice_option_group_count"
-        android:layout_width="50dp"
+        android:layout_width="30dp"
         android:layout_height="match_parent"
         app:layout_constraintEnd_toStartOf="@+id/practice_option_plus_button"
         app:layout_constraintTop_toTopOf="@+id/practice_option_plus_button"
@@ -44,13 +57,13 @@
     <ImageView
         android:src="@drawable/ic_minus_button"
         android:id="@+id/practice_option_minus_button"
-        android:layout_width="50dp"
+        android:layout_width="40dp"
         android:layout_height="match_parent"
         android:background="?selectableItemBackground"
         app:layout_constraintEnd_toStartOf="@+id/practice_option_group_count"
         app:layout_constraintTop_toTopOf="@+id/practice_option_group_count"
         app:layout_constraintBottom_toBottomOf="@+id/practice_option_group_count"
-        android:padding="12dp"
+        android:padding="8dp"
         tools:ignore="ContentDescription" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

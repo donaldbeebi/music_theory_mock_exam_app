@@ -1,22 +1,18 @@
 package com.donald.musictheoryapp.pagedexercise
 
 import com.donald.musictheoryapp.question.Description
-import com.donald.musictheoryapp.question.Question
+import com.donald.musictheoryapp.question.ChildQuestion
 
+// TODO: OPTIMIZE FOR JETPACK COMPOSE
 data class Page(
-    val sectionNumberString: String,
-    val sectionName: String,
-    val questionNumberString: String,
+    //val sectionNumber: String,
+    val sectionString: String,
+    val pageToPeekIndex: Int?,
+    val questionString: String,
     val descriptions: List<Description>,
-    val question: Question?
+    val question: ChildQuestion?,
+    val images: List<String>
 ) {
-
-    constructor(
-        sectionNumber: String,
-        sectionName: String,
-        questionString: String,
-        descriptions: Array<Description>,
-        question: Question?
-    ) : this(sectionNumber, sectionName, questionString, descriptions.toList(), question)
-
+    val isSectionPage: Boolean
+        get() = question == null
 }

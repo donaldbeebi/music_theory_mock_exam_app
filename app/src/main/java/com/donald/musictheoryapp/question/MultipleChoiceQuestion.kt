@@ -8,31 +8,50 @@ import org.json.JSONObject
 
 class MultipleChoiceQuestion(
     number: Int,
-    descriptions: Array<Description>,
+    descriptions: List<Description>,
     inputHint: String?,
-    val options: Array<String>,
+    val options: List<String>,
     val optionType: OptionType,
     val answer: Answer
-) : Question(number, descriptions, inputHint) {
+) : ChildQuestion(number, descriptions, inputHint) {
 
     override val points: Int
         get() = if (answer.correct) 1 else 0
     override val maxPoints = 1
+    override val correctAnswerCount = answer.correctAnswers.size
 
     override fun acceptVisitor(visitor: QuestionVisitor) {
         visitor.visit(this)
     }
 
+    override fun getAdditionalQuestionImagesRequired(): List<String> {
+        return if (optionType == OptionType.Image) {
+            options
+        } else {
+            emptyList()
+        }
+    }
+
     override fun registerImages(imageArray: JSONArray) {
         super.registerImages(imageArray)
-        if (optionType == OptionType.IMAGE) {
+        if (optionType == OptionType.Image) {
             for (option in options) {
                 imageArray.put(option)
             }
         }
     }
 
-    @Throws(JSONException::class)
+    override fun copyNew(): MultipleChoiceQuestion {
+        return MultipleChoiceQuestion(
+            number,
+            List(descriptions.size) { i -> descriptions[i].copy() },
+            inputHint,
+            List(options.size) { i -> options[i] },
+            optionType,
+            answer.copyNew()
+        )
+    }
+
     override fun toPartialJson(): JSONObject {
         val jsonObject = JSONObject()
         val array = JSONArray()
@@ -51,7 +70,7 @@ class MultipleChoiceQuestion(
             return MultipleChoiceQuestion(
                 number = jsonObject.getInt("number"),
                 descriptions = jsonObject.getDescriptions(),
-                inputHint = jsonObject.getInputHintOrNull(),
+                inputHint = jsonObject.getInputHint(),
                 options = jsonObject.getOptions(),
                 optionType = jsonObject.getOptionType(),
                 answer = Answer.fromJson(jsonObject.getJSONObject("answer")),
@@ -60,14 +79,19 @@ class MultipleChoiceQuestion(
 
     }
 
-    enum class OptionType {
-        TEXT, IMAGE, SCORE
-    }
+    enum class OptionType { Text, Image, Score }
 
-    class Answer(var userAnswer: Int?, val correctAnswers: List<Int>) : Question.Answer {
+    class Answer(var userAnswer: Int?, val correctAnswers: List<Int>) : ChildQuestion.Answer {
 
         override val correct: Boolean
             get() = correctAnswers.any { it == userAnswer }
+
+        override fun copyNew(): Answer {
+            return Answer(
+                null,
+                List(correctAnswers.size) { i -> correctAnswers[i] }
+            )
+        }
 
         fun toJson(): JSONObject {
             val jsonObject = JSONObject()

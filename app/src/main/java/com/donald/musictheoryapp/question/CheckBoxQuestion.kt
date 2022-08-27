@@ -2,27 +2,36 @@ package com.donald.musictheoryapp.question
 
 import kotlin.Throws
 import com.donald.musictheoryapp.util.getDescriptions
-import com.donald.musictheoryapp.util.getInputHintOrNull
+import com.donald.musictheoryapp.util.getInputHint
 import org.json.JSONArray
 import org.json.JSONException
 import org.json.JSONObject
 
 class CheckBoxQuestion(
     number: Int,
-    descriptions: Array<Description>,
+    descriptions: List<Description>,
     inputHint: String?,
-    val answers: Array<Answer>
-) : Question(number, descriptions, inputHint) {
+    val answers: List<Answer>
+) : ChildQuestion(number, descriptions, inputHint) {
 
     override val points: Int
         get() = answers.count { it.correct }
     override val maxPoints = answers.size
+    override val correctAnswerCount = 1
 
     override fun acceptVisitor(visitor: QuestionVisitor) {
         visitor.visit(this)
     }
 
-    @Throws(JSONException::class)
+    override fun copyNew(): CheckBoxQuestion {
+        return CheckBoxQuestion(
+            number,
+            List(descriptions.size) { i -> descriptions[i].copy() },
+            inputHint,
+            List(answers.size) { i -> answers[i].copyNew() }
+        )
+    }
+
     override fun toPartialJson(): JSONObject {
         val jsonObject = JSONObject()
         jsonObject.put(QUESTION_TYPE, Type.CHECK_BOX.ordinal)
@@ -43,9 +52,9 @@ class CheckBoxQuestion(
             val question = CheckBoxQuestion(
                 number = jsonObject.getInt("number"),
                 descriptions = jsonObject.getDescriptions(),
-                inputHint = jsonObject.getInputHintOrNull(),
+                inputHint = jsonObject.getInputHint(),
                 answers = jsonObject.getJSONArray("answers").run {
-                    Array(this.length()) { index ->
+                    List(this.length()) { index ->
                         Answer.fromJson(this.getJSONObject(index))
                     }
                 }
@@ -55,10 +64,14 @@ class CheckBoxQuestion(
 
     }
 
-    class Answer(var userAnswer: Boolean?, val correctAnswer: Boolean) : Question.Answer {
+    class Answer(var userAnswer: Boolean?, val correctAnswer: Boolean) : ChildQuestion.Answer {
 
         override val correct: Boolean
             get() = userAnswer == correctAnswer
+
+        override fun copyNew(): Answer {
+            return Answer(null, correctAnswer)
+        }
 
         @Throws(JSONException::class)
         fun toJson(): JSONObject {

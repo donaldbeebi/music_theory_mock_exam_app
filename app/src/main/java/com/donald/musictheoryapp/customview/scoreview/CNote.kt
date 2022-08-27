@@ -1,6 +1,7 @@
 package com.donald.musictheoryapp.customview.scoreview
 
 import android.graphics.Canvas
+import android.util.Log
 import com.donald.musictheoryapp.music.musicxml.Clef
 import com.donald.musictheoryapp.music.musicxml.Note
 
@@ -24,19 +25,6 @@ internal class CNote(view: ScoreView) : ScoreStamp(view) {
 
     fun setNote(note: Note, clef: Clef) {
         val noteArrow = note.notations?.noteArrow
-        /*
-        if (noteArrow == null) {
-            sAccidental.apply { this.note = note; this.clef = clef }
-            sNoteHead.apply { this.note = note; this.clef = clef }
-            sFlag.apply { this.note = note; this.clef = clef }
-            sLedgerLines.apply { this.note = note; this.clef = clef }
-            hasNoteArrow = false
-        }
-        else {
-            sNoteArrow.apply { this.note = note }
-            hasNoteArrow = true
-        }
-         */
 
         this.note = note
         this.clef = clef

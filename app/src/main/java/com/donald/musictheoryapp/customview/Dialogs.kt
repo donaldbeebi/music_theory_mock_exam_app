@@ -4,7 +4,6 @@ import android.app.AlertDialog
 import android.app.Dialog
 import android.os.Bundle
 import android.widget.EditText
-import android.widget.TextView
 import androidx.appcompat.app.AppCompatDialogFragment
 
 class PauseExerciseDialog(private val callback: () -> Unit) : AppCompatDialogFragment() {
@@ -42,18 +41,21 @@ class TimeOutDialog(private val callback: () -> Unit) : AppCompatDialogFragment(
 
 }
 
-class SignUpDialog(private val platform: String, private val callback: (String) -> Unit) : AppCompatDialogFragment() {
+class SignUpDialogOld(
+    private val onConfirm: (String) -> Unit,
+    private val onCancel: () -> Unit
+) : AppCompatDialogFragment() {
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
+        this.isCancelable = true
         return activity?.let {
             val builder = AlertDialog.Builder(it)
-            val view = it.layoutInflater.inflate(R.layout.dialog_sign_in, null).apply {
-                findViewById<TextView>(R.id.sign_up_dialog_title).text = it.getString(R.string.sign_up_dialog_title, platform)
-            }
+            val view = it.layoutInflater.inflate(R.layout.dialog_sign_in, null)
             val editText = view.findViewById<EditText>(R.id.sign_up_dialog_nick_name_edit_text)
             builder.setView(view)
-                .setPositiveButton(R.string.sign_up) { _, _ -> callback(editText.text.toString()) }
+                .setPositiveButton(R.string.sign_up) { _, _ -> onConfirm(editText.text.toString()) }
                 .setNegativeButton(R.string.cancel) { _, _ -> /* do nothing */ }
+                .setOnCancelListener { onCancel() }
                 .create()
         } ?: throw IllegalStateException("Activity is null.")
     }
@@ -65,10 +67,25 @@ class DisconnectAccountDialog(private val callback: () -> Unit): AppCompatDialog
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
         return activity?.let {
             AlertDialog.Builder(it)
+                .setMessage(getString(R.string.delete_account_dialog_description))
                 .setPositiveButton(getString(R.string.ok_dialog_confirmation)) { _, _ -> callback() }
                 .setNegativeButton(getString(R.string.no_thanks_dialog_confirmation)) { _, _ -> /* do nothing */ }
                 .create()
         } ?: throw IllegalStateException("Activity is null.")
+    }
+
+}
+
+class RedoExerciseDialog(private val callback: () -> Unit): AppCompatDialogFragment() {
+
+    override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
+        return activity?.let {
+            AlertDialog.Builder(it)
+                .setMessage(getString(R.string.redo_exercise_message))
+                .setPositiveButton(getString(R.string.ok_dialog_confirmation)) { _, _ -> callback() }
+                .setNegativeButton(getString(R.string.no_thanks_dialog_confirmation)) { _, _ -> callback() }
+                .create()
+        } ?: throw IllegalStateException("Activity is null")
     }
 
 }

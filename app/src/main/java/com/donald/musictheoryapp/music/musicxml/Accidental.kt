@@ -5,11 +5,11 @@ enum class Accidental(
     val jsonValue: String
 ) {
 
-    FLAT_FLAT("flat-flat", "flat-flat"),
-    FLAT("flat", "flat"),
-    NATURAL("natural", "natural"),
-    SHARP("sharp", "sharp"),
-    SHARP_SHARP("sharp-sharp", "sharp-sharp");
+    FlatFlat("flat-flat", "flat-flat"),
+    Flat("flat", "flat"),
+    Natural("natural", "natural"),
+    Sharp("sharp", "sharp"),
+    SharpSharp("sharp-sharp", "sharp-sharp");
 
     val alter: Int
         get() = ordinal - values().size / 2

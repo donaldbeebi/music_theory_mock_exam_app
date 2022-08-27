@@ -22,10 +22,10 @@ internal class SFlag(view: ScoreView) : ScoreStamp(view) {
             horizontalOffsetOnStaff = -noteWidth / 2
             downOffset = staffStepHeight * 14
             glyph = when (note.type) {
-                Type.EIGHTH -> U.FLAG_8TH_DOWN
-                Type.SIXTEENTH -> U.FLAG_16TH_DOWN
-                Type.THIRTY_SECOND -> U.FLAG_32TH_DOWN
-                Type.SIXTY_FOURTH -> U.FLAG_64TH_DOWN
+                Type.Eighth -> U.FLAG_8TH_DOWN
+                Type.Sixteenth -> U.FLAG_16TH_DOWN
+                Type.ThirtySecond -> U.FLAG_32TH_DOWN
+                Type.SixtyFourth -> U.FLAG_64TH_DOWN
                 else -> null
             }
         } else {
@@ -33,10 +33,10 @@ internal class SFlag(view: ScoreView) : ScoreStamp(view) {
             horizontalOffsetOnStaff = noteWidth / 2
             downOffset = 0f
             glyph = when (note.type) {
-                Type.EIGHTH -> U.FLAG_8TH_UP
-                Type.SIXTEENTH -> U.FLAG_16TH_UP
-                Type.THIRTY_SECOND -> U.FLAG_32TH_UP
-                Type.SIXTY_FOURTH -> U.FLAG_64TH_UP
+                Type.Eighth -> U.FLAG_8TH_UP
+                Type.Sixteenth -> U.FLAG_16TH_UP
+                Type.ThirtySecond -> U.FLAG_32TH_UP
+                Type.SixtyFourth -> U.FLAG_64TH_UP
                 else -> null
             }
         }

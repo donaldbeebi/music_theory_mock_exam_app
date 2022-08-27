@@ -5,13 +5,24 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <TextView
-        android:id="@+id/exercise_download_status_text"
+    <ProgressBar
+        android:id="@+id/exercise_download_progress_ring"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"
+        android:indeterminate="false" />
+
+    <TextView
+        android:id="@+id/exercise_download_status_text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:text="@string/contacting_server_status"
+        app:layout_constraintEnd_toEndOf="@+id/exercise_download_progress_ring"
+        app:layout_constraintStart_toStartOf="@+id/exercise_download_progress_ring"
+        app:layout_constraintTop_toBottomOf="@+id/exercise_download_progress_ring" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

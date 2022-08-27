@@ -111,21 +111,21 @@ class PanelOnTouchListener(scoreView: ScoreView, score: Score) : OnTouchListener
 
         val accidentalCycle = arrayOf(
             null,
-            Accidental.FLAT_FLAT,
-            Accidental.FLAT,
-            Accidental.NATURAL,
-            Accidental.SHARP,
-            Accidental.SHARP_SHARP
+            Accidental.FlatFlat,
+            Accidental.Flat,
+            Accidental.Natural,
+            Accidental.Sharp,
+            Accidental.SharpSharp
         )
 
     }
 
-    fun com.donald.musictheoryapp.music.musicxml.Accidental?.next(step: Int = 1): com.donald.musictheoryapp.music.musicxml.Accidental? {
+    fun Accidental?.next(step: Int = 1): Accidental? {
         val state = this?.let { ordinal + 1 } ?: 0
         return accidentalCycle[floorMod((state + step), accidentalCycle.size)]
     }
 
-    fun com.donald.musictheoryapp.music.musicxml.Accidental?.prev(step: Int = 1): com.donald.musictheoryapp.music.musicxml.Accidental? {
+    fun Accidental?.prev(step: Int = 1): Accidental? {
         val state = this?.let { ordinal + 1 } ?: 0
         return accidentalCycle[floorMod((state - step), accidentalCycle.size)]
     }

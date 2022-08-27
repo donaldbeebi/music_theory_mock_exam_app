@@ -8,27 +8,43 @@ import org.json.JSONException
 import org.json.JSONObject
 import java.util.*
 
-fun JSONObject.getStrings(key: String): Array<String> {
+fun JSONObject.getStringArray(key: String): Array<String> {
     val array = getJSONArray(key)
     return Array(array.length()) { index ->
         array.getString(index)
     }
 }
 
+fun JSONObject.getStringList(key: String): List<String> {
+    val array = getJSONArray(key)
+    return List(array.length()) { index ->
+        array.getString(index)
+    }
+}
+
 fun JSONObject.getStringsOrNull(key: String): Array<String>? {
     return try {
-        getStrings(key)
+        getStringArray(key)
     } catch (e: JSONException) {
         e.printStackTrace()
         null
     }
 }
 
-fun JSONObject.getOptions(): Array<String> {
-    return getStrings("options")
+fun JSONObject.getStringListOrNull(key: String): List<String>? {
+    return try {
+        getStringList(key)
+    } catch (e: JSONException) {
+        e.printStackTrace()
+        null
+    }
 }
 
-fun JSONObject.getOptionsOrNull(): Array<String>? {
+fun JSONObject.getOptions(): List<String> {
+    return getStringList("options")
+}
+
+fun JSONObject.getOptionsOrNull(): List<String>? {
     return try {
         getOptions()
     } catch (e: Exception) {
@@ -37,14 +53,16 @@ fun JSONObject.getOptionsOrNull(): Array<String>? {
     }
 }
 
-fun JSONObject.getDescriptions(): Array<Description> {
+@Deprecated("Use the one with key")
+fun JSONObject.getDescriptions(): List<Description> {
     val array = getJSONArray("descriptions")
-    return Array(array.length()) { index ->
+    return List(array.length()) { index ->
         Description.fromJson(array.getJSONObject(index))
     }
 }
 
-fun JSONObject.getDescriptionsOrNull(): Array<Description>? {
+@Deprecated("Use the one with key")
+fun JSONObject.getDescriptionsOrNull(): List<Description>? {
     return try {
         getDescriptions()
     } catch (e: JSONException) {
@@ -53,15 +71,31 @@ fun JSONObject.getDescriptionsOrNull(): Array<Description>? {
     }
 }
 
-// TODO: THIS COULD CAUSE A BUG LATER
-fun JSONObject.getInputHint(): String {
-    return if (isNull("input_hint")) {
-        throw JSONException("input_hint is null")
-    } else {
-        getString("input_hint")
+fun JSONObject.getDescriptions(key: String): List<Description> {
+    val array = getJSONArray(key)
+    return List(array.length()) { index ->
+        Description.fromJson(array.getJSONObject(index))
     }
 }
 
+fun JSONObject.getDescriptionsOrNull(key: String): List<Description>? {
+    return try {
+        getDescriptions(key)
+    } catch (e: JSONException) {
+        e.printStackTrace()
+        null
+    }
+}
+
+// TODO: THIS COULD CAUSE A BUG LATER
+fun JSONObject.getInputHint(): String? {
+    return when {
+        has("input_hint") && isNull("input_hint") -> null
+        else -> getString("input_hint")
+    }
+}
+
+@Deprecated("Use getInputHint instead")
 fun JSONObject.getInputHintOrNull(): String? {
     return try {
         if (!isNull("inputHint")) getInputHint()
@@ -72,51 +106,94 @@ fun JSONObject.getInputHintOrNull(): String? {
     }
 }
 
-fun JSONObject.getQuestions(): Array<Question> {
+@Deprecated("Use the one with key instead")
+fun JSONObject.getChildQuestions(): List<ChildQuestion> {
     val array = getJSONArray("questions")
-    return Array(array.length()) { index ->
-        Question.fromJson(array.getJSONObject(index))
+    return List(array.length()) { index ->
+        ChildQuestion.fromJson(array.getJSONObject(index))
     }
 }
 
-fun JSONObject.getQuestionsOrNull(): Array<Question>? {
+@Deprecated("Use the one with key instead")
+fun JSONObject.getChildQuestionsOrNull(): List<ChildQuestion>? {
     return try {
-        getQuestions()
+        getChildQuestions()
     } catch (e: JSONException) {
         e.printStackTrace()
         null
     }
 }
 
-fun JSONObject.getGroups(): Array<QuestionGroup> {
-    val array = getJSONArray("groups")
-    return Array(array.length()) { index ->
+fun JSONObject.getChildQuestions(key: String): List<ChildQuestion> {
+    val array = getJSONArray(key)
+    return List(array.length()) { index ->
+        ChildQuestion.fromJson(array.getJSONObject(index))
+    }
+}
+
+fun JSONObject.getChildQuestionsOrNull(key: String): List<ChildQuestion>? {
+    return try {
+        getChildQuestions(key)
+    } catch (e: JSONException) {
+        e.printStackTrace()
+        null
+    }
+}
+
+fun JSONObject.getParentQuestions(key: String): List<ParentQuestion> {
+    val array = getJSONArray(key)
+    return List(array.length()) { index ->
+        ParentQuestion.fromJson(array.getJSONObject(index))
+    }
+}
+
+fun JSONObject.getParentQuestionsOrNull(key: String): List<ParentQuestion>? {
+    return try {
+        getParentQuestions(key)
+    } catch (e: JSONException) {
+        null
+    }
+}
+
+fun JSONObject.getGroups(key: String): List<QuestionGroup> {
+    val array = getJSONArray(key)
+    return List(array.length()) { index ->
         QuestionGroup.fromJson(array.getJSONObject(index))
     }
 }
 
-fun JSONObject.getGroupsOrNull(): Array<QuestionGroup>? {
-    return try {
-        getGroups()
-    } catch (e: JSONException) {
-        e.printStackTrace()
-        null
+fun JSONObject.getGroupsOrNull(key: String): List<QuestionGroup>? {
+    val array = getJSONArray(key)
+    return List(array.length()) { index ->
+        QuestionGroup.fromJsonOrNull(array.getJSONObject(index)) ?: return null
     }
 }
 
-fun JSONObject.getSections(): Array<QuestionSection> {
-    val array = getJSONArray("sections")
-    return Array(array.length()) { index ->
-        QuestionSection.fromJson(array.getJSONObject(index))
+fun JSONObject.getSections(key: String): List<Section> {
+    val array = getJSONArray(key)
+    return List(array.length()) { index ->
+        Section.fromJson(array.getJSONObject(index))
     }
 }
 
-fun JSONObject.getSectionsOrNull(): Array<QuestionSection>? {
-    return try {
-        getSections()
-    } catch (e: JSONException) {
-        e.printStackTrace()
-        null
+fun JSONObject.getSectionsOrNull(key: String): List<Section>? {
+    val array = getJSONArray(key)
+    return List(array.length()) { index ->
+        Section.fromJsonOrNull(array.getJSONObject(index)) ?: return null
+    }
+}
+
+fun JSONObject.getSectionGroups(key: String): List<SectionGroup> {
+    val array = getJSONArray(key)
+    return List(array.length()) { index ->
+        SectionGroup.fromJson(array.getJSONObject(index))
+    }
+}
+
+fun JSONObject.getSectionGroupsOrNull(key: String): List<SectionGroup>? {
+    val array = getJSONArray(key)
+    return List(array.length()) { index ->
+        SectionGroup.fromJsonOrNull(array.getJSONObject(index)) ?: return null
     }
 }
 
@@ -146,11 +223,11 @@ fun JSONObject.getInputTypeOrNull(): TextInputQuestion.InputType? {
     }
 }
 
-fun JSONObject.getQuestionType(): Question.Type {
-    return Question.Type.values()[getInt(QUESTION_TYPE)]
+fun JSONObject.getQuestionType(): ChildQuestion.Type {
+    return ChildQuestion.Type.values()[getInt(QUESTION_TYPE)]
 }
 
-fun JSONObject.getQuestionTypeOrNull(): Question.Type? {
+fun JSONObject.getQuestionTypeOrNull(): ChildQuestion.Type? {
     return try {
         getQuestionType()
     } catch (e: JSONException) {
@@ -185,13 +262,15 @@ fun JSONObject.getOptionTypeOrNull(): MultipleChoiceQuestion.OptionType? {
     }
 }
 
-fun JSONObject.getDate(): Date {
-    return Date(getLong("date"))
+fun Date.toJsonValue(): Long = this.time
+
+fun JSONObject.getDate(key: String = "date"): Date {
+    return Date(getLong(key))
 }
 
-fun JSONObject.getDateOrNull(): Date? {
+fun JSONObject.getDateOrNull(key: String = "date"): Date? {
     return try {
-        getDate()
+        getDate(key)
     } catch (e: JSONException) {
         e.printStackTrace()
         null
@@ -211,6 +290,7 @@ fun JSONObject.getTimeOrNull(key: String): Time? {
     }
 }
 
+@Deprecated("Use tryGetString instead")
 fun JSONObject.getStringOrNull(key: String): String? {
     return try {
         getString(key)
@@ -218,6 +298,15 @@ fun JSONObject.getStringOrNull(key: String): String? {
         e.printStackTrace()
         null
     }
+}
+
+fun JSONObject.tryGetString(key: String): Result<String?, JSONException> {
+    val string: String? = try {
+        getString(key)
+    } catch (e: JSONException) {
+        return Result.Error(e)
+    }
+    return Result.Value(string)
 }
 
 fun JSONObject.getLongOrNull(key: String): Long? {
@@ -272,36 +361,38 @@ fun JSONObject.getCorrectAnswersOrNull(): List<Int>? {
     }
 }
 
-fun JSONObject.getExerciseType(): Exercise.Type {
-    return Exercise.Type.fromString(getString("type"))
+fun JSONObject.getExerciseType(key: String = "type"): Exercise.Type {
+    return Exercise.Type.fromJsonValue(getString(key))
 }
 
-fun JSONObject.getExerciseTypeOrNull(): Exercise.Type? {
+fun JSONObject.getExerciseTypeOrNull(key: String = "type"): Exercise.Type? {
     return try {
-        getExerciseType()
+        getExerciseType(key)
     } catch (e: JSONException) {
         e.printStackTrace()
         null
     }
 }
 
-fun JSONObject.getExerciseTitle(): String {
-    return getString("title")
+fun JSONObject.getExerciseTitle(key: String = "title"): String {
+    return getString(key)
 }
 
-fun JSONObject.getExerciseTitleOrNull(): String? {
+fun JSONObject.getExerciseTitleOrNull(key: String = "title"): String? {
     return try {
-        getExerciseTitle()
+        getExerciseTitle(key)
     } catch (e: JSONException) {
         e.printStackTrace()
         null
     }
 }
 
+@Deprecated("Use getInt() instead", ReplaceWith("getInt(\"points\")"))
 fun JSONObject.getPoints(): Int {
     return getInt("points")
 }
 
+@Deprecated("Use getInt() instead", ReplaceWith("getInt(\"points\")"))
 fun JSONObject.getPointsOrNull(): Int? {
     return try {
         getPoints()
@@ -311,10 +402,12 @@ fun JSONObject.getPointsOrNull(): Int? {
     }
 }
 
+@Deprecated("Use getInt() instead", ReplaceWith("getInt(\"points\")"))
 fun JSONObject.getMaxPoints(): Int {
     return getInt("max_points")
 }
 
+@Deprecated("Use getInt() instead", ReplaceWith("getInt(\"points\")"))
 fun JSONObject.getMaxPointsOrNull(): Int? {
     return try {
         getMaxPoints()
@@ -324,14 +417,17 @@ fun JSONObject.getMaxPointsOrNull(): Int? {
     }
 }
 
+@Deprecated("Use getTime() instead", ReplaceWith("getTime(\"time_remaining\")"))
 fun JSONObject.getTimeRemaining(): Time {
     return getTime("time_remaining")
 }
 
+@Deprecated("Use getTime() instead", ReplaceWith("getTime(\"time_remaining\")"))
 fun JSONObject.getTimeRemainingOrNull(): Time? {
     return getTimeOrNull("time_remaining")
 }
 
+@Deprecated("Use tryGetInt instead")
 fun JSONObject.getIntOrNull(key: String): Int? {
     return try {
         getInt(key)
@@ -340,3 +436,91 @@ fun JSONObject.getIntOrNull(key: String): Int? {
     }
 }
 
+fun JSONObject.tryGetInt(key: String): Result<Int?, JSONException> {
+    val int = try {
+        if (isNull(key)) return Result.Value(null)
+        getInt(key)
+    } catch (e: JSONException) {
+        return Result.Error(e)
+    }
+    return Result.Value(int)
+}
+
+fun JSONObject.getRedoInfo(key: String): RedoInfo {
+    return RedoInfo.fromJson(getJSONObject(key))
+}
+
+fun JSONObject.getRedoInfoOrNull(key: String): RedoInfo? {
+    return try {
+        getRedoInfo(key)
+    } catch (e: JSONException) {
+        e.printStackTrace()
+        null
+    }
+}
+
+fun JSONObject.getExerciseData(key: String): ExerciseData {
+    return ExerciseData.fromJson(getJSONObject(key))
+}
+
+fun JSONObject.getExerciseDataOrNull(key: String): ExerciseData? {
+    return try {
+        getExerciseData(key)
+    } catch (e: JSONException) {
+        e.printStackTrace()
+        null
+    }
+}
+
+fun JSONObject.getExercise(key: String): Exercise {
+    return getJSONObject(key).toExercise()
+}
+
+fun JSONObject.getExerciseOrNull(key: String): Exercise? {
+    return try {
+        getExercise(key)
+    } catch (e: JSONException) {
+        e.printStackTrace()
+        null
+    }
+}
+
+fun JSONObject.toExercise(): Exercise {
+    return Exercise.fromJson(this)
+}
+
+fun JSONObject.toExerciseOrNull(): Exercise? {
+    return try {
+        Exercise.fromJson(this)
+    } catch (e: JSONException) {
+        e.printStackTrace()
+        null
+    }
+}
+
+fun JSONObject.tryGetJSONObject(key: String): Result<JSONObject?, JSONException> {
+    val jsonObject = try {
+        getJSONObject(key)
+    } catch (e: JSONException) {
+        return Result.Error(e)
+    }
+    return Result.Value(jsonObject)
+}
+
+fun JSONObject.tryGetJSONArray(key: String): Result<JSONArray?, JSONException> {
+    val jsonArray = try {
+        getJSONArray(key)
+    } catch (e: JSONException) {
+        return Result.Error(e)
+    }
+    return Result.Value(jsonArray)
+}
+
+fun JSONArray.tryGetJSONObject(index: Int): Result<JSONObject?, JSONException> {
+    val jsonObject: JSONObject? = try {
+        getJSONObject(index)
+    } catch (e: JSONException) {
+        return Result.Error(e)
+    }
+    return Result.Value(jsonObject)
+}

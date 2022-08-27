@@ -1,18 +1,27 @@
 package com.donald.musictheoryapp.customview.scoreview
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.graphics.*
 import com.donald.musictheoryapp.music.musicxml.Clef.Companion.noteStaffPosition
-import kotlin.jvm.JvmOverloads
 import android.util.AttributeSet
+import android.util.Log
 import android.view.View
+import androidx.compose.ui.graphics.toArgb
 import androidx.core.content.res.ResourcesCompat
 import com.donald.musictheoryapp.R
 import com.donald.musictheoryapp.music.musicxml.*
+import java.lang.IllegalArgumentException
 import java.util.*
+import kotlin.math.abs
 
 // TODO: POTENTIAL BUG WITH PANEL INPUT LISTENER, ACCIDENTALS ARE WORKING BECAUSE THERE ARE EXTRA SPACES, WHAT IF THERE AREN'T?
-class ScoreView @JvmOverloads constructor(context: Context?, attrs: AttributeSet? = null) : View(context, attrs) {
+@SuppressLint("ViewConstructor")
+class ScoreView constructor(
+    context: Context?,
+    attrs: AttributeSet? = null,
+    color: androidx.compose.ui.graphics.Color? = null
+) : View(context, attrs) {
 
     var glyphSize = 0F
         private set
@@ -30,16 +39,30 @@ class ScoreView @JvmOverloads constructor(context: Context?, attrs: AttributeSet
     private var numberOfNotes = 0
 
     var inputMode = false
+    // TODO: NO LONGER IN USE
+    @Deprecated("The use of the graphics layer modifier makes this obsolete")
     var zoomedIn = false
+    val intrinsicAspectRatio: Float
+        get() {
+            val minRelWidth = run {
+                setStamps(this)
+                var relWidth = 0F
+                headStamps.forEach { relWidth += it.relWidth }
+                noteStamps.forEach { relWidth += it.relWidth }
+                REL_H_PADDING + relWidth + REL_H_PADDING
+            }
+            val minRelHeight = score?.let { calculateMinRelHeight(it, inputMode) } ?: 0F
+            return minRelWidth / minRelHeight
+        }
 
     // paints
-    val textPaint: Paint = Paint()
-    val glyphPaint: Paint = Paint()
-    val linePaint: Paint = Paint()
+    val textPaint = Paint().apply { this.color = color?.toArgb() ?: Color.BLACK }
+    val glyphPaint = Paint().apply { this.color = color?.toArgb() ?: Color.BLACK }
+    val linePaint = Paint().apply { this.color = color?.toArgb() ?: Color.BLACK }
 
     // DEBUG
     private val viewRect: RectF = RectF()
-    private val debugPaint: Paint = Paint().apply { color = Color.RED; style = Paint.Style.STROKE; strokeWidth = 5F }
+    private val debugPaint: Paint = Paint().apply { this.color = Color.RED; style = Paint.Style.STROKE; strokeWidth = 5F }
 
     // data
     private var score: Score? = null
@@ -79,7 +102,7 @@ class ScoreView @JvmOverloads constructor(context: Context?, attrs: AttributeSet
         glyphPaint.textSize = glyphSize
         glyphPaint.typeface = ResourcesCompat.getFont(context, R.font.bravura)
 
-        linePaint.color = Color.BLACK
+        //linePaint.color = Color.BLACK
         linePaint.style = Paint.Style.FILL
         linePaint.strokeWidth = REL_LINE_WIDTH * glyphSize
 
@@ -134,7 +157,7 @@ class ScoreView @JvmOverloads constructor(context: Context?, attrs: AttributeSet
         var reqRatio: Float
         run {
             val minRelWidth = run {
-                setStamps()
+                setStamps(this)
                 var relWidth = 0F
                 headStamps.forEach { relWidth += it.relWidth }
                 noteStamps.forEach { relWidth += it.relWidth }
@@ -142,6 +165,7 @@ class ScoreView @JvmOverloads constructor(context: Context?, attrs: AttributeSet
             }
             val minRelHeight = score?.let { calculateMinRelHeight(it, inputMode) } ?: 0F
             val calculatedGlyphSize = calculateGlyphSize(minRelWidth, minRelHeight, givenWidth, givenHeight)
+            //if (zoomedIn) calculatedGlyphSize *= 2
             val maxGlyphSize = if (zoomedIn) MAX_GLYPH_SIZE_ZOOMED else MAX_GLYPH_SIZE
             if (calculatedGlyphSize > maxGlyphSize) {
                 glyphSize = maxGlyphSize
@@ -151,6 +175,8 @@ class ScoreView @JvmOverloads constructor(context: Context?, attrs: AttributeSet
                 reqRatio = minRelWidth / minRelHeight
             }
         }
+
+        //if (zoomedIn) reqRatio /= 2
 
         if (hasFixedRatio) {
             if (givenRatio > fixedRatio) {
@@ -207,13 +233,12 @@ class ScoreView @JvmOverloads constructor(context: Context?, attrs: AttributeSet
         // 2. everything on the line
         var currentPosX = hPadding
         for (stamp in headStamps) {
-            stamp.onDraw(canvas, currentPosX, staffPosY)
+            stamp.onDraw(canvas, currentPosX + stamp.leftMargin, staffPosY)
             currentPosX += stamp.width
         }
         for (stamp in noteStamps) {
-            //canvas.drawLine(currentPosX, staffPosY, currentPosX + extraNoteSpacing, staffPosY, Paint().apply { color = Color.RED; strokeWidth = 5F; style = Paint.Style.STROKE })
             currentPosX += extraNoteSpacing
-            stamp.onDraw(canvas, currentPosX, staffPosY)
+            stamp.onDraw(canvas, currentPosX + stamp.leftMargin, staffPosY)
             currentPosX += stamp.width
         }
 
@@ -227,57 +252,12 @@ class ScoreView @JvmOverloads constructor(context: Context?, attrs: AttributeSet
         }
     }
 
-    private fun setStamps() {
-        headStamps.clear()
-        noteStamps.clear()
-        numberOfNotes = 0
-        val score = this.score ?: throw IllegalStateException("Score is not set")
-        scoreAssert(score)
-
-        val measure = score.parts[0].measures[0]
-        val attributes = measure.attributes ?: throw IllegalStateException("No attributes found")
-        val clef = attributes.clefs[0]
-        val key = attributes.key
-
-        // 1. clef
-        if (clef.printObject) {
-            headStamps += SClef(this).apply {
-                setClef(clef)
-                relLeftMargin = REL_H_SPACING
-            }
-        }
-
-        // 2. key signature
-        if (key.fifths != 0) {
-            headStamps += SSignature(this).apply {
-                setKey(key, clef)
-                relLeftMargin = REL_H_SPACING
-            }
-        }
-
-        // 3. notes
-        if (measure.notes.isNotEmpty()) {
-            measure.notes().forEachIndexed { index, note ->
-                noteStamps += CNote(this).apply {
-                    setNote(note, clef)
-                    if (index == 0) relLeftMargin = REL_H_SPACING
-                    if (index != measure.notes.size - 1) relRightMargin = REL_MARGIN_AFTER_NOTE
-                }
-                numberOfNotes++
-            }
-            noteStamps += SBarline(this).apply {
-                style = measure.barline?.barStyle ?: Barline.BarStyle.REGULAR
-                relLeftMargin = REL_H_SPACING
-            }
-        }
-    }
-
-    private companion object {
+    companion object {
         // TODO: IF THE SCORE ONLY HAS A CLEF, IT IS NOT CENTERED
         // TODO: THIS IS BECAUSE IF THE WIDTH IS LONGER THAN THE MIN RATIO, THE BODY RECT IS STRETCHED
 
         // this function arranges the score stamps
-        fun calculateMinRelHeight(score: Score, inputMode: Boolean = false): Float {
+        private fun calculateMinRelHeight(score: Score, inputMode: Boolean = false): Float {
             scoreAssert(score)
 
             var highestNotePos = if (inputMode) INPUT_MODE_TOP_PADDING_LINE_POS else TOP_PADDING_LINE_POS
@@ -301,7 +281,7 @@ class ScoreView @JvmOverloads constructor(context: Context?, attrs: AttributeSet
             return topRelPadding + REL_STAFF_HEIGHT + bottomRelPadding
         }
 
-        fun calculateRelTopPadding(score: Score, inputMode: Boolean = false): Float {
+        private fun calculateRelTopPadding(score: Score, inputMode: Boolean = false): Float {
             scoreAssert(score)
 
             val measure = score.parts[0].measures[0]
@@ -323,14 +303,14 @@ class ScoreView @JvmOverloads constructor(context: Context?, attrs: AttributeSet
             return relTopPadding
         }
 
-        fun scoreAssert(score: Score) {
+        private fun scoreAssert(score: Score) {
             assert(
                 score.parts.size == 1 && score.parts[0].measures.size == 1 &&
                         score.parts[0].measures[0].attributes!!.clefs.size == 1
             )
         }
 
-        fun calculateGlyphSize(minRelWidth: Float, minRelHeight: Float, givenWidth: Int, givenHeight: Int): Float {
+        private fun calculateGlyphSize(minRelWidth: Float, minRelHeight: Float, givenWidth: Int, givenHeight: Int): Float {
             val reqRatio = minRelWidth / minRelHeight
             val actualRatio = givenWidth.toFloat() / givenHeight.toFloat()
 
@@ -341,187 +321,108 @@ class ScoreView @JvmOverloads constructor(context: Context?, attrs: AttributeSet
             }
         }
 
-    }
+        private fun setStamps(scoreView: ScoreView) = with(scoreView) {
+            headStamps.clear()
+            noteStamps.clear()
+            numberOfNotes = 0
+            val score = this.score ?: throw IllegalStateException("Score is not set")
+            scoreAssert(score)
 
-    /*
-    fun onDrawOld(canvas: Canvas) {
-        calculateSizes()
+            val measure = score.parts[0].measures[0]
+            val attributes = measure.attributes ?: throw IllegalStateException("No attributes found")
+            val clef = attributes.clefs[0]
+            val key = attributes.key
 
-        if (score == null) return
-        // TODO: CONSIDER MULTIPLE PARTS AND MULTIPLE CLEFS
-        val currentPart = score!!.parts[0]!!
-        val measures = currentPart.measures
-        val currentClef = measures[0]!!.attributes!!.clefs[0]!!
-        sClef.setClef(currentClef)
-        val currentKey = measures[0]!!.attributes!!.key
-        sSignature.setKey(currentKey, currentClef)
-        setAccidentalMemory(measures[0]!!.attributes!!.key)
-
-        // TODO: FIX WHEN MEASURES_PER_LINE IS MORE THAN 1, AND THERE IS ONLY 1 MEASURE
-        val measuresPerLine = 1
-        val numberOfLines = (measures.size + measuresPerLine - 1) / measuresPerLine
-        var firstMeasureIndex = 0
-        //canvas.drawColor(Color.WHITE);
-
-        // TODO: WHAT IF DIVISION CHANGED MID-WAY
-        for (lineIndex in 0 until numberOfLines) {
-            // TODO: RIGHT NOW GLYPH SIZE IS THE SPACING BETWEEN STAVES, STORE IT AS A PROPER VARIABLE
-            val currentStaffPosY = topPadding + (glyphSize + staffHeight()) * lineIndex
-
-            //sStaff.setWidth(staffWidth)
-
-            currentHeaderRect.apply {
-                left = leftPadding
-                top = currentStaffPosY
-                right = left +
-                        (if (currentClef.printObject || currentKey.fifths != 0) hSpacing else 0F) +
-                        (if (currentClef.printObject) clefWidth + hSpacing else 0f) +
-                        (if (currentKey.fifths != 0)  accWidth * abs(currentKey.fifths) + hSpacing else 0f)
-                //sSignature.width
-                bottom = currentHeaderRect.top + staffHeight()
-            }
-
-            currentBodyRect.apply {
-                left = currentHeaderRect.right
-                top = currentStaffPosY
-                right = leftPadding + staffWidth
-                bottom = currentBodyRect.top + staffHeight()
-            }
-
-            // 1. drawing the staff lines
-            sStaff.onDraw(canvas, leftPadding, currentStaffPosY)
-
-            // 2. drawing the clef
-            if (currentClef.printObject) {
-                sClef.onDraw(canvas, currentHeaderRect.left + hSpacing, currentHeaderRect.top)
-            }
-
-            // 3. drawing the signature
-            sSignature.onDraw(
-                canvas,
-                currentHeaderRect.left +
-                        (if (currentClef.printObject) hSpacing + clefWidth else 0F) + hSpacing,
-                currentHeaderRect.top
-            )
-
-            val numberOfMeasuresThisLine = measuresPerLine.coerceAtMost(measures.size - firstMeasureIndex)
-            var currentPosX = currentBodyRect.left
-            val currentPosY = currentBodyRect.bottom
-
-            for (measureIndex in 0 until numberOfMeasuresThisLine) {
-                val measure = measures[firstMeasureIndex + measureIndex]
-                if (measure!!.notes.isEmpty()) continue
-                val notes = measure.notes
-                val extraNoteSpacing = (width - (minRelWidth * glyphSize)) / (notes.size + 1) // TODO: DISREGARDING CHORD NOTES
-                measureAlters.clear()
-                /*
-				 * VARIABLES
-				 */
-                // TODO: HANDLE WITHOUT NOTES
-                // TODO: REDUCE THE SPACE AT THE BEGINNING AND END OF THE NOTES
-                var totalDuration = 0
-                var shortestDuration = Int.MAX_VALUE
-                for (note in notes) {
-                    if (note!!.staff == 1 && !note.chord) {
-                        val duration = note.duration
-                        if (duration < shortestDuration) shortestDuration = duration
-                        totalDuration += duration
-                    }
+            // 1. clef
+            if (clef.printObject) {
+                headStamps += SClef(this).apply {
+                    setClef(clef)
+                    relLeftMargin = REL_H_SPACING
                 }
-                val spacingPerDuration = (currentBodyRect.width() / (totalDuration + shortestDuration)) / numberOfMeasuresThisLine
-
-                /*
-				 * DRAWING
-				 */
-                // 4. drawing the notes
-                //currentPosX += shortestDuration * spacingPerDuration
-
-                notes.indices.forEach { noteIndex ->
-                    val note = notes[noteIndex]!!
-
-                    if (noteIndex != 0 && !notes[noteIndex]!!.chord) {
-                        currentPosX +=  noteWidth
-                    }
-
-                    currentPosX += extraNoteSpacing + glyphSize *
-                            if (!note.printObject() && note.notations?.noteArrow != null) REL_NOTE_SINGLE_ACC_SPACING
-                            else if (note.accidental() == Note.Accidental.NULL) REL_NOTE_NO_ACC_SPACING
-                            else if (note.accidental == Note.Accidental.FLAT_FLAT) REL_NOTE_DOUBLE_ACC_SPACING
-                            else REL_NOTE_SINGLE_ACC_SPACING
-
-                    //currentPosX += accWidth(note, glyphSize)
-
-                    if (note.staff == 1 && note.printObject()) {
-                        // TODO: CHORD NOTES' LEDGER LINES ARE BEING DRAWN TWICE
-                        glyphPaint.color = note.color()
-
-                        // a. note head
-                        if (note.pitch != null && note.type != Note.Type.NULL) {
-                            sNoteHead.run {
-                                set(note, currentClef)
-                                onDraw(canvas, currentPosX, currentPosY)
-                            }
-                            if (note.type > Note.Type.QUARTER) {
-                                sFlag.run {
-                                    set(note, currentClef)
-                                    onDraw(canvas, currentPosX, currentPosY)
-                                }
-                                sStem.run {
-                                    setNote(note, currentClef)
-                                    onDraw(canvas, currentPosX, currentPosY)
-                                }
-                            }
-                            // b. accidental
-                            if (note.accidental != Note.Accidental.NULL) {
-                                sAccidental.run {
-                                    set(note, currentClef)
-                                    onDraw(canvas, currentPosX, currentPosY)
-                                }
-                            }
-                            // c. ledger lines
-                            sLedgerLines.run {
-                                set(note, currentClef)
-                                onDraw(canvas, currentPosX, currentPosY)
-                            }
-                        }
-                    }
-                    // d. notations
-                    if (note.notations != null) {
-                        if (note.notations.noteArrow != null) {
-                            sNoteArrow.run {
-                                setLabel(note.notations.noteArrow.label)
-                                onDraw(canvas, currentPosX, currentPosY)
-                            }
-                        }
-                    }
-                }
-
-                //glyphPaint.color = Color.BLACK
-
-                // 5. draw the bar line
-                // adjust for the last note
-                currentPosX += noteWidth + hSpacing + extraNoteSpacing
-                if (measure.barline != null) {
-                    sBarline.style = measure.barline.barStyle
-                } else {
-                    sBarline.style = Barline.BarStyle.REGULAR
-                }
-                sBarline.onDraw(canvas, currentPosX, currentPosY)
-
-                viewRect.left = 0F
-                viewRect.top = 0F
-                viewRect.right = width.toFloat()
-                viewRect.bottom = height.toFloat()
-                canvas.drawRect(viewRect, debugPaint)
-
-
-                canvas.drawRect(currentHeaderRect, debugPaint)
-                canvas.drawRect(currentBodyRect, debugPaint)
             }
-            firstMeasureIndex += measuresPerLine
+
+            // 2. key signature
+            if (key.fifths != 0) {
+                headStamps += SSignature(this).apply {
+                    setKey(key, clef)
+                    relLeftMargin = REL_H_SPACING
+                }
+            }
+
+            // 3. notes
+            if (measure.notes.isNotEmpty()) {
+                measure.notes().forEachIndexed { index, note ->
+                    noteStamps += CNote(this).apply {
+                        setNote(note, clef)
+                        if (index == 0) relLeftMargin = REL_H_SPACING
+                        if (index != measure.notes.size - 1) relRightMargin = REL_MARGIN_AFTER_NOTE
+                    }
+                    numberOfNotes++
+                }
+                noteStamps += SBarline(this).apply {
+                    style = measure.barline?.barStyle ?: Barline.BarStyle.REGULAR
+                    relLeftMargin = REL_H_SPACING
+                }
+            }
+        }
+
+        // TODO: NOT COMPLYING THE SINGLE SOURCE OF TRUTH
+        // this disregards input mode
+        fun getAspectRatio(score: Score): Float {
+            var relWidth = 0F
+            val relHeight = calculateMinRelHeight(score, inputMode = false)
+            //val headStamps = ArrayList<ScoreStamp>()
+            //val noteStamps = ArrayList<ScoreStamp>()
+            //val numberOfNotes = 0
+            scoreAssert(score)
+
+            val measure = score.parts[0].measures[0]
+            val attributes = measure.attributes ?: throw IllegalStateException("No attributes found")
+            val clef = attributes.clefs[0]
+            val key = attributes.key
+
+            // 1. clef
+            if (clef.printObject) {
+                relWidth += REL_H_SPACING
+                relWidth += REL_CLEF_WIDTH
+            }
+
+            // 2. key signature
+            if (key.fifths != 0) {
+                relWidth += REL_H_SPACING
+                relWidth += abs(key.fifths) * REL_SINGLE_ACC_WIDTH
+            }
+
+            // 3. notes
+            if (measure.notes.isNotEmpty()) {
+                measure.notes().forEachIndexed { index, note ->
+                    relWidth += getNoteRelWidth(note)
+                    if (index == 0) relWidth += REL_H_SPACING
+                    if (index != measure.notes.size - 1) relWidth += REL_MARGIN_AFTER_NOTE
+                }
+                // barline
+                relWidth += REL_H_SPACING
+            }
+
+            return relWidth / relHeight
+        }
+
+        private fun getNoteRelWidth(note: Note) = if (note.notations?.noteArrow == null) {
+            getNoteAccRelWidth(note) + getNoteHeadRelWidth(note)
+        } else {
+            REL_NOTE_ARROW_ARROW_WIDTH + REL_NOTE_ARROW_SPACING + REL_NOTE_ARROW_LABEL_WIDTH + REL_MARGIN_AFTER_ARROW
+        }
+
+        private fun getNoteAccRelWidth(note: Note) = when (note.accidental) {
+            Accidental.FlatFlat -> REL_DOUBLE_ACC_WIDTH + REL_MARGIN_AFTER_NOTE_ACC
+            null -> 0F
+            else -> REL_SINGLE_ACC_WIDTH + REL_MARGIN_AFTER_NOTE_ACC
+        }
+
+        private fun getNoteHeadRelWidth(note: Note) = when (note.type) {
+            Type.Breve, Type.Whole -> REL_HOLLOW_NOTE_WIDTH
+            else -> REL_SOLID_NOTE_WIDTH
         }
     }
-
-     */
 
 }
