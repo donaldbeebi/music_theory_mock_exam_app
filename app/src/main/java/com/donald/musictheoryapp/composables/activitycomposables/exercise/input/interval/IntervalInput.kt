@@ -9,6 +9,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
@@ -45,6 +46,12 @@ fun IntervalInput(
         if (intervalInputState == IntervalInputState.InputMode) Text(
             text = stringResource(R.string.interval_input_tip),
             style = MaterialTheme.exerciseTypography.intervalInputTip,
+            color = MaterialTheme.colors.onBackground
+        )
+        Text(
+            text = question.requiredInterval,
+            style = MaterialTheme.exerciseTypography.inputHint,
+            fontWeight = FontWeight.Bold,
             color = MaterialTheme.colors.onSurface
         )
         Surface(
@@ -135,7 +142,7 @@ private val MockIntervalInputQuestion = IntervalInputQuestion(
     descriptions = emptyList(),
     inputHint = null,
     score = MockScore,
-    requiredInterval = "",
+    requiredInterval = "Minor 3rd",
     answer = IntervalInputQuestion.Answer(
         userAnswer = null,
         correctAnswer = Note(
