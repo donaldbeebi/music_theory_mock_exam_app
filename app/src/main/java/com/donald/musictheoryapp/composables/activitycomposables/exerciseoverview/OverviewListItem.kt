@@ -49,7 +49,7 @@ private fun SectionOverviewItemPreview() = CustomTheme(darkTheme = false) {
                     )*/
                 )
             ),
-            state = OverviewListItemState.Disabled,
+            state = OverviewListItemState.Enabled(false, {}, { _, _ -> Unit }),
             showsTopShadow = true
         )
     }
@@ -58,9 +58,6 @@ private fun SectionOverviewItemPreview() = CustomTheme(darkTheme = false) {
 @Composable
 fun OverviewListItem(
     sectionGroup: SectionGroup,
-    //expanded: Boolean,
-    //onExpand: () -> Unit,
-    //onViewQuestion: (Int, Int) -> Unit,
     state: OverviewListItemState,
     showsTopShadow: Boolean,
     modifier: Modifier = Modifier
@@ -68,10 +65,10 @@ fun OverviewListItem(
     val buttonContentColor: Color
     val color: Color
     when (state) {
-        is OverviewListItemState.Deleting -> {
+        /*is OverviewListItemState.Deleting -> {
             color = MaterialTheme.colors.secondary
             buttonContentColor = MaterialTheme.colors.onSecondary
-        }
+        }*/
         else -> {
             color = MaterialTheme.colors.primary
             buttonContentColor = MaterialTheme.colors.onPrimary
@@ -85,8 +82,8 @@ fun OverviewListItem(
             color = color,
             buttonImagePainter = painterResource(
                 when (state) {
-                    is OverviewListItemState.Deleting -> R.drawable.ic_delete
-                    is OverviewListItemState.Regular -> if (state.expanded) {
+                    //is OverviewListItemState.Deleting -> R.drawable.ic_delete
+                    is OverviewListItemState.Enabled -> if (state.expanded) {
                         R.drawable.ic_expand_button_expanded
                     } else {
                         R.drawable.ic_expand_button_collapsed
@@ -96,8 +93,8 @@ fun OverviewListItem(
             ),
             buttonImageColor = buttonContentColor,
             buttonState = when (state) {
-                is OverviewListItemState.Regular -> ListItemButtonState.Enabled(state.onExpand)
-                is OverviewListItemState.Deleting -> ListItemButtonState.Enabled(state.onDelete)
+                is OverviewListItemState.Enabled -> ListItemButtonState.Enabled(state.onExpand)
+                //is OverviewListItemState.Deleting -> ListItemButtonState.Enabled(state.onDelete)
                 else -> ListItemButtonState.Disabled
             },
             modifier = modifier.height(IntrinsicSize.Min)
@@ -109,7 +106,7 @@ fun OverviewListItem(
         }
         AnimatedVisibility(
             visible = when (state) {
-                is OverviewListItemState.Regular -> state.expanded
+                is OverviewListItemState.Enabled -> state.expanded
                 else -> false
             },
             enter = expandVertically(),
@@ -128,7 +125,7 @@ fun OverviewListItem(
                             OverviewSubListItem(
                                 questionGroup,
                                 buttonState = when (state) {
-                                    is OverviewListItemState.Regular -> ListItemButtonState.Enabled(
+                                    is OverviewListItemState.Enabled -> ListItemButtonState.Enabled(
                                         { state.onViewQuestion(sectionIndex, questionGroupIndex) }
                                     )
                                     else -> ListItemButtonState.Disabled
@@ -219,13 +216,14 @@ private fun SectionDivider(
 }
 
 sealed class OverviewListItemState {
-    class Regular(
+    class Enabled(
         val expanded: Boolean,
         val onExpand: () -> Unit,
         val onViewQuestion: (Int, Int) -> Unit
     ) : OverviewListItemState()
-    class Deleting(
+    /*class Deleting(
         val onDelete: () -> Unit
-    ) : OverviewListItemState()
+    ) : OverviewListItemState()*/
+    @Deprecated("Might not even need this?")
     object Disabled : OverviewListItemState()
 }

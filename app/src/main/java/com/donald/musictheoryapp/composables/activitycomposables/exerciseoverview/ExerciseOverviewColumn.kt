@@ -100,7 +100,13 @@ fun ExerciseOverviewColumn(
             ) {
                 OverviewListItem(
                     sectionGroup = sectionGroup,
-                    state = OverviewListItemState.Disabled,
+                    state = OverviewListItemState.Enabled(
+                        expanded = sectionGroupIndex == currentExpandedSectionGroupIndex,
+                        onExpand = { onExpandButtonPressed(sectionGroupIndex) },
+                        onViewQuestion = { sectionIndex, questionGroupIndex ->
+                            onViewQuestion(sectionGroupIndex, sectionIndex, questionGroupIndex)
+                        }
+                    ),
                     showsTopShadow = sectionGroupIndex != sectionGroups.lastIndex
                 )
             }

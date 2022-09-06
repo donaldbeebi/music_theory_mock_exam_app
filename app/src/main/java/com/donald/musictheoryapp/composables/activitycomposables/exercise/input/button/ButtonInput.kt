@@ -80,7 +80,7 @@ fun ImageProvider.ButtonInput(
                             },
                             onUp = {
                                 check(state.pressed)
-                                state = if (state.interactingIndex == optionIndex) {
+                                state = if (state.interactingIndex == optionIndex || true) {
                                     // up on the same button
                                     InteractionState(
                                         interactingIndex = state.interactingIndex,
@@ -90,7 +90,8 @@ fun ImageProvider.ButtonInput(
                                         .also { onSelect(if (selectedIndex == null) state.interactingIndex else null) }
                                 } else {
                                     // up on a different button
-                                    throw IllegalStateException()
+                                    //throw IllegalStateException()
+                                    state
                                 }
                             }
                         ),

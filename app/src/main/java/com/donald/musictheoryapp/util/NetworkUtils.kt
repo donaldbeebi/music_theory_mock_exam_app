@@ -152,11 +152,12 @@ fun Context.executeRequest(request: Request): Result<Response, ExecuteError> {
         var response: Response
         var retry = -1
         do {
+            Log.d("NetworkUtils", "Trying with retry: $retry")
             response = HttpClient(request)
             if (!(response.status == Status.GATEWAY_TIMEOUT || response.status == Status.CLIENT_TIMEOUT)) break
             retry++
         } while (retry <= MAX_RETRY_COUNT)
-        if (response.status == Status.GATEWAY_TIMEOUT) {
+        if (response.status == Status.GATEWAY_TIMEOUT || response.status == Status.CLIENT_TIMEOUT) {
             return Result.Error(ExecuteError.Timeout)
         }
         //if (response.status == Status.OK && response.bodyString().isEmpty()) printStream(response.body.stream)
