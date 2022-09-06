@@ -53,9 +53,9 @@ class ExerciseOverviewActivity : AppCompatActivity() {
         )
     }
 
-    private val onViewQuestion = fun(sectionGroupIndex: Int, sectionIndex: Int, groupIndex: Int) {
+    private val onViewQuestion = fun(sectionGroupIndex: Int, sectionIndex: Int, questionGroupIndex: Int) {
         val exerciseDisplayData = this.exerciseDisplayData ?: throw IllegalStateException()
-        goToQuestion(exerciseDisplayData.exerciseIndex, sectionGroupIndex, sectionIndex, groupIndex)
+        goToQuestion(exerciseDisplayData.exerciseIndex, sectionGroupIndex, sectionIndex, questionGroupIndex)
     }
 
     private val onExpandButtonPressed = fun(index: Int) {

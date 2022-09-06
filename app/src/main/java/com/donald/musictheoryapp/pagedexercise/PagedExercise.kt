@@ -1,6 +1,7 @@
 package com.donald.musictheoryapp.pagedexercise
 
 import android.content.res.Resources
+import android.util.Log
 import com.donald.musictheoryapp.R
 import com.donald.musictheoryapp.question.*
 import com.donald.musictheoryapp.util.toAlphabet
@@ -15,7 +16,11 @@ class PagedExercise(private val pages: List<Page>)/*(val exercise: Exercise, que
         for (page in pages) {
             page.images uniqueAddTo imagesToLoad
         }
-        imagesToLoad
+        imagesToLoad.also {
+            require(
+                imagesToLoad.all { it in pages.flatMap { it.images } } && pages.flatMap { it.images }.all { it in imagesToLoad }
+            )
+        }
     }
 
     /*constructor(exercise: Exercise, resources: Resources) : this(
@@ -113,6 +118,7 @@ class PagedExercise(private val pages: List<Page>)/*(val exercise: Exercise, que
                     // a dedicated page for the section descriptions
                     if (section.descriptions.isNotEmpty()) {
                         val images = section.getSectionImagesRequired()
+                        Log.d("PagedExercise", "Images for section = ${images.joinToString(",")}")
                         pages += Page(
                             sectionString = "${getSectionNumber(sectionGroup, section)} ${sectionGroup.name}",
                             pageToPeekIndex = null,
@@ -166,8 +172,8 @@ private fun countPages(exercise: Exercise): Int {
     }
 }
 
-private infix fun List<String>.uniqueAddTo(imagesToLoad: ArrayList<String>) {
-    this.forEach { if (it !in imagesToLoad) imagesToLoad.add(it) }
+private infix fun List<String>.uniqueAddTo(destination: ArrayList<String>) {
+    this.forEach { if (it !in destination) destination.add(it) }
 }
 
 @Deprecated("")

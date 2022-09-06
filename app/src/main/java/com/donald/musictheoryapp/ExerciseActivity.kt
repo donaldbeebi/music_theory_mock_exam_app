@@ -263,7 +263,7 @@ class ExerciseActivity : AppCompatActivity(), ImageProvider, ExerciseTimerListen
             pageIndex = pageToPeekIndex,
             pageCount = pagedExercise.pageCount,
             pageMode = exerciseState.toPageMode(exercise.timeRemaining),
-            descriptions = pagePeeked.descriptions,
+            descriptions = if (pageIsLoading(pagePeeked.images, imageStatuses)) null else pagePeeked.descriptions,
             pageIndexToReturn = pageIndexToReturn,
             onUnpeek = { onUnpeek(it) },
             onPause = { pauseTimer() }
@@ -534,7 +534,7 @@ class ExerciseActivity : AppCompatActivity(), ImageProvider, ExerciseTimerListen
         accessToken: DecodedJWT
     ) {
         runNetworkIO {
-            if (profile.points < TEST_COST) {
+            if (profile.points < TEST_COST && false) { // TODO: POINTS DETECTION DISABLED
                 runMain { onInsufficientPoints() }
             } else {
                 val bodyJson = JSONObject().apply {
@@ -553,7 +553,7 @@ class ExerciseActivity : AppCompatActivity(), ImageProvider, ExerciseTimerListen
     ) {
         runNetworkIO {
             val profile = CurrentProfile ?: throw IllegalStateException("Profile is null")
-            if (profile.points < options.countCost(PRACTICE_COST)) {
+            if (profile.points < options.countCost(PRACTICE_COST) && false) { // TODO: POINTS DETECTION DISABLED
                 runMain { onInsufficientPoints(); Log.d("ExerciseActivity", "You have ${profile.points} points but it requires ${options.countCost(PRACTICE_COST)} points") }
             } else {
                 val bodyJson = JSONObject().apply {
@@ -823,11 +823,16 @@ private fun ImageProvider.ExerciseScreen(
 }
 
 @Composable
-private fun PageLoadingBody() = Box(modifier = Modifier.fillMaxSize()) {
+private fun LoadingIndicator(modifier: Modifier = Modifier) {
     CircularLoadingIndicator(
         text = stringResource(R.string.downloading_image),
-        modifier = Modifier.align(Alignment.Center)
+        modifier = modifier
     )
+}
+
+@Composable
+private fun PageLoadingBody() = Box(modifier = Modifier.fillMaxSize()) {
+    LoadingIndicator(Modifier.align(Alignment.Center))
 }
 
 @Composable
@@ -877,8 +882,11 @@ private fun ImageProvider.PagePeekingBody(
 ) = Box(
     modifier = modifier.fillMaxSize()
 ) {
-    DescriptionPanel(
-        descriptions = pageState.descriptions,
+    val descriptions = pageState.descriptions
+    if (descriptions == null) Box(modifier = Modifier.fillMaxSize()) {
+        LoadingIndicator(Modifier.align(Alignment.Center))
+    } else DescriptionPanel(
+        descriptions = descriptions,
         modifier = Modifier
             .padding(start = 16.dp, end = 16.dp, top = 16.dp)
             .align(Alignment.Center)
@@ -972,7 +980,7 @@ private sealed class PageState(
         pageCount: Int,
         pageMode: PageMode,
         val pageIndexToReturn: Int,
-        val descriptions: List<Description>,
+        val descriptions: (List<Description>)?,
         val onUnpeek: (Int) -> Unit,
         val onPause: (() -> Unit),
     ) : PageState(sectionString, questionString, pageIndex, pageCount, pageMode)
@@ -982,8 +990,6 @@ private sealed class PageState(
         questionString: String,
         pageIndex: Int,
         pageCount: Int,
-        //timeRemaining: Time,
-        //readMode: Boolean,
         pageMode: PageMode.RegularMode,
         val onResume: () -> Unit
     ) : PageState(sectionString, questionString, pageIndex, pageCount, pageMode)

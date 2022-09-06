@@ -167,7 +167,7 @@ class SignInActivity : AppCompatActivity() {
             Status.NO_CONTENT -> Result.Value(false)
             else -> {
                 //runMain { handleBadResponseFromServer(response.bodyString()) }
-                Result.Error(SignInError.BadResponse("Bad response from server: ${response.bodyString()}"))
+                Result.Error(SignInError.BadResponse("Bad response from server with code: ${response.status.code} and body: ${response.bodyString()}"))
             }
         }
     }
