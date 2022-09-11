@@ -191,7 +191,7 @@ class PracticeOptionsActivity : AppCompatActivity() {
     }
 
     private fun confirmPractice(accessToken: DecodedJWT) = runMain {
-        if (profile.points < sectionOptionViewModels.countCost(PRACTICE_COST)) {
+        if (profile.points < sectionOptionViewModels.countCost(PRACTICE_COST) || false) { // TODO: POINTS DETECTION DISABLED
             displayToast(R.string.toast_insufficient_points)
             return@runMain
         }
@@ -210,6 +210,7 @@ class PracticeOptionsActivity : AppCompatActivity() {
         when (tokenError) {
             TokenError.BadResponse -> this.displayToast(R.string.toast_bad_response_from_server)
             TokenError.NoInternet -> this.displayToast(R.string.toast_no_internet)
+            TokenError.Timeout -> this.displayToast(R.string.toast_timeout)
         }
     }
 
@@ -275,7 +276,7 @@ private fun Screen(
                     horizontalAlignment = Alignment.CenterHorizontally,
                     modifier = Modifier.padding(16.dp)
                 ) {
-                    PointsBar(
+                    if (false) PointsBar( // TODO: REMOVED
                         points = points,
                         modifier = Modifier.height(IntrinsicSize.Min)
                     )

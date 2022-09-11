@@ -64,9 +64,10 @@ class ExerciseActivity : AppCompatActivity(), ImageProvider, ExerciseTimerListen
         require(currentActivityState is ActivityState.Downloading)
         val pagedExercise = PagedExercise(exercise, { getString(R.string.question_string, it) })
         val initialPage = pagedExercise[0]
-        val exerciseState: ExerciseState = ExerciseState.RegularMode(
-            ExerciseTimer(this, lifecycleScope).also { it.start() }
-        )
+        val exerciseTimer = ExerciseTimer(this, lifecycleScope)
+        val exerciseState: ExerciseState = ExerciseState.RegularMode(exerciseTimer)
+        val pageIndex = 0
+        val page = pagedExercise[pageIndex]
 
         val newActivityState = ActivityState.ViewingExercise(
             exercise = exercise,
@@ -80,7 +81,7 @@ class ExerciseActivity : AppCompatActivity(), ImageProvider, ExerciseTimerListen
                 PageState.Loading(
                     sectionString = initialPage.sectionString,
                     questionString = initialPage.questionString,
-                    pageIndex = 0,
+                    pageIndex = pageIndex,
                     pageCount = pagedExercise.pageCount,
                     pageMode = exerciseState.toPageMode(exercise.timeRemaining),
                     onNavigate = { onNavigate(it) },
@@ -89,7 +90,30 @@ class ExerciseActivity : AppCompatActivity(), ImageProvider, ExerciseTimerListen
             )
         )
         currentActivityState = newActivityState
+        exerciseTimer.start()
         with (newActivityState) { loadImagesAsync() }
+
+        // TODO: FIX THIS SHIT v
+        if (page.images.isEmpty()) with(newActivityState) {
+            this.currentPageStateDelegate.value = PageState.Ready(
+                sectionString = page.sectionString,
+                questionString = page.questionString,
+                pageIndex = pageIndex,
+                pageCount = pagedExercise.pageCount,
+                pageMode = exerciseState.toPageMode(exercise.timeRemaining),
+                descriptions = page.descriptions,
+                question = page.question,
+                inputPanelExpanded = inputPanelExpanded,
+                onTogglePanelExpand = {
+                    inputPanelExpanded = !inputPanelExpanded
+                    updatePageStatus(pageIndex)
+                },
+                onNavigate = { onNavigate(it) },
+                onPeek = page.pageToPeekIndex?.let { { onPeek(it, currentPageStateDelegate.value.pageIndex) } },
+                onPause = { pauseTimer() }
+            )
+            currentActivityState = newActivityState
+        }
     }
 
     private fun onInsufficientPoints() {
@@ -321,6 +345,7 @@ class ExerciseActivity : AppCompatActivity(), ImageProvider, ExerciseTimerListen
         )
     }
 
+    // TODO: THIS IS SO FUCKING MESSY, FIX IT!
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         profile = CurrentProfile ?: throw IllegalStateException("Profile not set")
@@ -347,7 +372,9 @@ class ExerciseActivity : AppCompatActivity(), ImageProvider, ExerciseTimerListen
                             val imageStatuses = SnapshotStateMap<String, ImageStatus>().apply {
                                 pagedExercise.imagesToLoad.forEach { put(it, ImageStatus.Loading) }
                             }
-                            val exerciseState = ExerciseState.RegularMode(ExerciseTimer(this, lifecycleScope))
+
+                            val exerciseTimer = ExerciseTimer(this, lifecycleScope)
+                            val exerciseState = ExerciseState.RegularMode(exerciseTimer)
                             val newActivityState = ActivityState.ViewingExercise(
                                 exercise = exercise,
                                 pagedExercise = PagedExercise(exercise, { getString(R.string.question_string, it) }),
@@ -364,6 +391,7 @@ class ExerciseActivity : AppCompatActivity(), ImageProvider, ExerciseTimerListen
                                 )
                             )
                             currentActivityState = newActivityState
+                            exerciseTimer.start()
                             with(newActivityState) { loadImagesAsync() }
                         }
                     }
@@ -410,9 +438,8 @@ class ExerciseActivity : AppCompatActivity(), ImageProvider, ExerciseTimerListen
                             val imageStatuses = SnapshotStateMap<String, ImageStatus>().apply {
                                 pagedExercise.imagesToLoad.forEach { put(it, ImageStatus.Loading) }
                             }
-                            val exerciseState = ExerciseState.RegularMode(
-                                timer = ExerciseTimer(this, lifecycleScope)
-                            )
+                            val exerciseTimer = ExerciseTimer(this, lifecycleScope)
+                            val exerciseState = ExerciseState.RegularMode(timer = exerciseTimer)
                             val newActivityState = ActivityState.ViewingExercise(
                                 exercise = exercise,
                                 pagedExercise = PagedExercise(exercise, { getString(R.string.question_string, it) }),
@@ -429,6 +456,7 @@ class ExerciseActivity : AppCompatActivity(), ImageProvider, ExerciseTimerListen
                                 )
                             )
                             currentActivityState = newActivityState
+                            exerciseTimer.start()
                             with(newActivityState) { loadImagesAsync() }
                         }
                     }
@@ -508,7 +536,7 @@ class ExerciseActivity : AppCompatActivity(), ImageProvider, ExerciseTimerListen
         bodyJson: JSONObject,
         cost: Int
     ) {
-        require(profile.points >= cost) { "Insufficient points" }
+        require(profile.points >= cost || true) { "Insufficient points" } // TODO: POINTS DETECTION DISABLED
         // 1. download the exercise
         val exerciseJson = downloadExerciseJson(bodyJson, accessToken) ?: run {
             runMain { this.displayToast(R.string.toast_unable_to_get_exercise) }

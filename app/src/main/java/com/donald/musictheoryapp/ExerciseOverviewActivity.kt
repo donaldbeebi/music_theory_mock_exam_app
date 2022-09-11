@@ -82,7 +82,11 @@ class ExerciseOverviewActivity : AppCompatActivity() {
         val intent = Intent(this, ExerciseActivity::class.java).apply {
             putExtra("action", "redo")
             putExtra("exercise_data", newExercise.exerciseData())
-            addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_CLEAR_TASK)
+            /*addFlags(
+                Intent.FLAG_ACTIVITY_NEW_TASK
+                    or Intent.FLAG_ACTIVITY_CLEAR_TOP
+                    or Intent.FLAG_ACTIVITY_CLEAR_TASK
+            )*/ // TODO: THIS DOESN'T DO SHIT
         }
         startActivity(intent)
         finish()
