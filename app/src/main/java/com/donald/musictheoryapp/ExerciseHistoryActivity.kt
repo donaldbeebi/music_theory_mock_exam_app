@@ -77,7 +77,7 @@ class ExerciseHistoryActivity : AppCompatActivity() {
     private fun onDelete(indexToRemove: Int) {
         val displayDataList = this.displayDataList ?: throw IllegalStateException()
         displayDataList[indexToRemove].startDeletion()
-        //runDiskIO { deleteExerciseAll(displayDataList[indexToRemove].exerciseData) }
+        runDiskIO { deleteExerciseAll(displayDataList[indexToRemove].exerciseData) }
     }
 
     private fun onDismissFocusContent() {
@@ -451,7 +451,7 @@ private data class DisplayData(
     fun startDeletion() { visibleState.targetState = false }
 }
 
-private val List<DisplayData>.lastVisibleIndex: Int
+private val List<DisplayData>.lastVisibleIndex: Int?
     get() {
         var currentIndex = lastIndex
         while (currentIndex >= 0) {
@@ -461,5 +461,5 @@ private val List<DisplayData>.lastVisibleIndex: Int
                 currentIndex--
             }
         }
-        throw IllegalStateException()
+        return null
     }
